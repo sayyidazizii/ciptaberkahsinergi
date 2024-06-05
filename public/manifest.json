@@ -1,6 +1,6 @@
 {
-    "short_name": "JJM",
-    "name": "Koperasi Jacob Jaya Mandiri",
+    "short_name": "CBS",
+    "name": "Koperasi Cipta Berkah Sinergi",
     "orientation": "any",
     "icons": [
       {
@@ -70,6 +70,6 @@
         ]
       }
     ],
-    "description": "Aplikasi Koperasi Jacop Jaya Mandiri",
+    "description": "Aplikasi Koperasi Cipta Berkah Sinergi",
     "screenshots": []
   }

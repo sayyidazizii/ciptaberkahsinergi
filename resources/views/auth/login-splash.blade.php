@@ -180,7 +180,7 @@
                 <div class="container">
                     <div class="text-center my-10">
                         <h1 class="text-dark mb-3">
-                            {{ __('Koperasi Jacop Jaya Mandiri') }}
+                            {{ __('Koperasi Cipta Berkah Sinergi') }}
                         </h1>
                     </div>
 
