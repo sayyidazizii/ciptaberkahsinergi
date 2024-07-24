@@ -103,6 +103,7 @@ use App\Http\Controllers\TaxReportController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\AcctCreditsPaymentInsensiveController;
+use App\Http\Controllers\MigrationController;
 
 
 use App\Models\RequestLog;
@@ -1035,6 +1036,21 @@ Route::middleware(['auth','loged'])->group(function () {
 
     Route::prefix('documentation')->name('documentation.')->group(function () {
         Route::get('/', [ApiController::class, 'documentation'])->name('index');
+    });
+
+
+    // migration pages
+    Route::prefix('migration')->name('migration.')->group(function () {
+        Route::get('/', [MigrationController::class, 'index'])->name('index');
+        Route::get('account', [MigrationController::class, 'account'])->name('account');
+        Route::post('add-excel-account', [MigrationController::class, 'addExcelAccount'])->name('addExcelAccount');
+        Route::post('save-excel-account', [MigrationController::class, 'saveExcelAccount'])->name('saveExcelAccount');
+        Route::get('/profit-loss', [MigrationController::class, 'profitloss'])->name('profit-loss');
+        Route::post('add-excel-profitloss', [MigrationController::class, 'addExcelProfitLoss'])->name('addExcelProfitLoss');
+        Route::post('save-excel-profitloss', [MigrationController::class, 'saveExcelProfitLoss'])->name('saveExcelProfitLoss');
+        Route::get('/balancesheet', [MigrationController::class, 'balancesheet'])->name('balancesheet');
+        Route::post('add-excel-balancesheet', [MigrationController::class, 'addExcelBalanceSheet'])->name('addExcelBalanceSheet');
+        Route::post('save-excel-balancesheet', [MigrationController::class, 'saveExcelBalaneSheet'])->name('saveExcelBalanceSheet');
     });
 
 });

@@ -90,12 +90,12 @@ class PdoSessionHandler extends AbstractSessionHandler
     /**
      * Username when lazy-connect.
      */
-    private ?string $username = null;
+    private string $username = '';
 
     /**
      * Password when lazy-connect.
      */
-    private ?string $password = null;
+    private string $password = '';
 
     /**
      * Connection options when lazy-connect.

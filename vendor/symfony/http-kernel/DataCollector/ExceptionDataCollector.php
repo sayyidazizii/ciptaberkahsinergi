@@ -31,6 +31,11 @@ class ExceptionDataCollector extends DataCollector
         }
     }
 
+    public function reset(): void
+    {
+        $this->data = [];
+    }
+
     public function hasException(): bool
     {
         return isset($this->data['exception']);

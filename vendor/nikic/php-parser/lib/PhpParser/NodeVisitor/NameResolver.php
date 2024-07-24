@@ -118,9 +118,6 @@ class NameResolver extends NodeVisitorAbstract
                 $this->addNamespacedName($const);
             }
         } else if ($node instanceof Stmt\ClassConst) {
-            if (null !== $node->type) {
-                $node->type = $this->resolveType($node->type);
-            }
             $this->resolveAttrGroups($node);
         } else if ($node instanceof Stmt\EnumCase) {
             $this->resolveAttrGroups($node);

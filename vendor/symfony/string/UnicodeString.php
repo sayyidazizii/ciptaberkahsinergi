@@ -34,31 +34,22 @@ class UnicodeString extends AbstractUnicodeString
 {
     public function __construct(string $string = '')
     {
-        if ('' === $string || normalizer_is_normalized($this->string = $string)) {
-            return;
-        }
+        $this->string = normalizer_is_normalized($string) ? $string : normalizer_normalize($string);
 
-        if (false === $string = normalizer_normalize($string)) {
+        if (false === $this->string) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
         }
-
-        $this->string = $string;
     }
 
     public function append(string ...$suffix): static
     {
         $str = clone $this;
         $str->string = $this->string.(1 >= \count($suffix) ? ($suffix[0] ?? '') : implode('', $suffix));
+        normalizer_is_normalized($str->string) ?: $str->string = normalizer_normalize($str->string);
 
-        if (normalizer_is_normalized($str->string)) {
-            return $str;
-        }
-
-        if (false === $string = normalizer_normalize($str->string)) {
+        if (false === $str->string) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
         }
-
-        $str->string = $string;
 
         return $str;
     }
@@ -218,16 +209,11 @@ class UnicodeString extends AbstractUnicodeString
     {
         $str = clone $this;
         $str->string = (1 >= \count($prefix) ? ($prefix[0] ?? '') : implode('', $prefix)).$this->string;
+        normalizer_is_normalized($str->string) ?: $str->string = normalizer_normalize($str->string);
 
-        if (normalizer_is_normalized($str->string)) {
-            return $str;
-        }
-
-        if (false === $string = normalizer_normalize($str->string)) {
+        if (false === $str->string) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
         }
-
-        $str->string = $string;
 
         return $str;
     }
@@ -249,16 +235,11 @@ class UnicodeString extends AbstractUnicodeString
             }
 
             $str->string = $result.$tail;
+            normalizer_is_normalized($str->string) ?: $str->string = normalizer_normalize($str->string);
 
-            if (normalizer_is_normalized($str->string)) {
-                return $str;
-            }
-
-            if (false === $string = normalizer_normalize($str->string)) {
+            if (false === $str->string) {
                 throw new InvalidArgumentException('Invalid UTF-8 string.');
             }
-
-            $str->string = $string;
         }
 
         return $str;
@@ -288,16 +269,11 @@ class UnicodeString extends AbstractUnicodeString
         $start = $start ? \strlen(grapheme_substr($this->string, 0, $start)) : 0;
         $length = $length ? \strlen(grapheme_substr($this->string, $start, $length ?? 2147483647)) : $length;
         $str->string = substr_replace($this->string, $replacement, $start, $length ?? 2147483647);
+        normalizer_is_normalized($str->string) ?: $str->string = normalizer_normalize($str->string);
 
-        if (normalizer_is_normalized($str->string)) {
-            return $str;
-        }
-
-        if (false === $string = normalizer_normalize($str->string)) {
+        if (false === $str->string) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
         }
-
-        $str->string = $string;
 
         return $str;
     }
@@ -362,9 +338,6 @@ class UnicodeString extends AbstractUnicodeString
         return $prefix === grapheme_extract($this->string, \strlen($prefix), \GRAPHEME_EXTR_MAXBYTES);
     }
 
-    /**
-     * @return void
-     */
     public function __wakeup()
     {
         if (!\is_string($this->string)) {

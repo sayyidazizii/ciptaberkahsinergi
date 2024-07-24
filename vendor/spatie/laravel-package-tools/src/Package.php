@@ -50,7 +50,7 @@ class Package
 
     public function hasConfigFile($configFileName = null): static
     {
-        $configFileName ??= $this->shortName();
+        $configFileName = $configFileName ?? $this->shortName();
 
         if (! is_array($configFileName)) {
             $configFileName = [$configFileName];

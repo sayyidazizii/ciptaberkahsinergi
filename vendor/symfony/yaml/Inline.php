@@ -55,8 +55,12 @@ class Inline
      *
      * @throws ParseException
      */
-    public static function parse(string $value, int $flags = 0, array &$references = []): mixed
+    public static function parse(string $value = null, int $flags = 0, array &$references = []): mixed
     {
+        if (null === $value) {
+            return '';
+        }
+
         self::initialize($flags);
 
         $value = trim($value);
@@ -157,7 +161,7 @@ class Inline
                     } elseif (floor($value) == $value && $repr == $value) {
                         // Preserve float data type since storing a whole number will result in integer value.
                         if (!str_contains($repr, 'E')) {
-                            $repr .= '.0';
+                            $repr = $repr.'.0';
                         }
                     }
                 } else {
@@ -527,7 +531,7 @@ class Inline
                         if ('<<' === $key) {
                             $output += $value;
                         } elseif ($allowOverwrite || !isset($output[$key])) {
-                            if (!$isValueQuoted && \is_string($value) && '' !== $value && '&' === $value[0] && !self::isBinaryString($value) && Parser::preg_match(Parser::REFERENCE_PATTERN, $value, $matches)) {
+                            if (!$isValueQuoted && \is_string($value) && '' !== $value && '&' === $value[0] && Parser::preg_match(Parser::REFERENCE_PATTERN, $value, $matches)) {
                                 $references[$matches['ref']] = $matches['value'];
                                 $value = $matches['value'];
                             }

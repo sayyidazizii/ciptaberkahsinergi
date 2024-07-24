@@ -94,16 +94,10 @@ final class ControllerArgumentsEvent extends KernelEvent
     }
 
     /**
-     * @template T of class-string|null
-     *
-     * @param T $className
-     *
-     * @return array<class-string, list<object>>|list<object>
-     *
-     * @psalm-return (T is null ? array<class-string, list<object>> : list<object>)
+     * @return array<class-string, list<object>>
      */
-    public function getAttributes(string $className = null): array
+    public function getAttributes(): array
     {
-        return $this->controllerEvent->getAttributes($className);
+        return $this->controllerEvent->getAttributes();
     }
 }

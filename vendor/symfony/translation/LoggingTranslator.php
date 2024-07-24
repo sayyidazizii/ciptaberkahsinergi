@@ -87,7 +87,7 @@ class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface, 
     }
 
     /**
-     * @return mixed
+     * Passes through all unknown calls onto the translator object.
      */
     public function __call(string $method, array $args)
     {

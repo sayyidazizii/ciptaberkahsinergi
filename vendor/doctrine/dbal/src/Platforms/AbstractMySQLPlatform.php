@@ -406,17 +406,7 @@ abstract class AbstractMySQLPlatform extends AbstractPlatform
      */
     public function getColumnTypeSQLSnippets(string $tableAlias = 'c'): array
     {
-        return [$this->getColumnTypeSQLSnippet(...func_get_args()), ''];
-    }
-
-    /**
-     * The SQL snippet required to elucidate a column type
-     *
-     * Returns a column type SELECT snippet string
-     */
-    public function getColumnTypeSQLSnippet(string $tableAlias = 'c', ?string $databaseName = null): string
-    {
-        return $tableAlias . '.COLUMN_TYPE';
+        return [$tableAlias . '.COLUMN_TYPE', ''];
     }
 
     /** @deprecated The SQL used for schema introspection is an implementation detail and should not be relied upon. */

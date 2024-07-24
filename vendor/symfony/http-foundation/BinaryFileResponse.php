@@ -125,7 +125,7 @@ class BinaryFileResponse extends Response
      */
     public function setAutoLastModified(): static
     {
-        $this->setLastModified(\DateTimeImmutable::createFromFormat('U', $this->file->getMTime()));
+        $this->setLastModified(\DateTime::createFromFormat('U', $this->file->getMTime()));
 
         return $this;
     }
@@ -293,7 +293,7 @@ class BinaryFileResponse extends Response
     {
         try {
             if (!$this->isSuccessful()) {
-                return $this;
+                return parent::sendContent();
             }
 
             if (0 === $this->maxlen) {

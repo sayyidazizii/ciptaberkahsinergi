@@ -469,7 +469,7 @@ end when running `php artisan your-package-name:install`. You can use this to pe
 output.
 
 ```php
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
 public function configurePackage(Package $package): void
 {

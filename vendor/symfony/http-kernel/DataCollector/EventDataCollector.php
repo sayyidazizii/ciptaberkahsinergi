@@ -44,6 +44,7 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
             $dispatchers = [$this->defaultDispatcher => $dispatchers];
         }
         $this->dispatchers = $dispatchers ?? [];
+        $this->requestStack = $requestStack;
     }
 
     public function collect(Request $request, Response $response, \Throwable $exception = null): void
@@ -54,7 +55,7 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
 
     public function reset(): void
     {
-        parent::reset();
+        $this->data = [];
 
         foreach ($this->dispatchers as $dispatcher) {
             if ($dispatcher instanceof ResetInterface) {

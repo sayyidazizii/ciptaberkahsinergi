@@ -18,7 +18,7 @@ namespace Symfony\Component\HttpFoundation;
  *
  * @implements \IteratorAggregate<string, list<string|null>>
  */
-class HeaderBag implements \IteratorAggregate, \Countable, \Stringable
+class HeaderBag implements \IteratorAggregate, \Countable
 {
     protected const UPPER = '_ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     protected const LOWER = '-abcdefghijklmnopqrstuvwxyz';
@@ -193,17 +193,15 @@ class HeaderBag implements \IteratorAggregate, \Countable, \Stringable
     /**
      * Returns the HTTP header value converted to a date.
      *
-     * @return \DateTimeImmutable|null
-     *
      * @throws \RuntimeException When the HTTP header is not parseable
      */
-    public function getDate(string $key, \DateTimeInterface $default = null): ?\DateTimeInterface
+    public function getDate(string $key, \DateTime $default = null): ?\DateTimeInterface
     {
         if (null === $value = $this->get($key)) {
-            return null !== $default ? \DateTimeImmutable::createFromInterface($default) : null;
+            return $default;
         }
 
-        if (false === $date = \DateTimeImmutable::createFromFormat(\DATE_RFC2822, $value)) {
+        if (false === $date = \DateTime::createFromFormat(\DATE_RFC2822, $value)) {
             throw new \RuntimeException(sprintf('The "%s" HTTP header is not parseable (%s).', $key, $value));
         }
 

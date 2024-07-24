@@ -348,6 +348,7 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
         $result = [];
 
         $allListeners = new \ReflectionProperty(EventDispatcher::class, 'listeners');
+        $allListeners->setAccessible(true);
 
         foreach ($allListeners->getValue($this->dispatcher) as $eventName => $listenersByPriority) {
             foreach ($listenersByPriority as $priority => $listeners) {
