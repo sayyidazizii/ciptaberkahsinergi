@@ -21,6 +21,7 @@ class ProfitLossImport implements ToModel, WithHeadingRow
             'account_id' => $row['account_id'],
             'account_code' => $row['account_code'],
             'account_name' => $row['account_name'],
+            'account_amount_migration' => $row['account_amount_migration'],
             'report_formula' => $row['report_formula'],
             'report_operator' => $row['report_operator'],
             'report_type' => $row['report_type'],

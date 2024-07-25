@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcctAccount;
+use App\Models\AcctProfitLossReport;
 use App\Models\PreferenceCompany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -116,15 +117,25 @@ class MigrationController extends Controller
     // * profit Loss
     public function profitloss()
     {
+        
         $profitloss = MigrationProfitLoss::all();
-        return view('content.Migration.List.profitloss', compact('profitloss'));
+        $monthlist              = array_filter(Configuration::Month());
+        $year_now 	=	date('Y');
+        for($i=($year_now-2); $i<($year_now+2); $i++){
+            $year[$i] = $i;
+        }
+
+        return view('content.Migration.List.profitloss', compact('profitloss','monthlist','year'));
     }
 
-    public function addExceProfitloss(Request $request)
+    public function addExcelProfitLoss(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',
         ]);
+
+        MigrationProfitLoss::truncate();
+
 
         $file = $request->file('file');
         $path = $file->store('temp'); // Simpan file sementara
@@ -134,13 +145,80 @@ class MigrationController extends Controller
         // Hapus file setelah proses import selesai
         Storage::delete($path);
 
-        return redirect()->route('migration.profitloss')->with('success', 'Data akun berhasil diimpor!');
+        return redirect()->route('migration.profit-loss')->with('success', 'Data akun berhasil diimpor!');
     }
 
-    public function saveExcelProfitloss(Request $request)
+    public function saveExcelProfitLoss(Request $request)
     {
-        return redirect()->route('migration.account')->with('success', 'Data akun berhasil disimpan!');
+        $month_period = $request->month_period;
+        $year_period  = $request->year_period;
+
+        DB::beginTransaction();
+
+        try {
+            // Disable foreign key checks
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+            // Truncate the AcctProfitLossReport table
+            AcctProfitLossReport::truncate();
+
+            // Insert data from MigrationProfitLoss into AcctProfitLossReport
+            $migrationProfitLoss = MigrationProfitLoss::all();
+
+            foreach ($migrationProfitLoss as $migrationProfitLoss) {
+                AcctProfitLossReport::create([
+                    'profit_loss_report_id' => $migrationProfitLoss->profit_loss_report_id,
+                    'format_id' => $migrationProfitLoss->format_id,
+                    'report_no' => $migrationProfitLoss->report_no,
+                    'account_type_id' => $migrationProfitLoss->account_type_id,
+                    'account_id' => $migrationProfitLoss->account_id,
+                    'account_code' => $migrationProfitLoss->account_code,
+                    'account_name' => $migrationProfitLoss->account_name,
+                    'account_amount_migration' => $migrationProfitLoss->account_amount_migration,
+                    'report_formula' => $migrationProfitLoss->report_formula,
+                    'report_operator' => $migrationProfitLoss->report_operator,
+                    'report_type' => $migrationProfitLoss->report_type,
+                    'report_tab' => $migrationProfitLoss->report_tab,
+                    'report_bold' => $migrationProfitLoss->report_bold,
+                    'created_id' => $migrationProfitLoss->created_id,
+                    'created_at' => $migrationProfitLoss->created_at,
+                    'updated_at' => $migrationProfitLoss->updated_at,
+                    'deleted_at' => $migrationProfitLoss->deleted_at,
+                    'data_state' => $migrationProfitLoss->data_state,
+                ]);
+            }
+
+            // Truncate the MigrationProfitLoss table
+            MigrationProfitLoss::truncate();
+
+            // Update AcctAccountMutation with account_amount_migration from AcctProfitLossReport
+            DB::statement("
+                UPDATE acct_account_mutation a
+                JOIN acct_profit_loss_report p ON a.account_id = p.account_id
+                SET a.mutation_in_amount = p.account_amount_migration,
+                    a.last_balance = p.account_amount_migration
+                WHERE a.month_period = '.$month_period.' AND a.year_period = '.$year_period.'");
+
+            // Re-enable foreign key checks
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('migration.profit-loss')->with('success', 'Data akun berhasil disimpan!');
+        } catch (\Exception $e) {
+            // Rollback the transaction if something went wrong
+            DB::rollBack();
+
+            // Log the error or handle it as needed
+            \Log::error('Failed to save Excel profit-loss data: ' . $e->getMessage());
+
+            return redirect()->route('migration.profit-loss')->with('error', 'Terjadi kesalahan saat menyimpan data akun.');
+        }
     }
+
+
+
     // * end profit Loss
 
 

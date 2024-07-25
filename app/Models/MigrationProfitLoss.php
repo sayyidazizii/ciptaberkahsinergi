@@ -24,6 +24,7 @@ class MigrationProfitLoss extends Model
         'account_id',
         'account_code',
         'account_name',
+        'account_amount_migration',
         'report_formula',
         'report_operator',
         'report_type',

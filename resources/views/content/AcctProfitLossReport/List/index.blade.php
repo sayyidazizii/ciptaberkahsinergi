@@ -74,7 +74,7 @@ if (empty($sessiondata)){
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
-                    <a hidden href="{{ route('profit-loss-report.process-shu') }}" class="btn btn-info me-2" id="kt_filter_cancel">
+                    <a href="{{ route('profit-loss-report.process-shu') }}" class="btn btn-info me-2" id="kt_filter_cancel">
                         {{__('Proses SHU')}}
                     </a>
                     <button type="submit" class="btn btn-success" id="kt_filter_search">
@@ -161,7 +161,7 @@ if (empty($sessiondata)){
                                                     echo "</tr><tr>";
 
                                                     if($val['report_type']	== 3){
-                                                        $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($val['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'], $sessiondata['branch_id']);
+                                                        $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($val['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'], $sessiondata['branch_id'],$sessiondata['profit_loss_report_type']);
 
                                                         echo "
                                                         <td><div style='font-weight:".$report_bold."'>".$report_tab."(".$val['account_code'].") ".$val['account_name']."</div> </td>
@@ -269,7 +269,7 @@ if (empty($sessiondata)){
                                                     echo "</tr><tr>";
 
                                                     if($val['report_type']	== 3){
-                                                        $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($val['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'], $sessiondata['profit_loss_report_type'], $sessiondata['branch_id']);
+                                                        $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($val['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'],$sessiondata['branch_id'], $sessiondata['profit_loss_report_type']);
 
                                                         echo "
                                                         <td><div style='font-weight:".$report_bold."'>".$report_tab."(".$val['account_code'].") ".$val['account_name']."</div> </td>
@@ -374,4 +374,12 @@ if (empty($sessiondata)){
             <a href="{{ route('profit-loss-report.print') }}" class="btn btn-primary">{{ __('Export PDF') }}</a>
         </div>
     </div>
+    <script>
+        document.getElementById('kt_filter_cancel').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (confirm('Apakah Anda yakin ingin memproses SHU?')) {
+                window.location.href = this.href;
+            }
+        });
+    </script>
 </x-base-layout>
