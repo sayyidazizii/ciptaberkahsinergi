@@ -99,7 +99,7 @@
         </div>
 
         <div class="card-footer d-flex justify-content-end py-6 px-9">
-            <a href="{{ route('migration.index') }}" class="btn btn-primary me-2">{{ __('Kembali') }}</a>
+            {{-- <a href="{{ route('migration.index') }}" class="btn btn-primary me-2">{{ __('Kembali') }}</a> --}}
         </div>
     </div>
 </x-base-layout>
@@ -108,7 +108,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    
+
     <script>
         $(document).ready(function() {
             $('#accountsTable').DataTable();

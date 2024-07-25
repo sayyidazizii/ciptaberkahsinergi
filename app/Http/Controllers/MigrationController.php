@@ -23,7 +23,7 @@ class MigrationController extends Controller
 {
     public function index()
     {
- 
+
         return view('content.Migration.List.index');
 
     }
@@ -31,7 +31,7 @@ class MigrationController extends Controller
     // * account
     public function account()
     {
-       $accounts = MigrationAccount::all();
+        $accounts = MigrationAccount::all();
         return view('content.Migration.List.account', compact('accounts'));
     }
 
@@ -110,10 +110,6 @@ class MigrationController extends Controller
             return redirect()->route('migration.account')->with('error', 'Terjadi kesalahan saat menyimpan data akun.');
         }
     }
-
-    
-
-
     // * end account
 
 

@@ -95,7 +95,7 @@
         </div>
 
         <div class="card-footer d-flex justify-content-end py-6 px-9">
-            <a href="{{ route('migration.index') }}" class="btn btn-primary me-2">{{ __('Kembali') }}</a>
+            {{-- <a href="{{ route('migration.index') }}" class="btn btn-primary me-2">{{ __('Kembali') }}</a> --}}
         </div>
     </div>
 </x-base-layout>
