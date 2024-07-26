@@ -33,8 +33,26 @@
                     </div>
                     <div class="col mt-6">
                         <div class="card-footer d-flex justify-content-end py-6 px-9">
-                            <form action="{{ route('migration.saveExcelBalanceSheet') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('migration.saveExcelBalanceSheet') }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center">
                                 @csrf
+                                <div class="me-3">
+                                    <label class="col-form-label fw-bold fs-6">{{ __('Bulan') }}</label>
+                                    <select name="month_period" id="month_period" aria-label="{{ __('Bulan') }}" data-control="select2" data-placeholder="{{ __('Pilih periode..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                        <option value="">{{ __('Pilih periode..') }}</option>
+                                        @foreach($monthlist as $key => $value)
+                                            <option data-kt-flag="{{ $key }}" value="{{ $key }}" {{ (int)$key === old('month_period') ? 'selected' :'' }}>{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="me-3">
+                                    <label class="col-form-label fw-bold fs-6">{{ __('Tahun') }}</label>
+                                    <select name="year_period" id="year_period" aria-label="{{ __('Tahun') }}" data-control="select2" data-placeholder="{{ __('Pilih periode..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                        <option value="">{{ __('Pilih periode..') }}</option>
+                                        @foreach($year as $key => $value)
+                                            <option data-kt-flag="{{ $key }}" value="{{ $key }}" {{ $key === old('year_period') ? 'selected' :'' }}>{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <button type="submit" class="btn btn-success">Save</button>
                             </form>
                         </div>

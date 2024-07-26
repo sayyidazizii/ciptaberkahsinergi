@@ -1,7 +1,4 @@
 <?php
-// app/Imports/AccountsImport.php
-// app/Imports/BalanceSheetImport.php
-
 namespace App\Imports;
 
 use App\Models\MigrationBalanceSheet;
@@ -18,9 +15,11 @@ class BalanceSheetImport implements ToModel, WithHeadingRow
             'account_id1' => $row['account_id1'],
             'account_code1' => $row['account_code1'],
             'account_name1' => $row['account_name1'],
+            'account_amount1' => $row['account_amount1'],
             'account_id2' => $row['account_id2'],
             'account_code2' => $row['account_code2'],
             'account_name2' => $row['account_name2'],
+            'account_amount2' => $row['account_amount2'],
             'report_formula1' => $row['report_formula1'],
             'report_operator1' => $row['report_operator1'],
             'report_type1' => $row['report_type1'],
@@ -33,7 +32,7 @@ class BalanceSheetImport implements ToModel, WithHeadingRow
             'report_bold2' => $row['report_bold2'],
             'report_formula3' => $row['report_formula3'],
             'report_operator3' => $row['report_operator3'],
-            'balance_report_type' => $row['balance_report_type'],
+            'balance_report_type' => $row['balance_report_type'] ?? 'default_value',
             'balance_report_type1' => $row['balance_report_type1'],
             'created_id' => $row['created_id'],
             'created_at' => $row['created_at'],
@@ -43,5 +42,3 @@ class BalanceSheetImport implements ToModel, WithHeadingRow
         ]);
     }
 }
-
-

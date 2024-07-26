@@ -1050,7 +1050,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('save-excel-profitloss', [MigrationController::class, 'saveExcelProfitLoss'])->name('saveExcelProfitLoss');
         Route::get('/balancesheet', [MigrationController::class, 'balancesheet'])->name('balancesheet');
         Route::post('add-excel-balancesheet', [MigrationController::class, 'addExcelBalanceSheet'])->name('addExcelBalanceSheet');
-        Route::post('save-excel-balancesheet', [MigrationController::class, 'saveExcelBalaneSheet'])->name('saveExcelBalanceSheet');
+        Route::post('save-excel-balancesheet', [MigrationController::class, 'saveExcelBalanceSheet'])->name('saveExcelBalanceSheet');
     });
 
 });

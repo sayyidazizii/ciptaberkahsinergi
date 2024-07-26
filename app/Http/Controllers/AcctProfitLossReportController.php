@@ -888,6 +888,7 @@ class AcctProfitLossReportController extends Controller
         }
     }
 
+// ===========================processSHU=================================
     public function processSHU(){
         $monthlist 			= array_filter(Configuration::Month());
         $preferencecompany 	= PreferenceCompany::first();
@@ -931,7 +932,7 @@ class AcctProfitLossReportController extends Controller
                     $opening_balance_old = 0;
                 }
                 
-//!===========================================================================================================================================
+    //!===========================================================================================================================================
                 
                 //*Pakai AcctAccountBalanceDetail
                 $total_mutation_in 		= AcctAccountBalanceDetail::where("account_id", $val['account_id'])
@@ -963,7 +964,7 @@ class AcctProfitLossReportController extends Controller
                 // ->whereYear('acct_journal_voucher.journal_voucher_date', $sessiondata['year_period'])
                 // ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
 
-//!===========================================================================================================================================
+    //!===========================================================================================================================================
 
                 if(empty($total_mutation_in)){
                     $total_mutation_in 	= 0;
@@ -1062,7 +1063,7 @@ class AcctProfitLossReportController extends Controller
                 AcctAccountMutation::insert($data_account_mutation);
 
 
-//==============================================laba rugi template==============================================
+    //==============================================laba rugi template==============================================
             
                 $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
                 ->where('account_name', '!=', ' ')
@@ -1189,10 +1190,9 @@ class AcctProfitLossReportController extends Controller
                     ->sum('last_balance');
                 }
 
-
                 $profit_loss_amount = $shu;
 
-//================================================end template==============================================
+    //================================================end template==============================================
 
                 $data_profit_loss = array (
                     "branch_id"				=> $sessiondata['branch_id'],
@@ -1235,6 +1235,7 @@ class AcctProfitLossReportController extends Controller
 
         return redirect('profit-loss-report')->with($message);
     }
+// ===========================End processSHU===========================
 
     public static function getAccountAmount($account_id, $month_start, $month_end, $year, $branch_id,$profit_loss_report_type){
         $account_amount = 0;
@@ -1254,7 +1255,6 @@ class AcctProfitLossReportController extends Controller
         }
         
         return $account_amount;
-
 
     }
 }

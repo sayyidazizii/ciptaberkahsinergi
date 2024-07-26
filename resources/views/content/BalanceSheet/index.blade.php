@@ -151,6 +151,7 @@
                         <tbody>
                             <tr>
                                 <td style="width: 50%">
+                                    {{-- left --}}
                                     <table class="table table-rounded border  gs-7 show-border">
                                         <?php
                                             $grand_total_account_amount1 = 0;
@@ -167,11 +168,11 @@
                                                         $report_tab1 = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                                                     }
 
-                                                    if($val['report_bold1'] == 1){
-                                                        $report_bold1 = 'bold';
-                                                    } else {
-                                                        $report_bold1 = 'normal';
-                                                    }
+                                                        if($val['report_bold1'] == 1){
+                                                            $report_bold1 = 'bold';
+                                                        } else {
+                                                            $report_bold1 = 'normal';
+                                                        }
 
                                                     echo "
                                                         <tr>
@@ -274,7 +275,7 @@
                                                         <tr>
                                                     ";
 
-                                                    $grand_total_account_name1 = '';
+                                                        $grand_total_account_name1 = '';
                                                         if($val['report_type1'] == 6){
                                                             if(!empty($val['report_formula1']) && !empty($val['report_operator1'])){
                                                                 $grand_total_account_name1  = $val['account_name1'];
@@ -347,6 +348,7 @@
                                     </table>
                                 </td>
                                 <td style="width: 50%">
+                                    {{-- right --}}
                                     <table class="table table-rounded border  gs-7 show-border">
                                         <?php
                                             foreach ($acctbalancesheetreport_right as $key => $val) {
@@ -417,23 +419,23 @@
 
                                                 echo "
                                                 <tr>
-                                            ";
+                                                ";
 
-                                                if($val['report_type2']	== 7){
-                                                    
-                                                    $last_balance2 	= BalanceSheetController::getLastBalance($val['account_id2'], empty($session['branch_id']) ? auth()->user()->branch_id : $session['branch_id'], $last_month, $last_year);
+                                                    if($val['report_type2']	== 7){
+                                                        
+                                                        $last_balance2 	= BalanceSheetController::getProfitLossAmount(empty($session['branch_id']) ? auth()->user()->branch_id : $session['branch_id'], $last_month, $last_year);
+                                                        print_r($last_balance2);
+                                                        echo "
+                                                            <td><div style='font-weight:".$report_bold2."'>".$report_tab2."(".$val['account_code2'].") ".$val['account_name2']."</div> </td>
+                                                            <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($last_balance2, 2)."</div></td>
+                                                        ";   
 
-                                                    // echo "
-                                                    //     <td><div style='font-weight:".$report_bold2."'>".$report_tab2."(".$val['account_code2'].") ".$val['account_name2']."</div> </td>
-                                                    //     <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($last_balance2, 2)."</div></td>
-                                                    // ";   
+                                                        $account_amount2_bottom[$val['report_no']] = $last_balance2;
+                                                    }
 
-                                                    $account_amount2_bottom[$val['report_no']] = $last_balance2;
-                                                }
-
-                                            echo "
-                                                </tr>
-                                            ";
+                                                echo "
+                                                    </tr>
+                                                ";
 
                                                 echo "
                                                     <tr>
@@ -601,38 +603,6 @@
                                                             ";
                                                         }	
                                                     }
-                                                
-
-                                                    // if($val['report_type2'] == 6){
-                                                    //     if(!empty($val['report_formula2']) && !empty($val['report_operator2'])){
-                                                    //         $report_formula2 	= explode('#', $val['report_formula2']);
-                                                    //         $report_operator2 	= explode('#', $val['report_operator2']);
-
-                                                    //         $total_account_amount210	= 0;
-                                                    //         for($i = 0; $i < count($report_formula2); $i++){
-                                                    //             if($report_operator2[$i] == '-'){
-                                                    //                 if($total_account_amount210 == 0 ){
-                                                    //                     $total_account_amount210 = $total_account_amount210 + $account_amount210_top[$report_formula2[$i]];
-                                                    //                 } else {
-                                                    //                     $total_account_amount210 = $total_account_amount210 - $account_amount210_top[$report_formula2[$i]];
-                                                    //                 }
-                                                    //             } else if($report_operator2[$i] == '+'){
-                                                    //                 if($total_account_amount210 == 0){
-                                                    //                     $total_account_amount210 = $total_account_amount210 + $account_amount210_top[$report_formula2[$i]];
-                                                    //                 } else {
-                                                    //                     $total_account_amount210 = $total_account_amount210 + $account_amount210_top[$report_formula2[$i]];
-                                                    //                 }
-                                                    //             }
-                                                    //         }
-
-                                                    //         $grand_total_account_amount2 = $grand_total_account_amount2 + $total_account_amount210;
-
-                                                    //         echo "
-                                                    //             <td><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
-                                                    //             <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($grand_total_account_amount2, 2)."</div></td>
-                                                    //         ";
-                                                    //     }
-                                                    // }
 
                                                 echo "			
                                                     </tr>
