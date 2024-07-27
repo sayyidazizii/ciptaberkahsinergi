@@ -115,150 +115,14 @@ class BalanceSheetController extends Controller
         return $amount;
     }
 
-    // public static function getProfitLossAmount($branch_id, $month, $year)
-    // {
-    //     $data = AcctProfitLoss::where('month_period','<=',$month)
-    //     ->where('year_period', $year)
-    //     ->where('branch_id', $branch_id)
-    //     ->first();
-
-    //     return $data->profit_loss_amount;
-    // }
-
     public static function getProfitLossAmount($branch_id, $month, $year)
     {
-    //==============================================laba rugi template==============================================
-                
-            $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
-            ->where('account_name', '!=', ' ')
-            ->where('account_name', '!=', '')
-            ->where('account_type_id', 2)
-            ->orderBy('report_no', 'ASC')
-            ->get();
+        $data = AcctProfitLoss::where('month_period','<=',$month)
+        ->where('year_period', $year)
+        ->where('branch_id', $branch_id)
+        ->first();
 
-            $acctprofitlossreport_bottom	= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
-            ->where('account_name', '!=', ' ')
-            ->where('account_name', '!=', '')
-            ->where('account_type_id', 3)
-            ->orderBy('report_no', 'ASC')
-            ->get();
-
-
-            foreach ($acctprofitlossreport_top as $keyTop => $valTop) {
-                                
-
-                if($valTop['report_type']	== 3){
-                    $account_subtotal 	= self::getAccountAmount($valTop['account_id'], $month, $month,$year, $branch_id,1);
-
-                    $account_amount[$valTop['report_no']] = $account_subtotal;
-                }
-
-                if($valTop['report_type'] == 5){
-                    if(!empty($valTop['report_formula']) && !empty($valTop['report_operator'])){
-                        $report_formula 	= explode('#', $valTop['report_formula']);
-                        $report_operator 	= explode('#', $valTop['report_operator']);
-
-                        $total_account_amount1	= 0;
-                        for($i = 0; $i < count($report_formula); $i++){
-                            if($report_operator[$i] == '-'){
-                                if($total_account_amount1 == 0 ){
-                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $total_account_amount1 = $total_account_amount1 - $account_amount[$report_formula[$i]];
-                                }
-                            } else if($report_operator[$i] == '+'){
-                                if($total_account_amount1 == 0){
-                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            foreach ($acctprofitlossreport_bottom as $keyBottom => $valBottom) {
-            
-
-                if($valBottom['report_type']	== 3){
-                    $account_subtotal 	= self::getAccountAmount($valBottom['account_id'], $month, $month,$year, $branch_id,1);
-
-                    $account_amount[$valBottom['report_no']] = $account_subtotal;
-                }
-                
-
-                if($valBottom['report_type'] == 5){
-                    if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
-                        $report_formula 	= explode('#', $valBottom['report_formula']);
-                        $report_operator 	= explode('#', $valBottom['report_operator']);
-
-                        $total_account_amount2	= 0;
-                        for($i = 0; $i < count($report_formula); $i++){
-                            if($report_operator[$i] == '-'){
-                                if($total_account_amount2 == 0 ){
-                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $total_account_amount2 = $total_account_amount2 - $account_amount[$report_formula[$i]];
-                                }
-                            } else if($report_operator[$i] == '+'){
-                                if($total_account_amount2 == 0){
-                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if($valBottom['report_type'] == 6){
-                    if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
-                        $report_formula 	= explode('#', $valBottom['report_formula']);
-                        $report_operator 	= explode('#', $valBottom['report_operator']);
-
-                        $grand_total_account_amount2	= 0;
-                        for($i = 0; $i < count($report_formula); $i++){
-                            if($report_operator[$i] == '-'){
-                                if($grand_total_account_amount2 == 0 ){
-                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $grand_total_account_amount2 = $grand_total_account_amount2 - $account_amount[$report_formula[$i]];
-                                }
-                            } else if($report_operator[$i] == '+'){
-                                if($grand_total_account_amount2 == 0){
-                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
-                                } else {
-                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            $shu = $total_account_amount1 - $grand_total_account_amount2;
-
-            // if($sessiondata['profit_loss_report_type'] == 1){
-            //     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
-            //     ->where('acct_account_mutation.branch_id', $branch_id)
-            //     ->where('acct_account_mutation.month_period', '>=', $month)
-            //     ->where('acct_account_mutation.month_period', '<=', $month)
-            //     ->where('acct_account_mutation.year_period',$year)
-            //     ->sum('last_balance');
-            // }else if($sessiondata['profit_loss_report_type'] == 2){
-            //     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
-            //     ->where('acct_account_mutation.branch_id', $branch_id)
-            //     ->where('acct_account_mutation.year_period',$year)
-            //     ->sum('last_balance');
-            // }
-
-            $profit_loss_amount = $shu;
-
-    //================================================end template==============================================
-
-        return $profit_loss_amount;
+        return $data->profit_loss_amount;
     }
 
     public function getBranchName($branch_id)
@@ -579,7 +443,7 @@ class BalanceSheetController extends Controller
                                     $tblitem_right2 = "";
                                 }									
 
-                                if($valRight['report_type2']	== 3){
+                                if($valRight['report_type2'] == 3){
                                     $last_balance2 	= $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
 
                                     $tblitem_right3 = "
@@ -593,13 +457,11 @@ class BalanceSheetController extends Controller
                                     $tblitem_right3 = "";
                                 }
 
-
-                                if($valRight['report_type2']	== 7){
-                                    $last_balance2 	= $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
-
+                                if($valRight['report_type2'] == 7){
+                                    $last_balance2 	= $this->getAccountAmount($valRight['account_id2'], $month, $month, $last_year, empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'],1);
                                     $tblitem_right4 = "";
 
-                                    $account_amount2_bottom[$valRight['report_no']] = $last_balance2;
+                                    $account_amount2_shu[$valRight['report_no']] = $last_balance2;
                                 } else {
                                     $tblitem_right4 = "";
                                 }
@@ -649,20 +511,20 @@ class BalanceSheetController extends Controller
                                         for($i = 0; $i < count($report_formula2); $i++){
                                             if($report_operator2[$i] == '-'){
                                                 if($total_account_amount2 == 0 ){
-                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_bottom[$report_formula2[$i]];
+                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_shu[$report_formula2[$i]];
                                                 } else {
-                                                    $total_account_amount2 = $total_account_amount2 - $account_amount2_bottom[$report_formula2[$i]];
+                                                    $total_account_amount2 = $total_account_amount2 - $account_amount2_shu[$report_formula2[$i]];
                                                 }
                                             } else if($report_operator2[$i] == '+'){
                                                 if($total_account_amount2 == 0){
-                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_bottom[$report_formula2[$i]];
+                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_shu[$report_formula2[$i]];
                                                 } else {
-                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_bottom[$report_formula2[$i]];
+                                                    $total_account_amount2 = $total_account_amount2 + $account_amount2_shu[$report_formula2[$i]];
                                                 }
                                             }
                                         }
 
-                                        // $grand_total_account_amount2 = $grand_total_account_amount2 + $total_account_amount2;
+                                        $grand_total_account_pendapatan = $total_account_amount2;
 
                                         $tblitem_right6 = "";
                                     } else {
@@ -672,6 +534,37 @@ class BalanceSheetController extends Controller
                                     $tblitem_right6 = "";
                                 }
 
+                                if($valRight['report_type2'] == 9){
+                                    if(!empty($valRight['report_formula2']) && !empty($valRight['report_operator2'])){
+                                        $report_formula2 	= explode('#', $valRight['report_formula2']);
+                                        $report_operator2 	= explode('#', $valRight['report_operator2']);
+
+                                        $total_account_amount_beban	= 0;
+                                        for($i = 0; $i < count($report_formula2); $i++){
+                                            if($report_operator2[$i] == '-'){
+                                                if($total_account_amount_beban == 0 ){
+                                                    $total_account_amount_beban = $total_account_amount_beban + $account_amount2_shu[$report_formula2[$i]];
+                                                } else {
+                                                    $total_account_amount_beban = $total_account_amount_beban - $account_amount2_shu[$report_formula2[$i]];
+                                                }
+                                            } else if($report_operator2[$i] == '+'){
+                                                if($total_account_amount_beban == 0){
+                                                    $total_account_amount_beban = $total_account_amount_beban + $account_amount2_shu[$report_formula2[$i]];
+                                                } else {
+                                                    $total_account_amount_beban = $total_account_amount_beban + $account_amount2_shu[$report_formula2[$i]];
+                                                }
+                                            }
+                                        }
+
+                                        $grand_total_account_amount_beban = $total_account_amount_beban;
+
+                                        $tblitem_right6 = "";
+                                    } else {
+                                        $tblitem_right6 = "";
+                                    }
+                                } else {
+                                    $tblitem_right6 = "";
+                                }
 
                                 if($valRight['report_type2'] == 5){
                                     if(!empty($valRight['report_formula2']) && !empty($valRight['report_operator2'])){
@@ -708,12 +601,21 @@ class BalanceSheetController extends Controller
                                 } else {
                                     $tblitem_right7 = "";
                                 }
-                                
 
-                                if($valRight['report_type2']	== 5){
+                                if($valRight['report_type2'] == 5){
                                     $last_balance210 	= $this->getSHUTahunBerjalan($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $month, $year);		
 
                                     $account_amount210_top[$valRight['report_no']] = $last_balance210;
+                                }
+
+                                if($valRight['report_type2'] == 10){
+                                    $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
+
+                                    $tblitem_right3 = "
+                                        <tr>
+                                            <td><div style=\"font-weight:".$report_bold2."\">".$report_tab2."(".$valRight['account_code2'].") ".$valRight['account_name2']."</div> </td>
+                                            <td style=\"text-align:right;\">".number_format($shu, 2)."</td>
+                                        </tr>";
                                 }
 
                                 if($valRight['report_type2'] == 6){
@@ -737,8 +639,8 @@ class BalanceSheetController extends Controller
                                                 }
                                             }
                                         }
-
-                                        $grand_total_account_amount2 =  $total_account_amount2;
+                                        $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
+                                        $grand_total_account_amount2 =  $total_account_amount2 - $shu;
 
                                         $tblitem_right8 = "";
                                     } else {

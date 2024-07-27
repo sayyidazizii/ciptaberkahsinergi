@@ -248,7 +248,7 @@ class AcctProfitLossReportController extends Controller
                                         </tr>";
                                 }
 
-                                if($valTop['report_type']	== 2){
+                                if($valTop['report_type'] == 2){
                                     $export .= "
                                     <tr>
                                         <td style=\"width: 73%\"><div style='font-weight:".$report_bold."'>".$report_tab."".$valTop['account_name']."</div></td>
@@ -256,7 +256,7 @@ class AcctProfitLossReportController extends Controller
                                     </tr>";
                                 }									
 
-                                if($valTop['report_type']	== 3){
+                                if($valTop['report_type'] == 3){
                                     if($sessiondata['profit_loss_report_type'] == 1){
                                         $account_subtotal 	= AcctAccountMutation::where('acct_account_mutation.account_id', $valTop['account_id'])
                                         ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
@@ -377,7 +377,7 @@ class AcctProfitLossReportController extends Controller
                                     </tr>";
                                 }									
 
-                                if($valBottom['report_type']	== 3){
+                                if($valBottom['report_type'] == 3){
                                     if($sessiondata['profit_loss_report_type'] == 1){
                                         $account_subtotal 	= AcctAccountMutation::where('acct_account_mutation.account_id', $valBottom['account_id'])
                                         ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
@@ -400,7 +400,6 @@ class AcctProfitLossReportController extends Controller
 
                                     $account_amount[$valBottom['report_no']] = $account_subtotal;
                                 }
-                                
 
                                 if($valBottom['report_type'] == 5){
                                     if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
@@ -464,19 +463,19 @@ class AcctProfitLossReportController extends Controller
 
         $shu = $total_account_amount1 - $grand_total_account_amount2;
         
-        if($sessiondata['profit_loss_report_type'] == 1){
-            $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
-            ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
-            ->where('acct_account_mutation.month_period', '>=', $sessiondata['start_month_period'])
-            ->where('acct_account_mutation.month_period', '<=', $sessiondata['end_month_period'])
-            ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
-            ->sum('last_balance');
-        }else if($sessiondata['profit_loss_report_type'] == 2){
-            $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
-            ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
-            ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
-            ->sum('last_balance');
-        }
+        // if($sessiondata['profit_loss_report_type'] == 1){
+        //     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
+        //     ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
+        //     ->where('acct_account_mutation.month_period', '>=', $sessiondata['start_month_period'])
+        //     ->where('acct_account_mutation.month_period', '<=', $sessiondata['end_month_period'])
+        //     ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
+        //     ->sum('last_balance');
+        // }else if($sessiondata['profit_loss_report_type'] == 2){
+        //     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
+        //     ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
+        //     ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
+        //     ->sum('last_balance');
+        // }
 
         $export .= "
             <tr>
@@ -485,7 +484,7 @@ class AcctProfitLossReportController extends Controller
                     <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">
                         <tr>
                             <td style=\"width: 75%\"><div style=\"font-weight:bold;font-size:14px\">SISA HASIL USAHA</div></td>
-                            <td style=\"width: 23%; text-align:right;\"><div style=\"font-weight:bold; font-size:14px\">".number_format($shu - $income_tax, 2)."</div></td>
+                            <td style=\"width: 23%; text-align:right;\"><div style=\"font-weight:bold; font-size:14px\">".number_format($shu, 2)."</div></td>
                         </tr>
                     </table>
                 </td>
