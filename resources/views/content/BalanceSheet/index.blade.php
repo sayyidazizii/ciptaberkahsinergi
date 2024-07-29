@@ -145,7 +145,7 @@
                                 <th colspan="2"><b>{{ $title }}</b></th>
                             </tr>
                             <tr align="center">
-                                <th colspan="2"><b>{{ $preferencecompany['company_name'] }}</b></th>
+                                <th colspan="2"><b>{{ $preferencecompany['company_name']." ".$session['branch_name'] ?? '' }}</b></th>
                             </tr>
                             <tr align="center">
                                 <th colspan="2"><b>Periode {{ $period }}</b></th>

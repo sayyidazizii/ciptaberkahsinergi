@@ -26,7 +26,7 @@ class BalanceSheetController extends Controller
         $preferencecompany = PreferenceCompany::first();
         $monthlist = Configuration::Month();
         $branch_id          = auth()->user()->branch_id;
-        if($branch_id == 0){
+        if($branch_id == 1){
             $corebranch         = CoreBranch::where('data_state', 0)
             ->get();
         }else{
@@ -52,10 +52,16 @@ class BalanceSheetController extends Controller
 
     public function filter(Request $request)
     {
+
+        $corebranch         = CoreBranch::where('data_state', 0)
+            ->where('branch_id',  $request->branch_id)
+            ->first();
+
         $data = array(
             'month_period'  => $request->month_period,
             'year_period'   => $request->year_period,
             'branch_id'     => $request->branch_id,
+            'branch_name'   => $corebranch['branch_name'],
         );
 
         session()->put('filter_balencesheet', $data);
@@ -777,6 +783,8 @@ class BalanceSheetController extends Controller
         }
 
         $period = $day." ".$month_name." ".$year;
+        $branchname 					= $this->getBranchName($sesi['branch_id']);
+
         
         if(!empty($acctbalancesheetreport_left && $acctbalancesheetreport_right)){
             $spreadsheet = new Spreadsheet();
@@ -811,7 +819,7 @@ class BalanceSheetController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getFont()->setBold(true);	
             $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Neraca ");	
-            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']);	
+            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branchname);	
             $spreadsheet->getActiveSheet()->setCellValue('B3',"Periode ".$period."");	
             
             $j = 5;
