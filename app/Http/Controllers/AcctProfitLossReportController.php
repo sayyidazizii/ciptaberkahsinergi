@@ -33,6 +33,10 @@ class AcctProfitLossReportController extends Controller
             $sessiondata['year_period']                 = date('Y');
             $sessiondata['profit_loss_report_type']     = 1;
             $sessiondata['branch_id']                   = auth()->user()->branch_id;
+            $sessiondata['branch_name']                 = $this->getBranchName($branch_id);
+
+        }else{
+            $sessiondata = session()->get('filter_profitlossreport');
         }
         
         $monthlist              = array_filter(Configuration::Month());
@@ -61,18 +65,6 @@ class AcctProfitLossReportController extends Controller
             $year[$i] = $i;
         }
         
-        if(empty($session)){
-            $sessiondata = array(
-                'start_month_period'        => date('m'),
-                'end_month_period'          => date('m'),
-                'year_period'               => date('Y'),
-                'profit_loss_report_type'   => 1,
-                'branch_id'                 => $branch_id,
-                'branch_name'               => $this->getBranchName($branch_id),
-            ); 
-        }else{
-            $sessiondata = session()->get('filter_profitlossreport');
-        }
 
         $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
         ->where('account_name', '!=', ' ')
@@ -151,7 +143,7 @@ class AcctProfitLossReportController extends Controller
             'year_period'               => $year_period,
             'profit_loss_report_type'   => $profit_loss_report_type,
             'branch_id'                 => $branch_id,
-            'branch_name'               => $corebranch['branch_name'],
+            'branch_name'               => $this->getBranchName($request->branch_id),
         );
 
         session()->put('filter_profitlossreport', $sessiondata);
