@@ -27,17 +27,7 @@ class AcctProfitLossReportController extends Controller
     {
         $sessiondata = session()->get('filter_profitlossreport');
         // dd($sessiondata);
-        if (empty($sessiondata)){
-            $sessiondata['start_month_period']          = date('m');
-            $sessiondata['end_month_period']            = date('m');
-            $sessiondata['year_period']                 = date('Y');
-            $sessiondata['profit_loss_report_type']     = 1;
-            $sessiondata['branch_id']                   = auth()->user()->branch_id;
-            $sessiondata['branch_name']                 = $this->getBranchName($branch_id);
-
-        }else{
-            $sessiondata = session()->get('filter_profitlossreport');
-        }
+        
         
         $monthlist              = array_filter(Configuration::Month());
         $profitlossreporttype   = array_filter(Configuration::ProfitLossReportType());
@@ -52,6 +42,18 @@ class AcctProfitLossReportController extends Controller
             ->where('branch_id', $branch_id)
             ->get();
         }  
+
+        if (empty($sessiondata)){
+            $sessiondata['start_month_period']          = date('m');
+            $sessiondata['end_month_period']            = date('m');
+            $sessiondata['year_period']                 = date('Y');
+            $sessiondata['profit_loss_report_type']     = 1;
+            $sessiondata['branch_id']                   = auth()->user()->branch_id;
+            $sessiondata['branch_name']                 = $this->getBranchName($branch_id);
+
+        }else{
+            $sessiondata = session()->get('filter_profitlossreport');
+        }
 
 
         $acctaccount = AcctAccount::select('account_id', 'account_name')
