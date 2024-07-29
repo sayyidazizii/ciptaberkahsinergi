@@ -48,6 +48,13 @@ var validator = FormValidation.formValidation(
     }
 );
 
+$("#incentive_view").change(function(){
+        var incentive                                    = $("#incentive_view").val();
+        document.getElementById("incentive").value       = incentive;
+        document.getElementById("incentive_view").value  = toRp(incentive);
+        function_elements_add('incentive', incentive);
+    });
+
 const submitButton = document.getElementById('kt_office_add_submit');
 submitButton.addEventListener('click', function (e) {
     e.preventDefault();
@@ -98,6 +105,13 @@ submitButton.addEventListener('click', function (e) {
                         <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Nama BO') }}</label>
                         <div class="col-lg-8 fv-row">
                             <input type="text" name="office_name" class="form-control form-control-lg form-control-solid" placeholder="Nama BO" value="{{ old('office_name', '' ?? '') }}" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Insentif') }}</label>
+                        <div class="col-lg-8 fv-row">
+                            <input type="text" name="incentive_view" id="incentive_view" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('incentive_view', '' ?? '') }}" autocomplete="off"/>
+                            <input type="hidden" name="incentive" id="incentive" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('incentive','' ?? '') }}" autocomplete="off" />
                         </div>
                     </div>
                     <div class="row mb-6">

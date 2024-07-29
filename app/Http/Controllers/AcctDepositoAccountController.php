@@ -89,6 +89,7 @@ class AcctDepositoAccountController extends Controller
             $sessiondata['office_id']                               = null;
             $sessiondata['deposito_account_due_date']               = null;
             $sessiondata['deposito_account_amount']                 = 0;
+            $sessiondata['deposito_account_incentive']             = 0;
         }
         $sessiondata[$request->name] = $request->value;
         session()->put('data_depositoaccountadd', $sessiondata);
@@ -143,6 +144,8 @@ class AcctDepositoAccountController extends Controller
             'deposito_account_extra_type'   => ['required'],
             'deposito_account_due_date'     => ['required'],
             'deposito_account_interest'     => ['required'],
+            'deposito_account_incentive'    => ['required'],
+            'deposito_account_incentive_amount'    => ['required'],
             'deposito_account_amount'       => ['required'],
         ]);
 
@@ -159,6 +162,8 @@ class AcctDepositoAccountController extends Controller
                 'deposito_account_date'                 => date('Y-m-d', strtotime($fields['deposito_account_date'])),
                 'deposito_account_due_date'             => date('Y-m-d', strtotime($fields['deposito_account_due_date'])),
                 'deposito_account_interest'             => $fields['deposito_account_interest'],
+                'deposito_account_incentive'            => $fields['deposito_account_incentive'],
+                'deposito_account_incentive_amount'     => $fields['deposito_account_incentive_amount'],
                 'deposito_account_amount'               => $fields['deposito_account_amount'],
                 'deposito_member_heir'                  => $request->deposito_member_heir,
                 'deposito_member_heir_address'          => $request->deposito_member_heir_address,
@@ -535,9 +540,11 @@ class AcctDepositoAccountController extends Controller
         $filename = 'Validasi Simpanan Berjangka.pdf';
         $pdf::Output($filename, 'I');
     }
+
     public function printCertificate() {
         
     }
+
     public function printCertificateFront($deposito_account_id){
         $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
         $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
@@ -716,6 +723,14 @@ class AcctDepositoAccountController extends Controller
         $deposito_account_date                 = date('d-m-Y');
         $deposito_account_due_date             = date('d-m-Y', strtotime("+".$deposito['deposito_period']." months", strtotime($deposito_account_date)));
         $deposito['deposito_account_due_date'] = $deposito_account_due_date;
+
+        return $deposito;
+    }
+
+    public function getDepositoOffice(Request $request){
+        $deposito = Coreoffice::select('*')
+        ->where('office_id', $request->office_id)
+        ->first();
 
         return $deposito;
     }

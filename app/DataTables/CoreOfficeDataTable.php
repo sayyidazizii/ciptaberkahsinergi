@@ -22,7 +22,10 @@ class CoreOfficeDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('action', 'content.CoreOffice.List._action-menu');
+            ->addColumn('action', 'content.CoreOffice.List._action-menu')
+            ->editColumn('incentive', function (CoreOffice $model) {
+                return $model->incentive." % ";
+            });
     }
 
     /**
@@ -67,6 +70,7 @@ class CoreOfficeDataTable extends DataTable
             Column::make('office_code')->title(__('Kode BO')),
             Column::make('office_name')->title(__('Nama BO')),
             Column::make('branch.branch_name')->title(__('Cabang')),
+            Column::make('incentive')->title(__('Insentif/komisi')),
             Column::computed('action') 
                     ->title(__('Aksi'))
                     ->exportable(false)

@@ -70,6 +70,14 @@ var validator = FormValidation.formValidation(
                     }
                 }
             },
+            'deposito_account_incentive': {
+                validators: {
+                    notEmpty: {
+                        message: 'Komisi harus diisi'
+                    }
+                }
+            },
+            
         },
 
         plugins: {
@@ -144,6 +152,59 @@ $(document).ready(function(){
         document.getElementById("deposito_account_amount").value       = deposito_account_amount;
         document.getElementById("deposito_account_amount_view").value  = toRp(deposito_account_amount);
         function_elements_add('deposito_account_amount', deposito_account_amount);
+
+        var deposito_amount = parseFloat($('#deposito_account_amount').val());
+        var incentive = parseFloat($('#deposito_account_incentive').val());
+
+        // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
+        var incentive_decimal = incentive / 100;
+        
+        // Hitung nominal
+        var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
+
+        $('#deposito_account_incentive_amount').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
+        $('#deposito_account_incentive_amount_view').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount_view', deposito_account_incentive_amount);
+
+        var deposito_account_incentive_amount                                    = $("#deposito_account_incentive_amount_view").val();
+        document.getElementById("deposito_account_incentive_amount").value       = deposito_account_incentive_amount;
+        document.getElementById("deposito_account_incentive_amount_view").value  = toRp(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
+
+    });
+
+    $("#deposito_account_incentive_view").change(function(){
+        var deposito_account_incentive                                    = $("#deposito_account_incentive_view").val();
+        document.getElementById("deposito_account_incentive").value       = deposito_account_incentive;
+        document.getElementById("deposito_account_incentive_view").value  = toRp(deposito_account_incentive);
+        function_elements_add('deposito_account_incentive', deposito_account_incentive);
+
+        var deposito_amount = parseFloat($('#deposito_account_amount').val());
+        var incentive = parseFloat($('#deposito_account_incentive').val());
+
+        // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
+        var incentive_decimal = incentive / 100;
+        
+        // Hitung nominal
+        var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
+
+        $('#deposito_account_incentive_amount').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
+        $('#deposito_account_incentive_amount_view').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount_view', deposito_account_incentive_amount);
+
+        var deposito_account_incentive_amount                                    = $("#deposito_account_incentive_amount_view").val();
+        document.getElementById("deposito_account_incentive_amount").value       = deposito_account_incentive_amount;
+        document.getElementById("deposito_account_incentive_amount_view").value  = toRp(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
+    });
+
+    $("#deposito_account_incentive_amount_view").change(function(){
+        var deposito_account_incentive_amount                                    = $("#deposito_account_incentive_amount_view").val();
+        document.getElementById("deposito_account_incentive_amount").value       = deposito_account_incentive_amount;
+        document.getElementById("deposito_account_incentive_amount_view").value  = toRp(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
     });
 });
 
@@ -189,6 +250,49 @@ function changeDeposito(){
         }
     });
 }
+
+function changeOffice(){
+    var office_id = $("#office_id").val();
+    function_elements_add('office_id', office_id);
+
+    $.ajax({
+        type: "POST",
+        url : "{{route('deposito-account.get-deposito-office')}}",
+        dataType: "html",
+        data: {
+            'office_id'    : office_id,
+            '_token'        : '{{csrf_token()}}',
+        },
+        success: function(return_data){ 
+            return_data = JSON.parse(return_data);
+
+        var deposito_amount = parseFloat($('#deposito_account_amount').val());
+        var incentive = parseFloat(return_data.incentive);
+
+        // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
+        var incentive_decimal = incentive / 100;
+        
+        $('#deposito_account_incentive').val(incentive);
+        function_elements_add('deposito_account_incentive', incentive);
+        $('#deposito_account_incentive_view').val(incentive);
+        function_elements_add('deposito_account_incentive_view', incentive);
+
+        // Hitung nominal
+        var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
+
+        $('#deposito_account_incentive_amount').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
+        $('#deposito_account_incentive_amount_view').val(deposito_account_incentive_amount);
+        function_elements_add('deposito_account_incentive_amount_view', deposito_account_incentive_amount);
+
+
+        },
+        error: function(data)
+        {
+            console.log(data);
+        }
+    });
+}
 </script>
 @endsection
 <?php 
@@ -199,6 +303,8 @@ if(empty($sessiondata)){
     $sessiondata['office_id']                               = null;
     $sessiondata['deposito_account_due_date']               = null;
     $sessiondata['deposito_account_amount']                 = 0;
+    $sessiondata['deposito_account_incentive']              = 0;
+    $sessiondata['deposito_account_incentive_amount']              = 0;
 }
 if(!isset($coremember['member_heir_relationship'])){
     $coremember['member_heir_relationship'] = null;
@@ -358,7 +464,7 @@ if(!isset($coremember['member_gender'])){
                             <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('BO') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="function_elements_add(this.name, this.value)">
+                                    <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="changeOffice()">
                                         <option value="">{{ __('Pilih bo..') }}</option>
                                         @foreach($coreoffice as $key => $value)
                                             <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] === old('office_id', (int)$sessiondata['office_id'] ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>
@@ -392,7 +498,21 @@ if(!isset($coremember['member_gender'])){
                             <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Suku Bunga') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <input type="text" name="deposito_account_interest" id="deposito_account_interest" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_interest', $sessiondata['deposito_account_interest'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="text" name="deposito_account_interest" id="deposito_account_interest" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_interest', $sessiondata['deposito_account_interest'] ?? '') }}" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Persen Komisi') }}</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="deposito_account_incentive_view" id="deposito_account_incentive_view" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_incentive_view', number_format($sessiondata['deposito_account_incentive'], 2) ?? '') }}" autocomplete="off"/>
+                                    <input type="hidden" name="deposito_account_incentive" id="deposito_account_incentive" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_incentive', $sessiondata['deposito_account_incentive'] ?? '') }}" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Jumlah Komisi') }}</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="deposito_account_incentive_amount_view" id="deposito_account_incentive_amount_view" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_incentive_amount_view', number_format($sessiondata['deposito_account_incentive_amount'], 2) ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="hidden" name="deposito_account_incentive_amount" id="deposito_account_incentive_amount" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('deposito_account_incentive_amount', $sessiondata['deposito_account_incentive_amount'] ?? '') }}" autocomplete="off" />
                                 </div>
                             </div>
                             <div class="row mb-6">

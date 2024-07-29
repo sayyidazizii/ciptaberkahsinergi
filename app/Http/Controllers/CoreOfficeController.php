@@ -33,6 +33,7 @@ class CoreOfficeController extends Controller
             'office_code'   => ['required'],
             'office_name'   => ['required'],
             'branch_id'     => ['required'],
+            'incentive'     => ['required'],
             'user_id'       => ['required'],
         ]);
 
@@ -40,6 +41,7 @@ class CoreOfficeController extends Controller
             'office_code'   => $fields['office_code'],
             'office_name'   => $fields['office_name'],
             'branch_id'     => $fields['branch_id'],
+            'incentive'     => $fields['incentive'],
             'user_id'       => $fields['user_id'],
             'created_id'    => auth()->user()->user_id,
         );
@@ -67,7 +69,7 @@ class CoreOfficeController extends Controller
         $user = User::select('user_id','username')
         ->where('data_state',0)
         ->get();
-        $office = CoreOffice::select('office_id','office_code','office_name','branch_id','user_id')
+        $office = CoreOffice::select('office_id','office_code','office_name','branch_id','user_id','incentive')
         ->where('data_state', 0)
         ->where('office_id', $id)
         ->first();
@@ -82,13 +84,16 @@ class CoreOfficeController extends Controller
             'office_code'   => ['required'],
             'office_name'   => ['required'],
             'branch_id'     => ['required'],
+            'incentive'     => ['required'],
             'user_id'       => ['required'],
         ]);
+
 
         $office                 = CoreOffice::findOrFail($fields['office_id']);
         $office->office_code    = $fields['office_code'];
         $office->office_name    = $fields['office_name'];
         $office->branch_id      = $fields['branch_id'];
+        $office->incentive      = $fields['incentive'];
         $office->user_id        = $fields['user_id'];
         $office->updated_id     = auth()->user()->user_id;
 

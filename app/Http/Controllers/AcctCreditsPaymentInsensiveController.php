@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class AcctCreditsPaymentInsensiveController extends Controller
 {
+
     public function report() {
       $corebranch = CoreBranch::where('data_state', 0);
       if(Auth::user()->branch_id!=0){
@@ -23,6 +24,7 @@ class AcctCreditsPaymentInsensiveController extends Controller
       $corebranch = $corebranch->get();
       return view('content.AcctCreditsPaymentIntensive.report.index',compact('corebranch'));
     }
+
     public function account() {
       $corebranch = CoreBranch::where('data_state', 0);
       if(Auth::user()->branch_id!=0){
@@ -31,35 +33,38 @@ class AcctCreditsPaymentInsensiveController extends Controller
       $corebranch = $corebranch->get();
       return view('content.AcctCreditsPaymentIntensive.account.index',compact('corebranch'));
     }
+
     public function reportViewport(Request $request) {
-		$sesi = array (
-				'branch_id'		=> $request->branch_id,
-				'office_id'		=> $request->office_id,
-				'start_date'	=> $request->start_date,
-				'end_date'		=> $request->end_date,
-				"view"		=> $request->view
-		);
+      $sesi = array (
+          'branch_id'		=> $request->branch_id,
+          'office_id'		=> $request->office_id,
+          'start_date'	=> $request->start_date,
+          'end_date'		=> $request->end_date,
+          "view"		=> $request->view
+      );
 
-		if($sesi['view'] == 'pdf'){
-			return $this->pritCreditPayment($sesi);
-		} else {
-			return $this->exportCreditsPayment($sesi);
-		}
+      if($sesi['view'] == 'pdf'){
+        return $this->pritCreditPayment($sesi);
+      } else {
+        return $this->exportCreditsPayment($sesi);
+      }
     }
+
     public function accountViewport(Request $request) {
-		$sesi = array (
-			'branch_id'		=> $request->branch_id,
-			'start_date'	=> $request->start_date,
-			'end_date'		=> $request->end_date,
-			"view"			=> $request->view,
-		);
+        $sesi = array (
+        'branch_id'		=> $request->branch_id,
+        'start_date'	=> $request->start_date,
+        'end_date'		=> $request->end_date,
+        "view"			=> $request->view,
+      );
 
-		if($sesi['view'] == 'pdf'){
-			return $this->printCreditsAccount($sesi);
-		} else {
-			return $this->exportCreditsAccount($sesi);
-		}
+      if($sesi['view'] == 'pdf'){
+        return $this->printCreditsAccount($sesi);
+      } else {
+        return $this->exportCreditsAccount($sesi);
+      }
     }
+
     public function getOffice(Request $request) {
       $data = '';
       $bo = CoreOffice::where('branch_id',$request->branch_id)->get();
@@ -68,112 +73,163 @@ class AcctCreditsPaymentInsensiveController extends Controller
       }
       return response($data);
     }
-    protected function pritCreditPayment($sesi) {
-      // dd($sesi);
 
+    protected function pritCreditPayment($sesi) {
       $startDate = date('Y-m-d', strtotime($sesi['start_date']));
       $endDate = date('Y-m-d', strtotime($sesi['end_date']));
+  
+      $preferencecompany = PreferenceCompany::select('logo_koperasi', 'company_name')->first();
+      $path = public_path('storage/' . $preferencecompany['logo_koperasi']);
+  
+      if (Auth::user()->branch_id != 0 && empty($sesi['branch_id'])) {
+          $branch_id = Auth::user()->branch_id;
+      } else {
+          $branch_id = $sesi['branch_id'];
+      }
+  
+      $bo = CoreOffice::where('branch_id', $branch_id)
+          ->where('office_id', $sesi['office_id'])
+          ->first();
+  
+      if (!$bo) {
+          // Set default value if $bo is null
+          $bo = ['incentive' => 0];
+      }
+  
+      $acctcreditspayment = AcctCreditsPayment::with('member', 'account')
+          ->join('acct_credits_account', 'acct_credits_account.credits_account_id', 'acct_credits_payment.credits_account_id')
+          ->rightjoin('core_office', 'acct_credits_account.office_id', 'core_office.office_id')
+          ->where('acct_credits_account.credits_approve_status', 1)
+          ->where('acct_credits_account.credits_account_date', '>=', $startDate)
+          ->where('acct_credits_account.credits_account_date', '<=', $endDate);
+  
+      if (!empty($branch_id)) {
+          $acctcreditspayment->where('acct_credits_account.branch_id', $branch_id);
+      }
+  
+      if (!empty($sesi['office_id'])) {
+          $acctcreditspayment->where('acct_credits_account.acct_credits_account', $sesi['office_id']);
+      }
+  
+      $acctcreditspayment = $acctcreditspayment->orderBy('acct_credits_account.credits_account_serial', 'ASC')->get();
+  
+      // Group payments by member name
+      $groupedPayments = $acctcreditspayment->groupBy('member.member_name');
 
-      $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
-      $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
-      if(Auth::user()->branch_id!=0&&empty($sesi['branch_id'])){
-            $branch_id = Auth::user()->branch_id;
-      }else{$branch_id = $sesi['branch_id'];}
-      $acctcreditspayment = AcctCreditsPayment::with('member','account')
-      ->join('acct_credits_account','acct_credits_account.credits_account_id','acct_credits_payment.credits_account_id')
-      ->where('acct_credits_account.credits_approve_status',1)
-      ->where('acct_credits_account.credits_account_date',">=",$startDate) //start date
-      ->where('acct_credits_account.credits_account_date',"<=",$endDate); //end date
-      if(!empty($branch_id)){$acctcreditspayment->where('acct_credits_account.branch_id', $branch_id);}
-      if(!empty($sesi['office_id'])){$acctcreditspayment->where('acct_credits_account.office_id', $sesi['office_id']);}
-      $acctcreditspayment = $acctcreditspayment->orderBy('acct_credits_account.credits_account_serial', 'ASC')
-      ->get();
-      // dd($acctcreditspayment);
+      // dd($groupedPayments);
+  
       $pdf = new TCPDF(['L', PDF_UNIT, 'F4', true, 'UTF-8', false]);
       $pdf::SetPrintHeader(false);
       $pdf::SetPrintFooter(false);
       $pdf::SetMargins(6, 6, 6, 6);
-      $pdf::AddPage('L','F4');
+      $pdf::AddPage('L', 'F4');
       $pdf::SetFont('helvetica', '', 10);
       $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-      if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-          require_once(dirname(__FILE__).'/lang/eng.php');
+  
+      if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+          require_once(dirname(__FILE__) . '/lang/eng.php');
           $pdf::setLanguageArray($l);
       }
-      $export = "";
-      $header="<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\"><tr>
-            <td><div style=\"text-align: center; font-size:14px\">INSENTIF ANGSURAN  TGL : &nbsp; ".date('d-m-Y',strtotime($sesi['start_date']))." - ".date('d-m-Y',strtotime($sesi['end_date']))."</div></td>
-            </tr></table>";
-      if(!empty($sesi['office_id'])){
-            $header .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\"><tr>
-                              <td><div style=\"text-align: left;font-size:12;font-weight:bold\">AO:  ".CoreOffice::where('office_id',$sesi['office_id'])->pluck('office_name')."</div></td>
-                        </tr></table>";
+  
+      $header = "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
+                      <tr>
+                          <td>
+                              <div style=\"text-align: center; font-size:14px\">INSENTIF ANGSURAN TGL : &nbsp; " . date('d-m-Y', strtotime($sesi['start_date'])) . " - " . date('d-m-Y', strtotime($sesi['end_date'])) . "</div>
+                          </td>
+                      </tr>
+                  </table>";
+  
+      if (!empty($sesi['office_id'])) {
+          $officeName = CoreOffice::where('office_id', $sesi['office_id'])->pluck('office_name')->first();
+          $header .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+                          <tr>
+                              <td><div style=\"text-align: left;font-size:12;font-weight:bold\">AO: " . $officeName . "</div></td>
+                          </tr>
+                      </table>";
       } else {
-            $header .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\"><tr>
-                        <td><div style=\"text-align: left;font-size:12;font-weight:bold\">GLOBAL</div></td>
-                  </tr></table>";
+          $header .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+                          <tr>
+                              <td><div style=\"text-align: left;font-size:12;font-weight:bold\">GLOBAL</div></td>
+                          </tr>
+                      </table>";
       }
+  
       $pdf::writeHTML($header, true, false, false, false, '');
+  
       $pdf::SetFont('helvetica', '', 8);
-      $export .= "<br><table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
-          <tr>
-            <td width=\"5%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: left;font-size:10;\">NO.</div></td>
-            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NO. KREDIT</div></td>
-            <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NAMA</div></td>
-            <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">PLAFON</div></td>
-            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">ANGS POKOK</div></td>
-            <td width=\"13%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">ANGS BUNGA</div></td>
-         </tr>
-      </table>    
-      <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">";
+      $export = "<br><table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+                      <tr>
+                          <td width=\"5%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: left;font-size:10;\">NO.</div></td>
+                          <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NO. KREDIT</div></td>
+                          <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NAMA</div></td>
+                          <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">PLAFON</div></td>
+                          <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">ANGS POKOK</div></td>
+                          <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">ANGS BUNGA</div></td>
+                      </tr>
+                  </table>";
+  
       $no = 1;
       $totalpokok = 0;
       $totalmargin = 0;
-      $totaltotal = 0;
-      $totaldenda = 0;
-      foreach ($acctcreditspayment as $key => $val) {
-              $export .= "
-              <tr>
-                  <td width=\"5%\"><div style=\"text-align: left;\">".$no."</div></td>
-                  <td width=\"13%\"><div style=\"text-align: left;\">".$val->account->credits_account_serial."</div></td>
-                  <td width=\"15%\"><div style=\"text-align: left;\">".$val->member->member_name."</div></td>
-                  <td width=\"15%\"><div style=\"text-align: right;\">".$val->credits_principal_last_balance."</div></td>
-                  <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['credits_payment_principal'])."</div></td>
-                  <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['credits_payment_interest'], 2)."</div></td>
-              </tr>";
-            $totalpokok 	+= $val['credits_payment_principal'];
-            $totalmargin 	+= $val['credits_payment_interest'];
-            $totaltotal	      += $val->account->credits_account_payment_amount;
-            $totaldenda       += $val->account->credits_account_accumulated_fines;
-            $no++;
-      }
+  
+      foreach ($groupedPayments as $memberName => $payments) {
+          $export .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+                          <tr>
+                              <td colspan=\"6\" style=\"font-weight: bold; font-size: 10; text-align: left;\">$memberName</td>
+                          </tr>";
+  
+          foreach ($payments as $val) {
+              $export .= "<tr>
+                              <td width=\"5%\"><div style=\"text-align: left;\">".$no."</div></td>
+                              <td width=\"13%\"><div style=\"text-align: left;\">".$val->account->credits_account_serial."</div></td>
+                              <td width=\"15%\"><div style=\"text-align: left;\">".$val->member->member_name."</div></td>
+                              <td width=\"15%\"><div style=\"text-align: right;\">".number_format($val->credits_principal_last_balance)."</div></td>
+                              <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['credits_payment_principal'])."</div></td>
+                              <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['credits_payment_interest'], 2)."</div></td>
+                          </tr>
+                          <tr>
+                            <td colspan=\"3\" style=\"border-top: 1px solid black;\"><div style=\"font-size:10;text-align:left;font-style:italic\"></div></td>
+                            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;font-weight:bold;text-align:center\">Jumlah </div></td>
+                            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\">".number_format($totalpokok, 2)."</div></td>
+                            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\">".number_format($totalmargin, 2)."</div></td>
+                          </tr>
+                          <tr>
+                              <td colspan=\"3\"><div style=\"font-size:10;text-align:left;font-style:italic\">Insentif : 10 % x ".number_format($totalmargin, 2)." = Rp.".number_format($intensive)."</div></td>
+                              <td><div style=\"font-size:10;font-weight:bold;text-align:center\"></div></td>
+                              <td><div style=\"font-size:10;text-align:right\"></div></td>
+                              <td><div style=\"font-size:10;text-align:right\"></div></td>
+                          </tr> 
+                        </table>
+                          ";
+  
+              $totalpokok += $val['credits_payment_principal'];
+              $totalmargin += $val['credits_payment_interest'];
+              $no++;
+          }
+          
+          $intensive = $bo['incentive'] * $totalmargin;
 
-      $intensive =  10/100 * $totalmargin;
-      $export .= "
-          <tr>
-            <td colspan =\"3\" style=\"border-top: 1px solid black;\"><div style=\"font-size:10;text-align:left;font-style:italic\"></div></td>
-            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;font-weight:bold;text-align:center\">Jumlah </div></td>
-            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\">".number_format($totalpokok, 2)."</div></td>
-            <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\">".number_format($totalmargin, 2)."</div></td>
-          </tr> 
-          <tr>
-            <td colspan =\"3\" ><div style=\"font-size:10;text-align:left;font-style:italic\">Insentif : 10 % x ".number_format($totalmargin, 2)." = Rp.". number_format($intensive) ." </div></td>
-            <td ><div style=\"font-size:10;font-weight:bold;text-align:center\"></div></td>
-            <td ><div style=\"font-size:10;text-align:right\"></div></td>
-            <td ><div style=\"font-size:10;text-align:right\"></div></td>
-          </tr>   
-          <tr>
-          <td colspan =\"3\" ><div style=\"font-size:10;text-align:left;font-style:italic\">Printed : ".date('d-m-Y H:i:s')."  ".Auth::user()->username."</div></td>
-          <td ><div style=\"font-size:10;font-weight:bold;text-align:center\"></div></td>
-          <td ><div style=\"font-size:10;text-align:right\"></div></td>
-          <td ><div style=\"font-size:10;text-align:right\"></div></td>
-        </tr>   
-      </table>";
-      //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
+          // $export .= "
+          //             ";
+      }
       $pdf::writeHTML($export, true, false, false, false, '');
+  
+      $bottom = "
+                <table>
+                  <tr>
+                      <td colspan=\"3\"><div style=\"font-size:10;text-align:left;font-style:italic\">Printed : ".date('d-m-Y H:i:s')." ".Auth::user()->username."</div></td>
+                      <td><div style=\"font-size:10;font-weight:bold;text-align:center\"></div></td>
+                      <td><div style=\"font-size:10;text-align:right\"></div></td>
+                      <td><div style=\"font-size:10;text-align:right\"></div></td>
+                  </tr>
+              </table>";
+  
+
+      $pdf::writeHTML($bottom, true, false, false, false, '');
       $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_'.date('dmYHisu').'.pdf';
       $pdf::Output($filename, 'I');
     }
+
     protected function exportCreditsPayment($sesi) {
       $spreadsheet        = new Spreadsheet();
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
@@ -295,6 +351,7 @@ class AcctCreditsPaymentInsensiveController extends Controller
           return redirect()->back()->withInput()->with(['pesan' => 'Maaf data yang di eksport tidak ada !','alert' => 'warning']);
       }
     }
+
     protected function printCreditsAccount($sesi) { 
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
@@ -367,6 +424,7 @@ class AcctCreditsPaymentInsensiveController extends Controller
       $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_'.date('dmYHisu').'.pdf';
       $pdf::Output($filename, 'I');
     }
+    
     protected function exportCreditsAccount($sesi) {
       $spreadsheet        = new Spreadsheet();
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();

@@ -336,6 +336,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/print-certificate-back/{deposito_account_id}', [AcctDepositoAccountController::class, 'printCertificateBack'])->name('print-certificate-back');
         Route::get('/print-certificate-front/{deposito_account_id}', [AcctDepositoAccountController::class, 'printCertificateFront'])->name('print-certificate-front');
         Route::post('/get-deposito-detail', [AcctDepositoAccountController::class, 'getDepositoDetail'])->name('get-deposito-detail');
+        Route::post('/get-deposito-office', [AcctDepositoAccountController::class, 'getDepositoOffice'])->name('get-deposito-office');
     });
 
     //AcctDepositoAccountBlockir
@@ -1020,8 +1021,17 @@ Route::middleware(['auth','loged'])->group(function () {
     //     Route::post('/process-add', [WhatsappController::class, 'process-add'])->name('process-add');
     // });
     
-     //CreditsIntensive pages
+    //CreditsIntensive pages
      Route::prefix('credits-payment-intensive')->controller(AcctCreditsPaymentInsensiveController::class)->name('crd-payment-intensive.')->group(function () {
+        Route::get('/',  'report')->name('report');
+        Route::get('/ao', 'getOffice')->name('get-ao');
+        Route::get('/account',  'account')->name('account');
+        Route::post('/report/viewport',  'reportViewport')->name('p-viewport');
+        Route::post('/account/viewport',  'accountViewport')->name('a-viewport');
+    });
+
+    //Deposito Account insentif pages
+    Route::prefix('deposito-account-intensive')->controller(AcctCreditsPaymentInsensiveController::class)->name('crd-payment-intensive.')->group(function () {
         Route::get('/',  'report')->name('report');
         Route::get('/ao', 'getOffice')->name('get-ao');
         Route::get('/account',  'account')->name('account');
