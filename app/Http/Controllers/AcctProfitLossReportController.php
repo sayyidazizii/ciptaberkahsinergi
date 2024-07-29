@@ -40,14 +40,15 @@ class AcctProfitLossReportController extends Controller
 
         
         $branch_id          = auth()->user()->branch_id;
-        if($branch_id == 0){
+        if($branch_id == 1){
             $corebranch         = CoreBranch::where('data_state', 0)
             ->get();
         }else{
             $corebranch         = CoreBranch::where('data_state', 0)
             ->where('branch_id', $branch_id)
             ->get();
-        }
+        }  
+
 
         $acctaccount = AcctAccount::select('account_id', 'account_name')
         ->where('data_state', 0)
@@ -113,12 +114,17 @@ class AcctProfitLossReportController extends Controller
             $branch_id = auth()->user()->branch_id;
         }
 
+        $corebranch         = CoreBranch::where('data_state', 0)
+        ->where('branch_id',  $request->branch_id)
+        ->first();
+
         $sessiondata = array(
             'start_month_period'        => $start_month_period,
             'end_month_period'          => $end_month_period,
             'year_period'               => $year_period,
             'profit_loss_report_type'   => $profit_loss_report_type,
-            'branch_id'                 => $branch_id
+            'branch_id'                 => $branch_id,
+            'branch_name'               => $corebranch['branch_name'],
         );
 
         session()->put('filter_profitlossreport', $sessiondata);
@@ -570,7 +576,7 @@ class AcctProfitLossReportController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('B3')->getFont()->setBold(true)->setSize(12);
             
             $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Perhitungan SHU ");	
-            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']);	
+            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branch_name);	
             $spreadsheet->getActiveSheet()->setCellValue('B3',$branch_name);	
             $spreadsheet->getActiveSheet()->setCellValue('B4',"Periode ".$period);	
             

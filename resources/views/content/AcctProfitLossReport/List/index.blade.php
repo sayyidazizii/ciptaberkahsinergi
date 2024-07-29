@@ -104,7 +104,7 @@ if (empty($sessiondata)){
                                     <th colspan="2" class="align-middle"><b>LAPORAN LABA RUGI</b></th>
                                 </tr>
                                 <tr align="center">
-                                    <th colspan="2" class="align-middle"><b>{{ $company_name }}</b></th>
+                                    <th colspan="2" class="align-middle"><b>{{ $company_name." ".$sessiondata['branch_name'] ?? ''  }}</b></th>
                                 </tr>
                                 <tr align="center">
                                     <th colspan="2" class="align-middle"><b>Periode {{ $monthlist[$sessiondata['start_month_period']].' - '.$monthlist[$sessiondata['end_month_period']].' '.$sessiondata['year_period'] }}</b></th>
