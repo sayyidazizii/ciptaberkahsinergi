@@ -35,6 +35,17 @@ class BalanceSheetController extends Controller
             ->get();
         }
 
+        if(empty($session)){
+            $session = array(
+                'month_period'  => date('m'),
+                'year_period'   => date('Y'),
+                'branch_id'     => $branch_id,
+                'branch_name'   => $this->getBranchName($branch_id),
+            ); 
+        }else{
+            $session = session()->get('filter_balencesheet');
+        }
+
         // dd($session);
         $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
         ->from('acct_balance_sheet_report')

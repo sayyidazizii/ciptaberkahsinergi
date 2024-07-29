@@ -61,6 +61,19 @@ class AcctProfitLossReportController extends Controller
             $year[$i] = $i;
         }
         
+        if(empty($session)){
+            $sessiondata = array(
+                'start_month_period'        => date('m'),
+                'end_month_period'          => date('m'),
+                'year_period'               => date('Y'),
+                'profit_loss_report_type'   => 1,
+                'branch_id'                 => $branch_id,
+                'branch_name'               => $this->getBranchName($branch_id),
+            ); 
+        }else{
+            $sessiondata = session()->get('filter_profitlossreport');
+        }
+
         $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
         ->where('account_name', '!=', ' ')
         ->where('account_name', '!=', '')
@@ -81,6 +94,20 @@ class AcctProfitLossReportController extends Controller
 
 
         return view('content.AcctProfitLossReport.List.index', compact('monthlist', 'year', 'corebranch', 'profitlossreporttype', 'sessiondata', 'company_name', 'acctprofitlossreport_top', 'acctprofitlossreport_bottom', 'account_income_tax_id'));
+    }
+
+    public function getBranchName($branch_id)
+    {
+        $data = CoreBranch::where('branch_id', $branch_id)
+        ->where('data_state',0)
+        ->first();
+
+        if (empty($data)) {
+            return '';
+        } else {
+            return $data->branch_name;
+        }
+
     }
 
     public function filter(Request $request){
