@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\DataTables\MemberSavingsPayment\CoreMemberDataTable;
-use App\Models\AcctAccount;
-use App\Models\AcctSavingsMemberDetail;
-use App\Models\AcctSavings;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctMutation;
 use App\Models\CoreBranch;
 use App\Models\CoreMember;
+use App\Models\AcctAccount;
+use App\Models\AcctSavings;
+use App\Models\AcctMutation;
 use App\Models\CoreProvince;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
+use Illuminate\Http\Request;
 use App\Helpers\Configuration;
-use Illuminate\Support\Facades\DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctSavingsMemberDetail;
 use Illuminate\Support\Facades\Session;
+use App\Models\PreferenceTransactionModule;
+use App\DataTables\MemberSavingsPayment\CoreMemberDataTable;
 
 class MemberSavingsPaymentController extends Controller
 {
@@ -272,7 +273,9 @@ class MemberSavingsPaymentController extends Controller
                         if($data['member_principal_savings'] <> 0 || $data['member_principal_savings'] <> ''){
 
                             $mutation_type = '';
-                            if($data_detail['mutation_id'] == 2){
+                            if($data_detail['mutation_id'] == 1){
+                                $mutation_type = 'SETORAN TUNAI';
+                            }else if($data_detail['mutation_id'] == 2){
                                 $mutation_type = 'PENARIKAN TUNAI';
                             }else if($data_detail['mutation_id'] == 3){
                                 $mutation_type = 'KOREKSI KREDIT';
@@ -383,6 +386,7 @@ class MemberSavingsPaymentController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             report($e);
+            Log::error('Error updating member data: ' . $e->getMessage());
             $message = array(
                 'pesan' => 'Data Anggota gagal diubah',
                 'alert' => 'error'
