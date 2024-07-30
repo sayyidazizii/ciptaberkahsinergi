@@ -302,12 +302,14 @@ class AcctDepositoAccountController extends Controller
     {
         $sessiondata = session()->get('data_depositoaccountadd');
         if(!$sessiondata || $sessiondata == ""){
-            $sessiondata['deposito_id']                  = null;
-            $sessiondata['deposito_account_extra_type']  = null;
-            $sessiondata['deposito_period']              = null;
-            $sessiondata['office_id']                    = null;
-            $sessiondata['deposito_account_due_date']    = null;
-            $sessiondata['deposito_account_amount']      = 0;
+            $sessiondata['deposito_id']                            = null;
+            $sessiondata['deposito_account_extra_type']            = null;
+            $sessiondata['deposito_period']                        = null;
+            $sessiondata['office_id']                              = null;
+            $sessiondata['deposito_account_due_date']              = null;
+            $sessiondata['deposito_account_amount']                = 0;
+            $sessiondata['deposito_account_incentive']             = 0;
+            $sessiondata['deposito_account_incentive_amount']      = 0;
         }
         $sessiondata['member_id'] = $member_id;
         session()->put('data_depositoaccountadd', $sessiondata);
@@ -324,12 +326,15 @@ class AcctDepositoAccountController extends Controller
     {
         $sessiondata = session()->get('data_depositoaccountadd');
         if(!$sessiondata || $sessiondata == ""){
-            $sessiondata['deposito_id']                  = null;
-            $sessiondata['deposito_account_extra_type']  = null;
-            $sessiondata['deposito_period']              = null;
-            $sessiondata['office_id']                    = null;
-            $sessiondata['deposito_account_due_date']    = null;
-            $sessiondata['deposito_account_amount']      = 0;
+            $sessiondata['deposito_id']                            = null;
+            $sessiondata['deposito_account_extra_type']            = null;
+            $sessiondata['deposito_period']                        = null;
+            $sessiondata['office_id']                              = null;
+            $sessiondata['deposito_account_due_date']              = null;
+            $sessiondata['deposito_account_amount']                = 0;
+            $sessiondata['deposito_account_incentive']             = 0;
+            $sessiondata['deposito_account_incentive_amount']      = 0;
+
         }
         $sessiondata['savings_account_id'] = $savings_account_id;
         session()->put('data_depositoaccountadd', $sessiondata);
