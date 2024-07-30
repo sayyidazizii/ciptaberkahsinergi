@@ -844,7 +844,7 @@ function change_payment_type_id(value) {
                             <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Biaya Notaris') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <input type="text" name="credit_account_notary_view" id="credit_account_notary_view" class="form-control form-control-lg form-control-solid" placeholder="Biaya Asuransi" value="{{ old('credit_account_notary_view', empty($datasession['credit_account_notary']) ? '' : number_format($datasession['credit_account_notary'],2) ?? '') }}" autocomplete="off"/>
+                                    <input type="text" name="credit_account_notary_view" id="credit_account_notary_view" class="form-control form-control-lg form-control-solid" placeholder="Biaya Notaris" value="{{ old('credit_account_notary_view', empty($datasession['credit_account_notary']) ? '' : number_format($datasession['credit_account_notary'],2) ?? '') }}" autocomplete="off"/>
                                     <input type="hidden" name="credit_account_notary" id="credit_account_notary" class="form-control form-control-lg form-control-solid" value="{{ old('credit_account_notary', $datasession['credit_account_notary'] ?? '') }}"/>
                                 </div>
                             </div>

@@ -33,15 +33,16 @@
             if (validator) {
                 validator.validate().then(function (status) {
                     if (status == 'Valid') {
-                        submitButton.setAttribute('data-kt-indicator', 'on');
+                        if (confirm('Apakah Anda yakin ingin menyimpan data ini?')) {
+                            submitButton.setAttribute('data-kt-indicator', 'on');
 
-                        submitButton.disabled = true;
+                            submitButton.disabled = true;
 
-                        setTimeout(function () {
-                            submitButton.removeAttribute('data-kt-indicator');
-
-                            form.submit(); // Submit form
-                        }, 2000);
+                            setTimeout(function () {
+                                submitButton.removeAttribute('data-kt-indicator');
+                                form.submit(); // Submit form
+                            }, 2000);
+                        }
                     }
                 });
             }

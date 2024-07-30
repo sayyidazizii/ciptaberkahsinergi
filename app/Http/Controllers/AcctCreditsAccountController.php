@@ -918,13 +918,15 @@ class AcctCreditsAccountController extends Controller
 
         return $data->branch_city;
     }
-     public function getBranchManager($branch_id)
+
+    public function getBranchManager($branch_id)
     {
         $data = CoreBranch::where('branch_id', $branch_id)
         ->first();
 
         return $data->branch_manager;
     }
+
     public function printNote($credits_account_id)
     {
         $preferencecompany 		= PreferenceCompany::first();
@@ -5071,11 +5073,13 @@ class AcctCreditsAccountController extends Controller
 	    }
 	    return strtoupper($answer.'rupiah');
 	}
+
     function doone2($onestr) {
 	    $tsingle = array("","satu ","dua ","tiga ","empat ","lima ",
 		"enam ","tujuh ","delapan ","sembilan ");
 	      return strtoupper($tsingle[$onestr]);
 	}
+
     function doone($onestr) {
 	    $tsingle = array("","se","dua ","tiga ","empat ","lima ", "enam ","tujuh ","delapan ","sembilan ");
 	      return strtoupper($tsingle[$onestr]);
@@ -5399,6 +5403,7 @@ class AcctCreditsAccountController extends Controller
         return $pola;
 
     }
+
     protected function rate3($nprest, $vlrparc, $vp, $guess = 0.25) {
         $maxit      = 100;
         $precision  = 14;
@@ -5416,6 +5421,7 @@ class AcctCreditsAccountController extends Controller
         }
         return null;
     }
+
     public function slidingrate($id){
         $credistaccount					= AcctCreditsAccount::find($id);
 
@@ -6361,7 +6367,6 @@ class AcctCreditsAccountController extends Controller
         $filename = 'Pola_Angsuran_'.$acctcreditsaccount['credits_account_serial'].'.pdf';
         $pdf::Output($filename, 'I');
     }
-
 
     public function getMemberName($member_id){
         $coremember = CoreMember::select('*')

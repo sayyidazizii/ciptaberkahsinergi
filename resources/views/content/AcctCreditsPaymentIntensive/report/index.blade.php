@@ -23,14 +23,14 @@ $(document).ready(function () {
 @stop
 <x-base-layout>
     <div class="card mb-5 mb-xl-10">
-        <div class="card-header border-0">
+        <div class="card-header border-0">  
             <div class="card-title m-0">
-                <h3 class="fw-bolder m-0">{{ __('Insentif Angsuran Bunga') }}</h3>
+                <h3 class="fw-bolder m-0">{{ __('Insentif Angsuran Bunga Pinjaman') }}</h3>
             </div>
         </div>
 
         <div id="kt_deposito_report_view">
-            <form id="kt_deposito_report_view_form" class="form" method="POST" action="{{ route('crd-payment-intensive.p-viewport') }}" enctype="multipart/form-data">
+            <form id="kt_deposito_report_view_form" class="form" method="POST" action="{{ route('crd-payment-insentif.p-viewport') }}" enctype="multipart/form-data">
             @csrf
             @method('POST')
                 <div class="card-body border-top p-9">
@@ -65,9 +65,9 @@ $(document).ready(function () {
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
-                    <button type="submit" class="btn btn-primary me-2" id="kt_nominative_deposito_submit" id="view" name="view" value="excel">
+                    {{-- <button type="submit" class="btn btn-primary me-2" id="kt_nominative_deposito_submit" id="view" name="view" value="excel">
                         <i class="bi bi-file-earmark-excel"></i> {{__('Export Excel')}}
-                    </button>
+                    </button> --}}
                     <button type="submit" class="btn btn-primary" id="kt_deposito_report_submit" id="view" name="view" value="pdf">
                         <i class="bi bi-file-earmark-pdf"></i> {{__('Export PDF')}}
                     </button>
