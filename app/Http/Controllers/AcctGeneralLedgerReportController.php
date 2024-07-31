@@ -84,13 +84,13 @@ class AcctGeneralLedgerReportController extends Controller
         }
         $openingbalance 		= $openingbalance->first();
 
-        if(empty($openingbalance)){
-            $openingbalance 	= AcctAccountOpeningBalance::select('opening_balance')
-			->where('account_id', $sessiondata['account_id'])
-			->where('branch_id', $sessiondata['branch_id'])
-			->orderBy('month_period', 'ASC')
-            ->first();
-        }
+        // if(empty($openingbalance)){
+        //     $openingbalance 	= AcctAccountOpeningBalance::select('opening_balance')
+		// 	->where('account_id', $sessiondata['account_id'])
+		// 	->where('branch_id', $sessiondata['branch_id'])
+		// 	->orderBy('month_period', 'ASC')
+        //     ->first();
+        // }
 
         if(isset($openingbalance['opening_balance'])){
             $opening_balance = $openingbalance['opening_balance'];
@@ -101,34 +101,34 @@ class AcctGeneralLedgerReportController extends Controller
 //!=============================================================================================================================================
         
         //*Pakai AcctAccountBalanceDetail
-        // $account_in_amount 		= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
-        // ->whereMonth('transaction_date', $last_month_start)
-        // ->whereYear('transaction_date', $last_year)
-        // ->where('branch_id', $sessiondata['branch_id'])
-        // ->sum('account_in');
+        $account_in_amount 		= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
+        ->whereMonth('transaction_date', $last_month_start)
+        ->whereYear('transaction_date', $last_year)
+        ->where('branch_id', $sessiondata['branch_id'])
+        ->sum('account_in');
 
-        // $account_out_amount 	= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
-        // ->whereMonth('transaction_date', $last_month_start)
-        // ->whereYear('transaction_date', $last_year)
-        // ->where('branch_id', $sessiondata['branch_id'])
-        // ->sum('account_out');
+        $account_out_amount 	= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
+        ->whereMonth('transaction_date', $last_month_start)
+        ->whereYear('transaction_date', $last_year)
+        ->where('branch_id', $sessiondata['branch_id'])
+        ->sum('account_out');
 
         //*Pakai AccJournalVoucherItem
-        $account_in_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
-        ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
-        ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
-        ->whereColumn('acct_journal_voucher_item.account_id_status', 'acct_journal_voucher_item.account_id_default_status')
-        ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
-        ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
-        ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
+        // $account_in_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
+        // ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
+        // ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
+        // ->whereColumn('acct_journal_voucher_item.account_id_status', 'acct_journal_voucher_item.account_id_default_status')
+        // ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
+        // ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
+        // ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
 
-        $account_out_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
-        ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
-        ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
-        ->whereColumn('acct_journal_voucher_item.account_id_status', '<>', 'acct_journal_voucher_item.account_id_default_status')
-        ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
-        ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
-        ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
+        // $account_out_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
+        // ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
+        // ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
+        // ->whereColumn('acct_journal_voucher_item.account_id_status', '<>', 'acct_journal_voucher_item.account_id_default_status')
+        // ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
+        // ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
+        // ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
 
 //!=============================================================================================================================================
         
@@ -295,7 +295,7 @@ class AcctGeneralLedgerReportController extends Controller
 
 //!=============================================================================================================================================\
 
-
+        // dd($opening_balance_amount);
         return view('content.AcctGeneralLedgerReport.List.index', compact('monthlist', 'year', 'corebranch', 'acctaccount', 'sessiondata', 'acctgeneralledgerreport', 'opening_balance_amount', 'account_id_status'));
     }
 
@@ -395,13 +395,13 @@ class AcctGeneralLedgerReportController extends Controller
         }
         $openingbalance 		= $openingbalance->first();
 
-        if(empty($openingbalance)){
-            $openingbalance 	= AcctAccountOpeningBalance::select('opening_balance')
-			->where('account_id', $sessiondata['account_id'])
-			->where('branch_id', $sessiondata['branch_id'])
-			->orderBy('month_period', 'ASC')
-            ->first();
-        }
+        // if(empty($openingbalance)){
+        //     $openingbalance 	= AcctAccountOpeningBalance::select('opening_balance')
+		// 	->where('account_id', $sessiondata['account_id'])
+		// 	->where('branch_id', $sessiondata['branch_id'])
+		// 	->orderBy('month_period', 'ASC')
+        //     ->first();
+        // }
 
         if(isset($openingbalance['opening_balance'])){
             $opening_balance = $openingbalance['opening_balance'];
@@ -791,34 +791,34 @@ class AcctGeneralLedgerReportController extends Controller
 //!=============================================================================================================================================
         
         //*Pakai AcctAccountBalanceDetail
-        // $account_in_amount 		= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
-        // ->whereMonth('transaction_date', $last_month_start)
-        // ->whereYear('transaction_date', $last_year)
-        // ->where('branch_id', $sessiondata['branch_id'])
-        // ->sum('account_in');
+        $account_in_amount 		= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
+        ->whereMonth('transaction_date', $last_month_start)
+        ->whereYear('transaction_date', $last_year)
+        ->where('branch_id', $sessiondata['branch_id'])
+        ->sum('account_in');
 
-        // $account_out_amount 	= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
-        // ->whereMonth('transaction_date', $last_month_start)
-        // ->whereYear('transaction_date', $last_year)
-        // ->where('branch_id', $sessiondata['branch_id'])
-        // ->sum('account_out');
+        $account_out_amount 	= AcctAccountBalanceDetail::where('account_id', $sessiondata['account_id'])
+        ->whereMonth('transaction_date', $last_month_start)
+        ->whereYear('transaction_date', $last_year)
+        ->where('branch_id', $sessiondata['branch_id'])
+        ->sum('account_out');
 
         //*Pakai AccJournalVoucherItem
-        $account_in_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
-        ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
-        ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
-        ->whereColumn('acct_journal_voucher_item.account_id_status', 'acct_journal_voucher_item.account_id_default_status')
-        ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
-        ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
-        ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
+        // $account_in_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
+        // ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
+        // ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
+        // ->whereColumn('acct_journal_voucher_item.account_id_status', 'acct_journal_voucher_item.account_id_default_status')
+        // ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
+        // ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
+        // ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
 
-        $account_out_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
-        ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
-        ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
-        ->whereColumn('acct_journal_voucher_item.account_id_status', '<>', 'acct_journal_voucher_item.account_id_default_status')
-        ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
-        ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
-        ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
+        // $account_out_amount 		= AcctJournalVoucherItem::join('acct_journal_voucher', 'acct_journal_voucher.journal_voucher_id', '=', 'acct_journal_voucher_item.journal_voucher_id')
+        // ->where('acct_journal_voucher_item.account_id', $sessiondata['account_id'])
+        // ->where('acct_journal_voucher.branch_id', $sessiondata['branch_id'])
+        // ->whereColumn('acct_journal_voucher_item.account_id_status', '<>', 'acct_journal_voucher_item.account_id_default_status')
+        // ->whereMonth('acct_journal_voucher.journal_voucher_date', $last_month_start)
+        // ->whereYear('acct_journal_voucher.journal_voucher_date', $last_year)
+        // ->sum(DB::raw('acct_journal_voucher_item.journal_voucher_debit_amount + acct_journal_voucher_item.journal_voucher_credit_amount'));
 
 //!============================================================================================================================================
         
