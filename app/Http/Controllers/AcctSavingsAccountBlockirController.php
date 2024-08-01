@@ -141,6 +141,7 @@ class AcctSavingsAccountBlockirController extends Controller
     public function selectMember($savings_account_id)
     {
         $coremember = AcctSavingsAccount::join('core_member','core_member.member_id','=','acct_savings_account.member_id')
+        ->withoutGlobalScopes()
         ->join('acct_savings','acct_savings.savings_id','=','acct_savings_account.savings_id')
         ->where('acct_savings_account.data_state',0)
         ->where('acct_savings_account.savings_account_id', $savings_account_id)

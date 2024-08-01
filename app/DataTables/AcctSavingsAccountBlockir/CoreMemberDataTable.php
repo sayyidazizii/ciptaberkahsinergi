@@ -34,11 +34,10 @@ class CoreMemberDataTable extends DataTable
      */
     public function query(AcctSavingsAccount $model)
     {
-        $model = $model->newQuery()
-        ->withoutGlobalScopes()
-        ->with('branch')
-        ->where('member_status', 1)
+        $model = $model->newQuery()->with('member')
+        // ->where('member_status', 1)
         ->where('data_state', 0);
+        // ->where('pickup_state', 1);
         if(Auth::user()->branch_id!==0){
             $model->where('branch_id',Auth::user()->branch_id);
         }
@@ -73,8 +72,8 @@ class CoreMemberDataTable extends DataTable
         return [
             Column::make('acct_savings_account.savings_account_id')->title(__('No'))->data('DT_RowIndex'),
             Column::make('acct_savings_account.savings_account_no')->title(__('No. Rekening'))->data('savings_account_no'),
-            Column::make('core_member.member_name')->title(__('Nama Anggota'))->data('member_name'),
-            Column::make('core_member.member_address')->title(__('Alamat'))->data('member_address'),
+            Column::make('member.member_name')->title(__('Nama Anggota')),
+            Column::make('member.member_address')->title(__('Alamat')),
             Column::computed('action') 
                     ->title(__('Aksi'))
                     ->exportable(false)
