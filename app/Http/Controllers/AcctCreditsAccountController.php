@@ -460,7 +460,7 @@ class AcctCreditsAccountController extends Controller
             // biaya provisi
             if($provisi != '' && $provisi > 0){
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_provision_income_id'])
+                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
                 ->where('data_state',0)
                 ->first()
                 ->account_default_status;
@@ -478,14 +478,14 @@ class AcctCreditsAccountController extends Controller
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferenceinventory['inventory_stamp_duty_id'])
+                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_provision_income_id'])
                 ->where('data_state',0)
                 ->first()
                 ->account_default_status;
 
                 $data_credit = array (
                     'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferenceinventory['inventory_stamp_duty_id'],
+                    'account_id'					=> $preferencecompany['account_provision_income_id'],
                     'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
                     'journal_voucher_amount'		=> $provisi,
                     'journal_voucher_credit_amount'	=> $provisi,
