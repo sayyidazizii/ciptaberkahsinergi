@@ -641,7 +641,7 @@
                                                             }
 
                                                             $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
-                                                            $grand_total_account_amount2 =  $total_account_amount2 - $shu;
+                                                            $grand_total_account_amount2 =  $total_account_amount2 + $shu;
                                                             echo "
                                                                 <td hidden><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                                 <td hidden style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($grand_total_account_amount2, 2)."</div></td>
