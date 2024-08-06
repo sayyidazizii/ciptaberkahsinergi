@@ -11,6 +11,13 @@
     use Carbon\Carbon;
     use App\Models\AcctDepositoAccount;
     use App\Models\AcctDepositoProfitSharing;  
+    use Illuminate\Support\Facades\Auth;
+    use App\Utils\BranchUtils;
+
+
+    $user = Auth::user(); // Mendapatkan data pengguna yang sedang login
+    $branch_id = $user->branch_id; // Mendapatkan ID cabang pengguna
+    $branch_name = BranchUtils::getBranchName($branch_id);
 
     //tgl hari ini
     $today = Carbon::today()->format('d-m-Y');
@@ -59,6 +66,7 @@
                     <?php }else{ ?>
                         <p class="fw-bold">Hari Ini Ada {{  $depositoAccountCount }} Basil Simpanan Berjangka yang Jatuh Tempo</p> 
                     <?php } ?>
+                    <p class="fw-bold">Cabang : {{ $branch_name ?? '' }}</p>
                 </div>
                 <div class="modal-footer">
                     
