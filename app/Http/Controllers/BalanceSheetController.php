@@ -657,7 +657,7 @@ class BalanceSheetController extends Controller
                                             }
                                         }
                                         $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
-                                        $grand_total_account_amount2 =  $total_account_amount2 - $shu;
+                                        $grand_total_account_amount2 =  $total_account_amount2 + $shu;
 
                                         $tblitem_right8 = "";
                                     } else {
