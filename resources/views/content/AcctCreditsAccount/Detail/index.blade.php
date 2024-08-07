@@ -117,9 +117,9 @@
                             </div>
                         </div>
                         <div class="row mb-6">
-                            <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Business Office (BO)') }}</label>
+                            <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Account Office (AO)') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <select name="office_id" id="office_id" data-control="select2" data-placeholder="{{ __('Pilih Business Office (BO)') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg" disabled>
+                                <select name="office_id" id="office_id" data-control="select2" data-placeholder="{{ __('Pilih Account Office (AO)') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg" disabled>
                                     <option value="">{{ __('Pilih') }}</option>
                                     @foreach($coreoffice as $key => $value)
                                         <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] == old('office_id', $creditsdata['office_id'] ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>

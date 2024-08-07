@@ -94,7 +94,7 @@ submitButton.addEventListener('click', function (e) {
     <div class="card mb-5 mb-xl-10">
         <div class="card-header border-0">
             <div class="card-title m-0">
-                <h3 class="fw-bolder m-0">{{ __('Form Ubah Kode Business Office (BO)') }}</h3>
+                <h3 class="fw-bolder m-0">{{ __('Form Ubah Kode Account Office (AO)') }}</h3>
             </div>
 
             <a href="{{ route('office.index') }}" class="btn btn-light align-self-center">
@@ -108,14 +108,14 @@ submitButton.addEventListener('click', function (e) {
             @method('PUT')
                 <div class="card-body border-top p-9">
                     <div class="row mb-6">
-                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Kode BO') }}</label>
+                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Kode AO') }}</label>
                         <div class="col-lg-8 fv-row">
                             <input type="hidden" name="office_id" class="form-control form-control-lg form-control-solid" value="{{ old('office_id', $office->office_id ?? '') }}"/>
                             <input type="text" name="office_code" class="form-control form-control-lg form-control-solid" placeholder="Kode BO" value="{{ old('office_code', $office->office_code ?? '') }}" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="row mb-6">
-                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Nama BO') }}</label>
+                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Nama AO') }}</label>
                         <div class="col-lg-8 fv-row">
                             <input type="text" name="office_name" class="form-control form-control-lg form-control-solid" placeholder="Nama BO" value="{{ old('office_name', $office->office_name ?? '') }}" autocomplete="off"/>
                         </div>
@@ -128,9 +128,9 @@ submitButton.addEventListener('click', function (e) {
                         </div>
                     </div>
                     <div class="row mb-6">
-                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Cabang BO') }}</label>
+                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Cabang AO') }}</label>
                         <div class="col-lg-8 fv-row">
-                            <select name="branch_id" id="branch_id" aria-label="{{ __('Pilih') }}" data-control="select2" data-placeholder="{{ __('Pilih Cabang BO') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                            <select name="branch_id" id="branch_id" aria-label="{{ __('Pilih') }}" data-control="select2" data-placeholder="{{ __('Pilih Cabang AO') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
                                 <option value="">{{ __('Pilih') }}</option>
                                 @foreach($corebranch as $key => $value)
                                     <option data-kt-flag="{{ $value->branch_id }}" value="{{ $value->branch_id }}" {{ $value->branch_id === old('branch_id', $office->branch_id ?? '') ? 'selected' :'' }}>{{ $value['branch_name'] }}</option>
@@ -139,9 +139,9 @@ submitButton.addEventListener('click', function (e) {
                         </div>
                     </div>
                     <div class="row mb-6">
-                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Akun BO') }}</label>
+                        <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Akun AO') }}</label>
                         <div class="col-lg-8 fv-row">
-                            <select name="user_id" id="user_id" aria-label="{{ __('Pilih') }}" data-control="select2" data-placeholder="{{ __('Pilih Cabang BO') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                            <select name="user_id" id="user_id" aria-label="{{ __('Pilih') }}" data-control="select2" data-placeholder="{{ __('Pilih Cabang AO') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
                                 <option value="">{{ __('Pilih') }}</option>
                                 @foreach($user as $key => $value)
                                     <option data-kt-flag="{{ $value->user_id }}" value="{{ $value->user_id }}" {{ $value->user_id === old('user_id', $office->user_id ?? '') ? 'selected' :'' }}>{{ $value['username'] }}</option>

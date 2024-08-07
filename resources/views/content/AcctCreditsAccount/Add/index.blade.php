@@ -61,7 +61,7 @@ var validator = FormValidation.formValidation(
             'office_id': {
                 validators: {
                     notEmpty: {
-                        message: 'Business Office (BO) harus diisi'
+                        message: 'Account Office (AO) harus diisi'
                     }
                 }
             },
@@ -803,9 +803,9 @@ function change_payment_type_id(value) {
                                 </div>
                             </div>
                             <div class="row mb-6">
-                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Business Office (BO)') }}</label>
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Account Office (AO)') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <select name="office_id" id="office_id" data-control="select2" data-placeholder="{{ __('Pilih Business Office (BO)') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg" onchange="function_elements_add(this.name, this.value)">
+                                    <select name="office_id" id="office_id" data-control="select2" data-placeholder="{{ __('Pilih Account Office (AO)') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg" onchange="function_elements_add(this.name, this.value)">
                                         <option value="">{{ __('Pilih') }}</option>
                                         @foreach($coreoffice as $key => $value)
                                             <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] == old('office_id', $datasession['office_id'] ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>

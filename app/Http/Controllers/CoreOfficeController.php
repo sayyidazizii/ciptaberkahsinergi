@@ -48,12 +48,12 @@ class CoreOfficeController extends Controller
 
         if(CoreOffice::create($office)){
             $message = array(
-                'pesan' => 'Kode Business Office (BO) berhasil ditambah',
+                'pesan' => 'Kode Account Office (AO) berhasil ditambah',
                 'alert' => 'success'
             );
         }else{
             $message = array(
-                'pesan' => 'Kode Business Office (BO) gagal ditambah',
+                'pesan' => 'Kode Account Office (AO) gagal ditambah',
                 'alert' => 'error'
             );
         }
@@ -99,12 +99,12 @@ class CoreOfficeController extends Controller
 
         if($office->save()){
             $message = array(
-                'pesan' => 'Kode Business Office (BO) berhasil diubah',
+                'pesan' => 'Kode Account Office (AO) berhasil diubah',
                 'alert' => 'success'
             );
         }else{
             $message = array(
-                'pesan' => 'Kode Business Office (BO) gagal diubah',
+                'pesan' => 'Kode Account Office (AO) gagal diubah',
                 'alert' => 'error'
             );
         }
@@ -120,12 +120,12 @@ class CoreOfficeController extends Controller
 
         if($office->save()){
             $message = array(
-                'pesan' => 'Kode Business Office (BO) berhasil dihapus',
+                'pesan' => 'Kode Account Office (AO) berhasil dihapus',
                 'alert' => 'success'
             );
         }else{
             $message = array(
-                'pesan' => 'Kode Business Office (BO) gagal dihapus',
+                'pesan' => 'Kode Account Office (AO) gagal dihapus',
                 'alert' => 'error'
             );
         }

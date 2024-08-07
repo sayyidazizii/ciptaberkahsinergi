@@ -15,13 +15,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Hapus Kode Business Office (BO)</h3>
+                <h3 class="modal-title">Hapus Kode Account Office (AO)</h3>
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="bi bi-x-lg"></span>
                 </div>
             </div>
             <div class="modal-body">
-                <p>Apakah anda yakin ingin menghapus Kode Business Office (BO)?</p>
+                <p>Apakah anda yakin ingin menghapus Kode Account Office (AO)?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tidak</button>

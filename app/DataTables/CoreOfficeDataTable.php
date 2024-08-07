@@ -67,8 +67,8 @@ class CoreOfficeDataTable extends DataTable
     {
         return [
             Column::make('office_id')->title(__('No'))->data('DT_RowIndex'),
-            Column::make('office_code')->title(__('Kode BO')),
-            Column::make('office_name')->title(__('Nama BO')),
+            Column::make('office_code')->title(__('Kode AO')),
+            Column::make('office_name')->title(__('Nama AO')),
             Column::make('branch.branch_name')->title(__('Cabang')),
             Column::make('incentive')->title(__('Insentif/komisi')),
             Column::computed('action') 
