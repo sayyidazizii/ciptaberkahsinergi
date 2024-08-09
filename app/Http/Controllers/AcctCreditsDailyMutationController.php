@@ -161,6 +161,7 @@ class AcctCreditsDailyMutationController extends Controller
       $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_'.date('dmYHisu').'.pdf';
       $pdf::Output($filename, 'I');
     }
+
     protected function exportCreditsPayment($sesi) {
       $spreadsheet        = new Spreadsheet();
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
@@ -282,16 +283,18 @@ class AcctCreditsDailyMutationController extends Controller
           return redirect()->back()->withInput()->with(['pesan' => 'Maaf data yang di eksport tidak ada !','alert' => 'warning']);
       }
     }
+
     protected function printCreditsAccount($sesi) {
+      // dd($sesi['start_date']);
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
       if(Auth::user()->branch_id!=0&&empty($sesi['branch_id'])){
             $branch_id = Auth::user()->branch_id;
       }else{$branch_id = $sesi['branch_id'];}
       $acctcreditspayment = AcctCreditsAccount::with('member')
-      ->where('credits_approve_status',1)
-      ->where('credits_account_date',">=",$sesi['start_date'])
-      ->where('credits_account_date',"<=",$sesi['end_date']);
+      ->where('credits_approve_status',1);
+      // ->where('credits_account_date',">=",'09-08-2024')
+      // ->where('credits_account_date',"<=",'09-08-2024');
       if(!empty($branch_id)){$acctcreditspayment->where('branch_id', $branch_id);}
       $acctcreditspayment = $acctcreditspayment->orderBy('credits_account_serial', 'ASC')
       ->get();
@@ -319,6 +322,7 @@ class AcctCreditsDailyMutationController extends Controller
 		  <td width=\"12%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NO. KREDIT</div></td>
 		  <td width=\"18%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NAMA</div></td>
 		  <td width=\"25%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">ALAMAT</div></td>
+		  <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">Bunga (%)</div></td>
 		  <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">POKOK</div></td>
 		  <td width=\"10%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">JK WAKTU</div></td>
 		  <td width=\"12%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">JT TEMPO</div></td>
@@ -330,9 +334,10 @@ class AcctCreditsDailyMutationController extends Controller
               $export .= "
               <tr>
                   <td width=\"5%\"><div style=\"text-align: left;\">".$no."</div></td>
-                  <td width=\"12%\"><div style=\"text-align: left;\">".$val->account->credits_account_serial."</div></td>
+                  <td width=\"12%\"><div style=\"text-align: left;\">".$val->credits_account_serial."</div></td>
                   <td width=\"18%\"><div style=\"text-align: left;\">".$val->member->member_name."</div></td>
                   <td width=\"25%\"><div style=\"text-align: left;\">".$val->member->member_address."</div></td>
+                  <td width=\"12%\"><div style=\"text-align: left;\">".$val->credits_account_interest."</div></td>
                   <td width=\"15%\"><div style=\"text-align: right;\">".number_format($val['credits_account_amount'],2)."</div></td>
                   <td width=\"10%\"><div style=\"text-align: right;\">".$val->credits_account_period."</div></td>
                   <td width=\"12%\"><div style=\"text-align: right;\">".date('d-m-Y',strtotime($val->credits_account_due_date))."</div></td>
@@ -354,6 +359,7 @@ class AcctCreditsDailyMutationController extends Controller
       $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_'.date('dmYHisu').'.pdf';
       $pdf::Output($filename, 'I');
     }
+
     protected function exportCreditsAccount($sesi) {
       $spreadsheet        = new Spreadsheet();
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();

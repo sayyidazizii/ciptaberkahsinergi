@@ -529,6 +529,15 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/export', [BalanceSheetController::class, 'export'])->name('export');
     });
 
+    // BalanceSheet consolidation pages
+    Route::prefix('balance-sheet')->name('balance-sheet.')->group(function () {
+        Route::get('/', [BalanceSheetController::class, 'index'])->name('index');
+        Route::post('/filter', [BalanceSheetController::class, 'filter'])->name('filter');
+        Route::get('/reset-filter', [BalanceSheetController::class, 'resetFilter'])->name('reset-filter');
+        Route::get('/preview', [BalanceSheetController::class, 'preview'])->name('preview');
+        Route::get('/export', [BalanceSheetController::class, 'export'])->name('export');
+    });
+
     //CoreBranch pages
     Route::prefix('branch')->name('branch.')->group(function () {
         Route::get('/', [CoreBranchController::class, 'index'])->name('index');

@@ -1,3 +1,19 @@
+@php
+    use Carbon\Carbon;
+    use App\Models\AcctDepositoAccount;
+    use App\Models\AcctDepositoProfitSharing;  
+    use Illuminate\Support\Facades\Auth;
+    use App\Utils\BranchUtils;
+
+
+    $user = Auth::user(); // Mendapatkan data pengguna yang sedang login
+    $branch_id = $user->branch_id; // Mendapatkan ID cabang pengguna
+    $branch_name = BranchUtils::getBranchName($branch_id);
+
+@endphp
+
+
+
 <!--begin::Menu-->
 <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold py-4 fs-6 w-275px" data-kt-menu="true">
     <!--begin::Menu item-->
@@ -13,6 +29,10 @@
             <div class="d-flex flex-column">
                 <div class="fw-bolder d-flex align-items-center fs-5">
                     {{ auth()->user()->username }}
+                    {{-- <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Pro</span> --}}
+                </div>
+                <div class="fw-bolder d-flex align-items-center fs-8">
+                    {{ $branch_name }}
                     {{-- <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Pro</span> --}}
                 </div>
                 {{-- <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">{{ auth()->user()->user_group_id }}</span> --}}

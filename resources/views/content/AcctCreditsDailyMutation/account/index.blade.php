@@ -2,12 +2,12 @@
     <div class="card mb-5 mb-xl-10">
         <div class="card-header border-0">
             <div class="card-title m-0">
-                <h3 class="fw-bolder m-0">{{ __('Laporan Anggota Belum Angsur') }}</h3>
+                <h3 class="fw-bolder m-0">{{ __('Mutasi Harian Pencairan Pembiayaan') }}</h3>
             </div>
         </div>
 
         <div id="kt_deposito_report_view">
-            <form id="kt_deposito_report_view_form" class="form" method="POST" action="{{ route('credits-hasnt-paid-report.viewport') }}" enctype="multipart/form-data">
+            <form id="kt_deposito_report_view_form" class="form" method="POST" action="{{ route('crd-daily-mutation.a-viewport') }}" enctype="multipart/form-data">
             @csrf
             @method('POST')
                 <div class="card-body border-top p-9">
@@ -17,7 +17,7 @@
                             <input name="start_date" id="start_date" class="date form-control form-control-solid form-select-lg" value="{{old('start_date')}}" placeholder="Pilih tanggal"/>
                         </div>
                         <div class="col-lg-4 fv-row">
-                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Sampai Tanggal') }}</label>
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('SampaiTanggal') }}</label>
                             <input name="end_date" id="end_date" class="date form-control form-control-solid form-select-lg" value="{{old('end_date')}}" placeholder="Pilih tanggal"/>
                         </div>
                         <div class="col-lg-4 fv-row">

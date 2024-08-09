@@ -299,6 +299,28 @@ $(document).ready(function(){
         // }
     });
 
+    $('#credits_account_interest_amount_view').change(function() {
+        var angsuranbunga = $('#credits_account_interest_amount_view').val();
+        var jangka = $("#credit_account_period").val();
+        var pembiayaan = $("#credits_account_last_balance_principal").val();
+
+        // Jika pembiayaan dan jangka waktu ada
+        if (pembiayaan && jangka) {
+            var totalangsuran = parseInt(angsuranbunga) + (parseInt(pembiayaan) / jangka);
+            var bunga_perbulan = (parseInt(angsuranbunga) * 100) / parseInt(pembiayaan);
+            var bunga_tahunan = bunga_perbulan * 12;
+
+            $('#credit_account_interest').val(bunga_tahunan.toFixed(2));
+            $('#credits_account_interest_amount').val(angsuranbunga);
+            $('#credits_account_interest_amount_view').val(toRp(angsuranbunga));
+
+            function_elements_add('credits_account_interest_amount', angsuranbunga);
+            function_elements_add('credit_account_interest', bunga_tahunan.toFixed(2));
+        }
+    });
+
+    
+
     $('#credit_account_provisi_view').change(function(){
         var credit_account_provisi = $('#credit_account_provisi_view').val();
 
