@@ -255,7 +255,7 @@ $(document).ready(function(){
             // if (payment_type_id == 1 || payment_type_id == 3 || payment_type_id == 4) {
             //     if (interest > 0 || interest != '') {
                     hitungbungaflat();
-  
+
                 // }
             // } else if (payment_type_id == 2) {
             //     if (interest > 0 || interest != '') {
@@ -300,26 +300,80 @@ $(document).ready(function(){
     });
 
     $('#credits_account_interest_amount_view').change(function() {
-        var angsuranbunga = $('#credits_account_interest_amount_view').val();
-        var jangka = $("#credit_account_period").val();
-        var pembiayaan = $("#credits_account_last_balance_principal").val();
+        // Ambil nilai yang diubah oleh user
+        var angsuranBungaBaru = parseFloat($(this).val().replace(/[^0-9.-]+/g, "")); // Menghapus format mata uang
+        var angsuranPokok = parseFloat($('#credits_account_principal_amount_view').val().replace(/[^0-9.-]+/g, ""));
+        var pembiayaan = parseFloat($("#credits_account_last_balance_principal").val().replace(/[^0-9.-]+/g, ""));
+        var jangka = parseInt($("#credit_account_period").val());
 
-        // Jika pembiayaan dan jangka waktu ada
-        if (pembiayaan && jangka) {
-            var totalangsuran = parseInt(angsuranbunga) + (parseInt(pembiayaan) / jangka);
-            var bunga_perbulan = (parseInt(angsuranbunga) * 100) / parseInt(pembiayaan);
-            var bunga_tahunan = bunga_perbulan * 12;
-
-            $('#credit_account_interest').val(bunga_tahunan.toFixed(2));
-            $('#credits_account_interest_amount').val(angsuranbunga);
-            $('#credits_account_interest_amount_view').val(toRp(angsuranbunga));
-
-            function_elements_add('credits_account_interest_amount', angsuranbunga);
-            function_elements_add('credit_account_interest', bunga_tahunan.toFixed(2));
+        // Validasi input
+        if (isNaN(angsuranBungaBaru) || isNaN(angsuranPokok) || isNaN(pembiayaan) || isNaN(jangka)) {
+            alert("Input tidak valid atau belum lengkap!");
+            return;
         }
+
+        // Perhitungan total angsuran
+        var totalAngsuranBaru = angsuranPokok + angsuranBungaBaru;
+
+        // Perhitungan ulang bunga
+        var bungaBaru = (angsuranBungaBaru * 100) / pembiayaan;
+
+        // Update nilai ke elemen lain
+        $('#credit_account_payment_amount_view').val(toRp(totalAngsuranBaru));
+        $('#credit_account_payment_amount').val(totalAngsuranBaru);
+        $('#credit_account_interest').val(bungaBaru.toFixed(2));
+
+        // Update nilai aslinya
+        $('#credits_account_interest_amount').val(angsuranBungaBaru);
+        $('#credits_account_principal_amount').val(angsuranPokok);
+        $('#credit_account_payment_amount').val(totalAngsuranBaru);
+
+        // Tambahkan ke function_elements_add jika diperlukan
+        function_elements_add('credits_account_interest_amount_view', toRp(angsuranBungaBaru));
+        function_elements_add('credits_account_interest_amount', angsuranBungaBaru);
+        function_elements_add('credit_account_payment_amount', totalAngsuranBaru);
+        function_elements_add('credit_account_interest', bungaBaru.toFixed(2));
     });
 
-    
+
+        $('#credit_account_payment_amount_view').change(function() {
+            // Ambil nilai yang diubah oleh user
+            var totalAngsuranBaru = parseFloat($(this).val().replace(/[^0-9.-]+/g, "")); // Menghapus format mata uang
+            var angsuranPokok = parseFloat($('#credits_account_principal_amount_view').val().replace(/[^0-9.-]+/g, ""));
+            var pembiayaan = parseFloat($("#credits_account_last_balance_principal").val().replace(/[^0-9.-]+/g, ""));
+
+            // Validasi input
+            if (isNaN(totalAngsuranBaru) || isNaN(angsuranPokok) || isNaN(pembiayaan)) {
+                alert("Input tidak valid atau belum lengkap!");
+                return;
+            }
+
+            // Perhitungan bunga yang baru
+            var angsuranBungaBaru = totalAngsuranBaru - angsuranPokok;
+
+            // Perhitungan ulang bunga dalam persentase
+            var bungaBaru = (angsuranBungaBaru * 100) / pembiayaan;
+
+            // Update nilai ke elemen lain
+            $('#credits_account_interest_amount_view').val(toRp(angsuranBungaBaru));
+            $('#credits_account_interest_amount').val(angsuranBungaBaru);
+            $('#credit_account_interest').val(bungaBaru.toFixed(2));
+
+            // Update nilai lainnya
+            $('#credit_account_payment_amount').val(totalAngsuranBaru);
+            $('#credits_account_principal_amount').val(angsuranPokok);
+
+            // Tambahkan ke function_elements_add jika diperlukan
+            function_elements_add('credit_account_payment_amount_view', toRp(totalAngsuranBaru));
+            function_elements_add('credits_account_interest_amount_view', toRp(angsuranBungaBaru));
+            function_elements_add('credits_account_interest_amount', angsuranBungaBaru);
+            function_elements_add('credit_account_payment_amount', totalAngsuranBaru);
+            function_elements_add('credit_account_interest', bungaBaru.toFixed(2));
+        });
+
+
+
+
 
     $('#credit_account_provisi_view').change(function(){
         var credit_account_provisi = $('#credit_account_provisi_view').val();
@@ -632,7 +686,7 @@ function hitungbungaflat() {
                     var jumlah_angsuran = $("#credit_account_payment_amount").val();
                     var angsuranpokok   = $("#credits_account_principal_amount").val();
                     var pinjaman        = $("#credits_account_last_balance_principal").val();
-                    var period          = $("#credit_account_period").val();    
+                    var period          = $("#credit_account_period").val();
                     var interest        = $("#credits_account_interest_amount_view").val();
                     var angsuranbunga   = parseInt(jumlah_angsuran) - parseInt(angsuranpokok);
                     var bunga           = (parseInt(angsuranbunga) * 12) / parseInt(pinjaman);
@@ -643,7 +697,7 @@ function hitungbungaflat() {
                     var jumlah_angsuran2 = $("#credit_account_payment_amount_view").val();
                     var angsuranpokok2   = $("#credits_account_principal_amount_view").val();
                     var pinjaman2        = $("#credits_account_last_balance_principal_view").val();
-                    var period2          = $("#credit_account_period").val();    
+                    var period2          = $("#credit_account_period").val();
                     var interest2        = $("#credits_account_interest_amount_view").val();
                     var angsuranbunga2   = parseInt(jumlah_angsuran2) - parseInt(angsuranpokok2);
                     var bunga2           = (parseInt(angsuranbunga2) * 12) / 100;
@@ -655,7 +709,7 @@ function hitungbungaflat() {
 
                     var name    = 'credit_account_interest';
                     var name3   = 'credits_account_interest_amount';
-                    
+
                     function_elements_add(name, bunga2);
                     function_elements_add(name3, angsuranbunga);
 }
@@ -852,7 +906,7 @@ function change_payment_type_id(value) {
                             <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Jumlah Angsuran') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <input type="text" name="credit_account_payment_amount_view" id="credit_account_payment_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Jumlah Angsuran" value="{{ old('credit_account_payment_amount_view', empty($datasession['credit_account_payment_amount']) ? '' : number_format($datasession['credit_account_payment_amount'],2) ?? '') }}" autocomplete="off"/>
+                                    <input type="text" name="credit_account_payment_amount_view" id="credit_account_payment_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Jumlah Angsuran" value="{{ old('credit_account_payment_amount_view', empty($datasession['credit_account_payment_amount']) ? '' : number_format($datasession['credit_account_payment_amount'],2) ?? '') }}" autocomplete="off" readonly/>
                                     <input type="hidden" name="credit_account_payment_amount" id="credit_account_payment_amount" class="form-control form-control-lg form-control-solid" value="{{ old('credit_account_payment_amount', $datasession['credit_account_payment_amount'] ?? '') }}"/>
                                 </div>
                             </div>
