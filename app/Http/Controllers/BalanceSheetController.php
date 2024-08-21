@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Elibyy\TCPDF\Facades\TCPDF;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use App\Models\AcctAccountOpeningBalance;
-use App\Models\AcctAccountMutation;
-use App\Models\AcctBalanceSheetReport;
-use App\Models\AcctProfitLoss;
 use App\Models\CoreBranch;
-use App\Models\PreferenceCompany;
-use App\Helpers\Configuration;
 use App\Models\AcctAccount;
+use Illuminate\Http\Request;
+use App\Helpers\Configuration;
+use App\Models\AcctProfitLoss;
+use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
 use App\Models\AcctAccountBalance;
 use App\Models\AcctJournalVoucher;
+use App\Models\AcctAccountMutation;
 use App\Models\AcctProfitLossReport;
+use App\Models\AcctBalanceSheetReport;
+use App\Models\AcctAccountOpeningBalance;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use App\Models\AcctBalanceSheetReportBranch;
 
 
 class BalanceSheetController extends Controller
@@ -47,15 +48,37 @@ class BalanceSheetController extends Controller
         }
 
         // dd($session);
-        $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->from('acct_balance_sheet_report')
-        ->where('acct_balance_sheet_report.account_name1','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
-        $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->where('acct_balance_sheet_report.account_name2','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
+        if($branch_id == 1){
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }elseif($branch_id == 6){
+            $acctbalancesheetreport_left = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id1', 'acct_balance_sheet_report_branch.account_code1', 'acct_balance_sheet_report_branch.account_name1', 'acct_balance_sheet_report_branch.report_formula1', 'acct_balance_sheet_report_branch.report_operator1', 'acct_balance_sheet_report_branch.report_type1', 'acct_balance_sheet_report_branch.report_tab1', 'acct_balance_sheet_report_branch.report_bold1', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->from('acct_balance_sheet_report_branch')
+            ->where('acct_balance_sheet_report_branch.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id2', 'acct_balance_sheet_report_branch.account_code2', 'acct_balance_sheet_report_branch.account_name2', 'acct_balance_sheet_report_branch.report_formula2', 'acct_balance_sheet_report_branch.report_operator2', 'acct_balance_sheet_report_branch.report_type2', 'acct_balance_sheet_report_branch.report_tab2', 'acct_balance_sheet_report_branch.report_bold2', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->where('acct_balance_sheet_report_branch.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+        }else{
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }
 
         // dd($acctbalancesheetreport_left,$acctbalancesheetreport_right);
         return view('content.BalanceSheet.index', compact('preferencecompany','acctbalancesheetreport_left','acctbalancesheetreport_right','monthlist','corebranch','session'));
@@ -181,15 +204,38 @@ class BalanceSheetController extends Controller
         }
         $branchname 					= $this->getBranchName($sesi['branch_id']);
         $preferencecompany 				= PreferenceCompany::first();
-        $acctbalancesheetreport_left    = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->from('acct_balance_sheet_report')
-        ->where('acct_balance_sheet_report.account_name1','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
-        $acctbalancesheetreport_right   = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->where('acct_balance_sheet_report.account_name2','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
+
+        if( $sesi['branch_id'] == 1){
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }elseif( $sesi['branch_id'] == 6){
+            $acctbalancesheetreport_left = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id1', 'acct_balance_sheet_report_branch.account_code1', 'acct_balance_sheet_report_branch.account_name1', 'acct_balance_sheet_report_branch.report_formula1', 'acct_balance_sheet_report_branch.report_operator1', 'acct_balance_sheet_report_branch.report_type1', 'acct_balance_sheet_report_branch.report_tab1', 'acct_balance_sheet_report_branch.report_bold1', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->from('acct_balance_sheet_report_branch')
+            ->where('acct_balance_sheet_report_branch.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id2', 'acct_balance_sheet_report_branch.account_code2', 'acct_balance_sheet_report_branch.account_name2', 'acct_balance_sheet_report_branch.report_formula2', 'acct_balance_sheet_report_branch.report_operator2', 'acct_balance_sheet_report_branch.report_type2', 'acct_balance_sheet_report_branch.report_tab2', 'acct_balance_sheet_report_branch.report_bold2', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->where('acct_balance_sheet_report_branch.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+        }else{
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }
 
         $pdf = new TCPDF('P', PDF_UNIT, 'F4', true, 'UTF-8', false);
 
@@ -729,15 +775,38 @@ class BalanceSheetController extends Controller
         }
 
         $preferencecompany 				= PreferenceCompany::first();
-        $acctbalancesheetreport_left    = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->from('acct_balance_sheet_report')
-        ->where('acct_balance_sheet_report.account_name1','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
-        $acctbalancesheetreport_right   = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
-        ->where('acct_balance_sheet_report.account_name2','!=','')
-        ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
-        ->get();
+
+        if( $sesi['branch_id'] == 1){
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }elseif( $sesi['branch_id'] == 6){
+            $acctbalancesheetreport_left = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id1', 'acct_balance_sheet_report_branch.account_code1', 'acct_balance_sheet_report_branch.account_name1', 'acct_balance_sheet_report_branch.report_formula1', 'acct_balance_sheet_report_branch.report_operator1', 'acct_balance_sheet_report_branch.report_type1', 'acct_balance_sheet_report_branch.report_tab1', 'acct_balance_sheet_report_branch.report_bold1', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->from('acct_balance_sheet_report_branch')
+            ->where('acct_balance_sheet_report_branch.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReportBranch::select('acct_balance_sheet_report_branch.balance_sheet_report_id', 'acct_balance_sheet_report_branch.report_no', 'acct_balance_sheet_report_branch.account_id2', 'acct_balance_sheet_report_branch.account_code2', 'acct_balance_sheet_report_branch.account_name2', 'acct_balance_sheet_report_branch.report_formula2', 'acct_balance_sheet_report_branch.report_operator2', 'acct_balance_sheet_report_branch.report_type2', 'acct_balance_sheet_report_branch.report_tab2', 'acct_balance_sheet_report_branch.report_bold2', 'acct_balance_sheet_report_branch.report_formula3', 'acct_balance_sheet_report_branch.report_operator3')
+            ->where('acct_balance_sheet_report_branch.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report_branch.report_no', 'ASC')
+            ->get();
+        }else{
+            $acctbalancesheetreport_left = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id1', 'acct_balance_sheet_report.account_code1', 'acct_balance_sheet_report.account_name1', 'acct_balance_sheet_report.report_formula1', 'acct_balance_sheet_report.report_operator1', 'acct_balance_sheet_report.report_type1', 'acct_balance_sheet_report.report_tab1', 'acct_balance_sheet_report.report_bold1', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->from('acct_balance_sheet_report')
+            ->where('acct_balance_sheet_report.account_name1','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+            $acctbalancesheetreport_right = AcctBalanceSheetReport::select('acct_balance_sheet_report.balance_sheet_report_id', 'acct_balance_sheet_report.report_no', 'acct_balance_sheet_report.account_id2', 'acct_balance_sheet_report.account_code2', 'acct_balance_sheet_report.account_name2', 'acct_balance_sheet_report.report_formula2', 'acct_balance_sheet_report.report_operator2', 'acct_balance_sheet_report.report_type2', 'acct_balance_sheet_report.report_tab2', 'acct_balance_sheet_report.report_bold2', 'acct_balance_sheet_report.report_formula3', 'acct_balance_sheet_report.report_operator3')
+            ->where('acct_balance_sheet_report.account_name2','!=','')
+            ->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+            ->get();
+        }
 
         $day 	= date("t", strtotime($sesi['month_period']));
         $month 	= $sesi['month_period'];
