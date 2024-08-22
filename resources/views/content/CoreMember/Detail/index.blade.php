@@ -171,8 +171,8 @@ const form = document.getElementById('kt_member_detail_view_form');
                                     @foreach($coremember->depositoacc as $key => $val)
                                         <tr>
                                             <th style="text-align: center">{{ $no }}</th>
-                                            <th>{{ $val['savings_account_no'] }}</th>
-                                            <th>{{ $val->deposito->savings_name }}</th>
+                                            <th>{{ $val->deposito_account_no }}</th>
+                                            <th>{{ $val->deposito->deposito_name }}</th>
                                         </tr>
                                     <?php $no++ ?>
                                     @endforeach
