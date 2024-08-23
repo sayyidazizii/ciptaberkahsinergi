@@ -930,7 +930,7 @@ class AcctCreditsAccountController extends Controller
     public function printNote($credits_account_id)
     {
         $preferencecompany 		= PreferenceCompany::first();
-        $acctcreditsaccount	 	= AcctCreditsAccount::with('member')->find($credits_account_id);
+        $acctcreditsaccount	 	= AcctCreditsAccount::with('member','credit')->find($credits_account_id);
 
         $pdf = new TCPDF('P', PDF_UNIT, 'F4', true, 'UTF-8', false);
 
@@ -969,6 +969,10 @@ class AcctCreditsAccountController extends Controller
                 <td width=\"80%\"><div style=\"text-align: left;\">: {$acctcreditsaccount->member->member_name}</div></td>
             </tr>
             <tr>
+                <td width=\"20%\"><div style=\"text-align: left;\">No. Anggota</div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: {$acctcreditsaccount->member->member_no}</div></td>
+            </tr>
+            <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Alamat</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: {$acctcreditsaccount->member->member_address}</div></td>
             </tr>
@@ -977,20 +981,22 @@ class AcctCreditsAccountController extends Controller
                 <td width=\"80%\"><div style=\"text-align: left;\">: {$acctcreditsaccount->member->member_job}</div></td>
             </tr>
             <tr>
-                <td width=\"20%\"><div style=\"text-align: left;\">Besar Paket</div></td>
+                <td width=\"20%\"><div style=\"text-align: left;\">Jenis Pinjaman</div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: ".$acctcreditsaccount->credit->credits_name."</div></td>
+            </tr>
+            <tr>
+                <td width=\"20%\"><div style=\"text-align: left;\">Plafon</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsaccount['credits_account_amount'], 2)."</div></td>
             </tr>
             <tr>
-                <td width=\"20%\"><div style=\"text-align: left;\">Besar Angsuran</div></td>
+                <td width=\"20%\"><div style=\"text-align: left;\">Angsuran</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsaccount['credits_account_payment_amount'], 2)."</div></td>
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Pembayaran Tiap</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: </div></td>
             </tr>
-            <tr>
-                <td width=\"100%\"><div style=\"text-align: left;\">Kelompok................................. Resort  ................................   No. Anggota {$acctcreditsaccount->member->member_no} </div></td>
-            </tr>
+            
            
         </table>";
 
