@@ -405,7 +405,7 @@ if(!isset($coremember['member_gender'])){
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Bunga Per Bulan') }}</label>
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Bunga Per Th') }}</label>
                                 <div class="col-lg-8 fv-row">
                                     <input type="text" name="savings_interest_rate" id="savings_interest_rate" class="form-control form-control-lg form-control-solid" placeholder="%" value="{{ old('savings_interest_rate', $sessiondata['savings_interest_rate'] ?? '') }}" autocomplete="off" readonly/>
                                 </div>
