@@ -989,7 +989,7 @@ class AcctCreditsAccountController extends Controller
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsaccount['credits_account_amount'], 2)."</div></td>
             </tr>
             <tr>
-                <td width=\"20%\"><div style=\"text-align: left;\">Angsuran</div></td>
+                <td width=\"20%\"><div style=\"text-align: left;\">Tenor</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsaccount['credits_account_payment_amount'], 2)."</div></td>
             </tr>
             <tr>
