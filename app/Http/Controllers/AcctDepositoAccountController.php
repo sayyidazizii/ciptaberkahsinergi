@@ -89,7 +89,9 @@ class AcctDepositoAccountController extends Controller
             $sessiondata['office_id']                               = null;
             $sessiondata['deposito_account_due_date']               = null;
             $sessiondata['deposito_account_amount']                 = 0;
-            $sessiondata['deposito_account_incentive']             = 0;
+            $sessiondata['deposito_account_incentive']              = 0;
+            $sessiondata['deposito_account_incentive_amount']       = 0;
+            $sessiondata['deposito_account_interest_type']          = 0;
         }
         $sessiondata[$request->name] = $request->value;
         session()->put('data_depositoaccountadd', $sessiondata);
@@ -103,7 +105,9 @@ class AcctDepositoAccountController extends Controller
         $memberidentity         = array_filter(Configuration::MemberIdentity());
         $familyrelationship     = array_filter(Configuration::FamilyRelationship());
         $depositoextratype      = array_filter(Configuration::DepositoExtraType());
+        $depositointeresttype   = array_filter(Configuration::DepositoInterestType());
         
+        // dd($sessiondata);
         $acctdeposito            = AcctDeposito::select('deposito_id', 'deposito_name')
 	    ->join('acct_account', 'acct_account.account_id','=','acct_deposito.account_id')
         ->where('acct_deposito.data_state', 0)
@@ -126,7 +130,7 @@ class AcctDepositoAccountController extends Controller
             ->first();
         }
 
-        return view('content.AcctDepositoAccount.Add.index', compact('sessiondata', 'membergender', 'memberidentity', 'familyrelationship', 'depositoextratype', 'acctdeposito', 'coreoffice', 'coremember', 'savingsaccount'));
+        return view('content.AcctDepositoAccount.Add.index', compact('sessiondata', 'membergender', 'memberidentity', 'familyrelationship', 'depositoextratype','depositointeresttype','acctdeposito', 'coreoffice', 'coremember', 'savingsaccount'));
     }
 
     public function processAdd(Request $request)
@@ -147,6 +151,7 @@ class AcctDepositoAccountController extends Controller
             'deposito_account_incentive'    => ['required'],
             'deposito_account_incentive_amount'    => ['required'],
             'deposito_account_amount'       => ['required'],
+            'deposito_account_interest_type'=> ['required'],
         ]);
 
         DB::beginTransaction();
@@ -159,6 +164,7 @@ class AcctDepositoAccountController extends Controller
                 'office_id'                             => $fields['office_id'],
                 'deposito_account_period'               => $fields['deposito_period'],
                 'deposito_account_extra_type'           => $fields['deposito_account_extra_type'],
+                'deposito_account_interest_type'        => $fields['deposito_account_interest_type'],
                 'deposito_account_date'                 => date('Y-m-d', strtotime($fields['deposito_account_date'])),
                 'deposito_account_due_date'             => date('Y-m-d', strtotime($fields['deposito_account_due_date'])),
                 'deposito_account_interest'             => $fields['deposito_account_interest'],
@@ -310,6 +316,8 @@ class AcctDepositoAccountController extends Controller
             $sessiondata['deposito_account_amount']                = 0;
             $sessiondata['deposito_account_incentive']             = 0;
             $sessiondata['deposito_account_incentive_amount']      = 0;
+            $sessiondata['deposito_account_interest_type']      = 0;
+            
         }
         $sessiondata['member_id'] = $member_id;
         session()->put('data_depositoaccountadd', $sessiondata);
@@ -334,6 +342,8 @@ class AcctDepositoAccountController extends Controller
             $sessiondata['deposito_account_amount']                = 0;
             $sessiondata['deposito_account_incentive']             = 0;
             $sessiondata['deposito_account_incentive_amount']      = 0;
+            $sessiondata['deposito_account_interest_type']      = 0;
+
 
         }
         $sessiondata['savings_account_id'] = $savings_account_id;

@@ -304,7 +304,8 @@ if(empty($sessiondata)){
     $sessiondata['deposito_account_due_date']               = null;
     $sessiondata['deposito_account_amount']                 = 0;
     $sessiondata['deposito_account_incentive']              = 0;
-    $sessiondata['deposito_account_incentive_amount']              = 0;
+    $sessiondata['deposito_account_incentive_amount']       = 0;
+    $sessiondata['deposito_account_interest_type']          = 0;
 }
 if(!isset($coremember['member_heir_relationship'])){
     $coremember['member_heir_relationship'] = null;
@@ -520,6 +521,17 @@ if(!isset($coremember['member_gender'])){
                                 <div class="col-lg-8 fv-row">
                                     <input type="text" name="deposito_account_amount_view" id="deposito_account_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Setoran" value="{{ old('deposito_account_amount_view', number_format($sessiondata['deposito_account_amount'], 2) ?? '') }}" autocomplete="off"/>
                                     <input type="hidden" name="deposito_account_amount" id="deposito_account_amount" class="form-control form-control-lg form-control-solid" placeholder="Setoran" value="{{ old('deposito_account_amount', $sessiondata['deposito_account_amount'] ?? '') }}" autocomplete="off"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Tipe Prose Bunga') }}</label>
+                                <div class="col-lg-8 fv-row">
+                                    <select name="deposito_account_interest_type" id="deposito_account_interest_type" aria-label="{{ __('Jenis Proses Bunga') }}" data-control="select2" data-placeholder="{{ __('Pilih proses bunga..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="function_elements_add(this.name, this.value)">
+                                        <option value="deposito_account_interest_type">{{ __('Pilih Proses Bunga..') }}</option>
+                                        @foreach($depositointeresttype as $key => $value)
+                                            <option data-kt-flag="{{ $value }}"  value="{{ $key }}" {{ $key === old($key, (int)$sessiondata['deposito_account_interest_type'] ?? '') ? 'selected' :'' }}>{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
