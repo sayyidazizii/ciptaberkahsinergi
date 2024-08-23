@@ -31,7 +31,7 @@ var validator = FormValidation.formValidation(
             'savings_interest_rate': {
                 validators: {
                     notEmpty: {
-                        message: 'Bunga Per Bulan harus diisi'
+                        message: 'Bunga Per Tahun harus diisi'
                     }
                 }
             },
