@@ -121,6 +121,15 @@ class Configuration
 		return $deposito_extra_type;
 	}
 
+	public static function DepositoInterestType(){
+		$deposito_extra_type = array (
+            0 => 'Simpanan', 
+            1 => 'Deposito'
+        );
+
+		return $deposito_extra_type;
+	}
+
 	public static function KelompokPerkiraan(){
 		return collect([
             0 => 'NA - Neraca Aktiva', 
