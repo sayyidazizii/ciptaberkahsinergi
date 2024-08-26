@@ -6,15 +6,15 @@ const form = document.getElementById('kt_savings_cash_mutation_add_view_form');
 var validator = FormValidation.formValidation(
     form,
     {
-        fields: {
-            'savings_account_id': {
-                validators: {
-                    notEmpty: {
-                        message: 'Tabungan harus diisi'
-                    }
-                }
-            },
-        },
+        // fields: {
+        //     'savings_account_id': {
+        //         validators: {
+        //             notEmpty: {
+        //                 message: 'Tabungan harus diisi'
+        //             }
+        //         }
+        //     },
+        // },
 
         plugins: {
             trigger: new FormValidation.plugins.Trigger(),
@@ -191,6 +191,8 @@ if(!isset($acctsavingsaccount['savings_account_last_balance'])){
                                     <input type="hidden" name="deposito_profit_sharing_amount" id="deposito_profit_sharing_amount" class="form-control form-control-lg form-control-solid" placeholder="Rupiah" value="{{ old('deposito_profit_sharing_amount', '' ?? '') }}" autocomplete="off"/>
                                 </div>
                             </div>
+                            @if ($acctdepositoaccount['deposito_account_interest_type'] == 0)
+
                             <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('No Rek Tabungan') }}</label>
                                 <div class="col-lg-5 fv-row">
@@ -206,6 +208,21 @@ if(!isset($acctsavingsaccount['savings_account_last_balance'])){
                                     </button>
                                 </div>
                             </div>
+                            @endif
+
+                            @if ($acctdepositoaccount['deposito_account_interest_type'] == 1)
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('No Rek Deposito') }}</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="hidden" name="deposito_account_id" class="form-control form-control-lg form-control-solid" placeholder="ID Rek Deposito" value="{{ old('deposito_account_id', $depositoaccount['deposito_account_id'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="text" name="full_no_deposito" class="form-control form-control-lg form-control-solid" placeholder="No Rek Deposito" value="{{ old('full_no_deposito', $depositoaccount['full_no_deposito'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="hidden" name="deposito_id" class="form-control form-control-lg form-control-solid" placeholder="No Rek Deposito" value="{{ old('deposito_id', $depositoaccount['deposito_id'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="hidden" name="member_id_deposito" class="form-control form-control-lg form-control-solid" placeholder="No Rek Deposito" value="{{ old('member_id_deposito', $depositoaccount['member_id'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="hidden" name="deposito_account_amount" class="form-control form-control-lg form-control-solid" placeholder="No Rek Deposito" value="{{ old('deposito_account_amount', $depositoaccount['deposito_account_amount'] ?? '') }}" autocomplete="off" readonly/>
+                                </div>
+                            </div>
+                            @endif
+                           
                         </div>
                     </div>
                 </div>

@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctDeposito;
-use App\Models\AcctDepositoAccount;
-use App\Models\AcctDepositoProfitSharing;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsTransferMutation;
-use App\Models\AcctSavingsTransferMutationTo;
 use App\Models\CoreBranch;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\DataTables\AcctDepositoProfitSharing\AcctDepositoProfitSharingDataTable;
-use App\DataTables\AcctDepositoProfitSharing\AcctSavingsAccountDataTable;
+use App\Models\AcctAccount;
+use App\Models\AcctSavings;
+use App\Models\AcctDeposito;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use App\Models\AcctDepositoAccount;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctDepositoProfitSharing;
+use App\Models\AcctSavingsTransferMutation;
+use App\Models\PreferenceTransactionModule;
+use App\Models\AcctSavingsTransferMutationTo;
+use App\DataTables\AcctDepositoProfitSharing\AcctSavingsAccountDataTable;
+use App\DataTables\AcctDepositoProfitSharing\AcctDepositoProfitSharingDataTable;
 
 class AcctDepositoProfitSharingController extends Controller
 {
@@ -105,7 +106,17 @@ class AcctDepositoProfitSharingController extends Controller
         ->first();
 
         $acctsavingsaccount     = array();
-        if(isset($sessiondata['savings_account_id'])){
+        $depositoaccount     = array();
+
+
+        if($acctdepositoaccount['deposito_account_interest_type'] == 1){
+            $depositoaccount = AcctDepositoAccount::select('acct_deposito_account.*', 'acct_deposito_account.deposito_id', 'acct_deposito_account.member_id', 'acct_deposito_account.deposito_account_amount', DB::raw('CONCAT(acct_deposito_account.deposito_account_no," - ",core_member.member_name) AS full_no_deposito'))
+            ->withoutGlobalScopes() 
+            ->join('core_member', 'core_member.member_id', '=', 'acct_deposito_account.member_id')
+            ->where('acct_deposito_account.deposito_account_id', $acctdepositoaccount['deposito_account_id'])
+            ->first();
+        }
+        else if(isset($sessiondata['savings_account_id'])){
             $acctsavingsaccount = AcctSavingsAccount::select('acct_savings_account.*', 'acct_savings_account.savings_id', 'acct_savings_account.member_id', 'acct_savings_account.savings_account_last_balance', DB::raw('CONCAT(acct_savings_account.savings_account_no," - ",core_member.member_name) AS full_no'))
             ->withoutGlobalScopes() 
             ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
@@ -119,7 +130,9 @@ class AcctDepositoProfitSharingController extends Controller
             ->first();
         }
 
-        return view('content.AcctDepositoProfitSharing.Add.index', compact('sessiondata', 'acctdepositoaccount', 'acctsavingsaccount'));
+        
+
+        return view('content.AcctDepositoProfitSharing.Add.index', compact('sessiondata', 'acctdepositoaccount', 'acctsavingsaccount','depositoaccount'));
     }
 
     public function modalAcctSavingsAccount(AcctSavingsAccountDataTable $dataTable)
@@ -141,9 +154,9 @@ class AcctDepositoProfitSharingController extends Controller
     public function processUpdate(Request $request)
     {
         $preferencecompany = PreferenceCompany::first();
-
+        
         $fields = request()->validate([
-            'savings_account_id'            => ['required'],
+            // 'savings_account_id'            => ['required'],
         ]);
 
         DB::beginTransaction();
@@ -156,7 +169,7 @@ class AcctDepositoProfitSharingController extends Controller
 				'deposito_index_amount'				=> $request->deposito_account_interest,
 				'deposito_profit_sharing_amount'	=> $request->deposito_profit_sharing_amount,
 				'deposito_profit_sharing_period'	=> date('mY'),
-				'savings_account_id'				=> $fields['savings_account_id'],
+				'savings_account_id'				=> $request->savings_account_id,
 				'deposito_profit_sharing_status'	=> 1,
 			);
 
@@ -178,14 +191,25 @@ class AcctDepositoProfitSharingController extends Controller
             $depositoprofitsharing->deposito_index_amount           = $request->deposito_account_interest;
             $depositoprofitsharing->deposito_profit_sharing_amount  = $request->deposito_profit_sharing_amount;
             $depositoprofitsharing->deposito_profit_sharing_period  = date('mY');
-            $depositoprofitsharing->savings_account_id              = $fields['savings_account_id'];
+            $depositoprofitsharing->savings_account_id              = $request->savings_account_id;
             $depositoprofitsharing->deposito_profit_sharing_status  = 1;
             $depositoprofitsharing->save();
 
 			$depositoaccount = AcctDepositoAccount::findOrFail($request->deposito_account_id);
-            $depositoaccount->deposito_account_interest_amount  = $depositoaccount['deposito_account_interest_amount']+$data['deposito_profit_sharing_amount'];
-            $depositoaccount->deposito_process_last_date        = $data['deposito_profit_sharing_date'];
-            $depositoaccount->save();
+            //when interest type 
+            if($depositoaccount['deposito_account_interest_type'] == 0){
+                $depositoaccount->deposito_account_interest_amount  = $depositoaccount['deposito_account_interest_amount']+$data['deposito_profit_sharing_amount'];
+                $depositoaccount->deposito_process_last_date        = $data['deposito_profit_sharing_date'];
+                $depositoaccount->save();
+            }else{
+                $depositoaccount->deposito_account_interest_amount  = $depositoaccount['deposito_account_interest_amount']+$data['deposito_profit_sharing_amount'];
+                $depositoaccount->deposito_process_last_date        = $data['deposito_profit_sharing_date'];
+                $depositoaccount->deposito_account_amount           = $depositoaccount['deposito_account_amount'] + $data['deposito_profit_sharing_amount'];
+                $depositoaccount->save();
+
+                AcctDepositoProfitSharing::where('deposito_account_id',$request->deposito_account_id)
+                ->update(['deposito_account_last_balance' => $depositoaccount['deposito_account_amount']]);
+            }
 
             $total_amount	= $data['deposito_profit_sharing_amount'];
             $tax_amount		= 0;
@@ -194,33 +218,35 @@ class AcctDepositoProfitSharingController extends Controller
             }
             $total_amount_min_tax	= $total_amount - $tax_amount;
 
-            $data_transfer = array (
-                'branch_id'							=> auth()->user()->branch_id,
-                'savings_transfer_mutation_date'	=> date('Y-m-d'),
-                'savings_transfer_mutation_amount'	=> $total_amount_min_tax,
-                'operated_name'						=> 'SYS',
-                'created_id'						=> auth()->user()->user_id,
-            );
-            AcctSavingsTransferMutation::create($data_transfer);
+            if($depositoaccount['deposito_account_interest_type'] == 0){
+                $data_transfer = array (
+                    'branch_id'							=> auth()->user()->branch_id,
+                    'savings_transfer_mutation_date'	=> date('Y-m-d'),
+                    'savings_transfer_mutation_amount'	=> $total_amount_min_tax,
+                    'operated_name'						=> 'SYS',
+                    'created_id'						=> auth()->user()->user_id,
+                );
+                AcctSavingsTransferMutation::create($data_transfer);
 
-            $savings_transfer_mutation_id = AcctSavingsTransferMutation::select('savings_transfer_mutation_id')
-            ->where('created_id', $data_transfer['created_id'])
-            ->orderBy('savings_transfer_mutation_id', 'DESC')
-            ->first()
-            ->savings_transfer_mutation_id;
+                $savings_transfer_mutation_id = AcctSavingsTransferMutation::select('savings_transfer_mutation_id')
+                ->where('created_id', $data_transfer['created_id'])
+                ->orderBy('savings_transfer_mutation_id', 'DESC')
+                ->first()
+                ->savings_transfer_mutation_id;
 
-            $data_transfer_to = array (
-                'savings_transfer_mutation_id'				=> $savings_transfer_mutation_id,
-                'savings_account_id'						=> $data['savings_account_id'],
-                'savings_id'								=> $data_savings['savings_id'],
-                'member_id'									=> $data_savings['member_id'],
-                'branch_id'									=> auth()->user()->branch_id,
-                'mutation_id'								=> $preferencecompany['deposito_basil_id'],
-                'savings_account_opening_balance'			=> $data_savings['savings_account_opening_balance'],
-                'savings_transfer_mutation_to_amount'		=> $total_amount_min_tax,
-                'savings_account_last_balance'				=> $data_savings['savings_account_last_balance'],
-            );
-            AcctSavingsTransferMutationTo::create($data_transfer_to);
+                $data_transfer_to = array (
+                    'savings_transfer_mutation_id'				=> $savings_transfer_mutation_id,
+                    'savings_account_id'						=> $data['savings_account_id'],
+                    'savings_id'								=> $data_savings['savings_id'],
+                    'member_id'									=> $data_savings['member_id'],
+                    'branch_id'									=> auth()->user()->branch_id,
+                    'mutation_id'								=> $preferencecompany['deposito_basil_id'],
+                    'savings_account_opening_balance'			=> $data_savings['savings_account_opening_balance'],
+                    'savings_transfer_mutation_to_amount'		=> $total_amount_min_tax,
+                    'savings_account_last_balance'				=> $data_savings['savings_account_last_balance'],
+                );
+                AcctSavingsTransferMutationTo::create($data_transfer_to);
+            }
 
             $acctdepositoprofitsharing_last 	= AcctDepositoProfitSharing::select('acct_deposito_profit_sharing.deposito_profit_sharing_id', 'acct_deposito_profit_sharing.deposito_account_id', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.member_id', 'core_member.member_name')
 			->withoutGlobalScopes() 
@@ -274,11 +300,17 @@ class AcctDepositoProfitSharingController extends Controller
             );
             AcctJournalVoucherItem::create($data_debet);
 
-            $account_id = AcctSavings::select('account_id')
-            ->where('savings_id', $data_savings['savings_id'])
-            ->first()
-            ->account_id;
-
+            if($depositoaccount['deposito_account_interest_type'] == 0){
+                $account_id = AcctSavings::select('account_id')
+                ->where('savings_id', $data_savings['savings_id'])
+                ->first()
+                ->account_id;
+            }else{
+                $account_id = AcctDeposito::select('account_id')
+                ->where('deposito_id', $data['deposito_id'])
+                ->first()
+                ->account_id;
+            }
 
             $account_id_default_status = AcctAccount::select('account_default_status')
             ->where('acct_account.account_id', $account_id)
@@ -327,10 +359,12 @@ class AcctDepositoProfitSharingController extends Controller
                 'alert' => 'success'
             );
         } catch (\Exception $e) {
-            DB::rollback();
+             // Log the error message
+            Log::error('Error processing Bunga Simpanan Berjangka: ' . $e->getMessage());
             $message = array(
                 'pesan' => 'Bunga Simpanan Berjangka gagal diproses',
-                'alert' => 'error'
+                'alert' => 'error',
+                'error_details' => $e->getMessage() // You can pass the error message if needed
             );
         }
         
