@@ -224,6 +224,12 @@ if(empty($sessiondata)){
                                 </div>
                             </div>
                             <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Saldo Rek Tabungan') }}</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="savings_account_last_balance_view" id="savings_account_last_balance_view" class="form-control form-control-lg form-control-solid" placeholder="Rupiah" value="{{ old('savings_account_last_balance_view', number_format($acctsavingsaccount['savings_account_last_balance']) ?? '') }}" autocomplete="off" readonly/>
+                                </div>
+                            </div>
+                            <div class="row mb-6">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Jenis Pinjaman') }}</label>
                                 <div class="col-lg-8 fv-row">
                                     <input type="text" name="credits_name" class="form-control form-control-lg form-control-solid" placeholder="Jenis Pinjaman" value="{{ old('credits_name', $acctcreditsaccount->credit->credits_name ?? '') }}" autocomplete="off" readonly/>

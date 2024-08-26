@@ -110,7 +110,7 @@ class AcctCreditsPaymentDebetController extends Controller
         $acctcreditspayment     = array();
         
         if(isset($sessiondata['savings_account_id'])){
-            $acctsavingsaccount = AcctSavingsAccount::select('savings_account_id', 'savings_account_no')
+            $acctsavingsaccount = AcctSavingsAccount::select('savings_account_id', 'savings_account_no', 'savings_account_last_balance')
             ->where('savings_account_id', $sessiondata['savings_account_id'])
             ->first();
         }
