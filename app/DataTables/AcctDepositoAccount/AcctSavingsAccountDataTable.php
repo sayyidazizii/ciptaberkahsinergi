@@ -32,8 +32,15 @@ class AcctSavingsAccountDataTable extends DataTable
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function query(AcctSavingsAccount $model)
-    {
-        return $model->newQuery()
+    {   
+        $sessiondata = session()->get('data_depositoaccountadd');
+        if(!$sessiondata){
+            $sessiondata = array(
+                'member_id' => null,
+            );
+        }
+
+        $querydata = $model->newQuery()
         ->withoutGlobalScopes()
         ->select('acct_savings_account.savings_account_id','acct_savings.savings_name', 'acct_savings_account.savings_account_no', 'core_member.member_name', 'core_member.member_address')
         ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
@@ -41,6 +48,12 @@ class AcctSavingsAccountDataTable extends DataTable
         ->where('acct_savings_account.savings_account_status', 0)
         ->where('acct_savings_account.data_state', 0)
         ->where('acct_savings_account.branch_id', auth()->user()->branch_id);
+
+        if($sessiondata['member_id']){
+            $querydata = $querydata->where('core_member.member_id', $sessiondata['member_id']);
+        }
+       
+        return $querydata;
     }
     /**
      * Optional method if you want to use html builder.
