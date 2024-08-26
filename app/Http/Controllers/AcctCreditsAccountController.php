@@ -5309,7 +5309,7 @@ class AcctCreditsAccountController extends Controller
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalpokok, 2)."</div></td>
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalmargin, 2)."</div></td>
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($total, 2)."</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalpk, 2)."</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\"></div></td>
             </tr>
         </table>";
 
