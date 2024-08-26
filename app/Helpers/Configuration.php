@@ -123,8 +123,8 @@ class Configuration
 
 	public static function DepositoInterestType(){
 		$deposito_extra_type = array (
-            0 => 'Simpanan', 
-            1 => 'Deposito'
+            0 => 'Simpanan Biasa', 
+            1 => 'Simpanan Deposito'
         );
 
 		return $deposito_extra_type;
