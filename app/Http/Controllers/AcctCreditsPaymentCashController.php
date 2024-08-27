@@ -166,7 +166,9 @@ class AcctCreditsPaymentCashController extends Controller
 						$interval_payments	= $date4->diff($date3);
 					}
 					$interest_month 	= $acctcreditsaccount['credits_account_last_balance'] * $acctcreditsaccount['credits_account_interest']/100;
-					$angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
+					// $angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
+					$angsuran_bunga 	= $interest_month;
+
 				}else{
 					$start_date 		= $acctcreditsaccount['credits_account_date'];
 					$end_date 			= date('Y-m-d', strtotime("+1 months", strtotime($start_date)));
@@ -180,7 +182,8 @@ class AcctCreditsPaymentCashController extends Controller
 						$interval_payments	= $date4->diff($date3);
 					}
 					$interest_month 	= $acctcreditsaccount['credits_account_last_balance'] * $acctcreditsaccount['credits_account_interest']/100;
-					$angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
+					// $angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
+					$angsuran_bunga 	= $interest_month;
 				}
                 $angsuranpokok		= $acctcreditsaccount['credits_account_principal_amount'];
                 $angsuranbunga		= $angsuran_bunga;
