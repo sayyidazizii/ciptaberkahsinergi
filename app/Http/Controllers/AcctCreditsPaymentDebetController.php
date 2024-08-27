@@ -163,7 +163,7 @@ class AcctCreditsPaymentDebetController extends Controller
             $angsuranbunga                      = 0;
             $angsuranke                         = 0;
         }
-
+        // dd($acctsavingsaccount);
         return view('content.AcctCreditsPaymentDebet.Add.index', compact('sessiondata', 'acctsavingsaccount', 'acctcreditsaccount', 'acctcreditspayment', 'angsuranke', 'angsuranpokok', 'angsuranbunga', 'credits_payment_fine_amount', 'credits_account_accumulated_fines', 'credits_payment_day_of_delay'));
     }
 
