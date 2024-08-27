@@ -73,12 +73,12 @@ class AcctCreditsAccountMasterDataTable extends DataTable
             })
             ->editColumn('member.member_gender', function (AcctCreditsAccount $model) {
 
-                if($model->member_gender == 0)
+                if($model->member->member_gender == 0)
                 {
                     return 'Perempuan';
                 }else{
                     return 'Laki-laki';
-                }               
+                }
             })
             ->editColumn('member_working_type', function (AcctCreditsAccount $model) {
                 return ($model->member_working_type == 0 ?'': ($model->member_working_type == 1?'Karyawan': ($model->member_working_type == 2 ? 'Profesional':'Non Karyawan')));
@@ -175,7 +175,7 @@ class AcctCreditsAccountMasterDataTable extends DataTable
             Column::make('credits_account_principal_amount')->title(__('Angsuran Pokok')),
             Column::make('credits_account_interest_amount')->title(__('Angsuran Bunga')),
             Column::make('credits_account_last_balance')->title(__('Saldo Pokok')),
-            
+
         ];
     }
 
