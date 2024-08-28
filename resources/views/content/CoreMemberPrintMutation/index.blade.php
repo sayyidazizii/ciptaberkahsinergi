@@ -18,7 +18,7 @@ function function_elements_add(name, value){
         type: "POST",
         url : "{{route('member-print-mutation.elements-add')}}",
         data : {
-            'name'      : name, 
+            'name'      : name,
             'value'     : value,
             '_token'    : '{{csrf_token()}}'
         },
@@ -35,7 +35,7 @@ function searchDate(){
         type: "POST",
         url : "{{route('member-print-mutation.change-date')}}",
         data : {
-            'start_date'    : start_date, 
+            'start_date'    : start_date,
             'end_date'      : end_date,
             '_token'        : '{{csrf_token()}}'
         },
@@ -46,7 +46,7 @@ function searchDate(){
 }
 </script>
 @endsection
-<?php 
+<?php
 if (empty($sessiondata)){
     $sessiondata['coremember']  = null;
     $sessiondata['start_date']  = date('d-m-Y');
@@ -140,10 +140,10 @@ if (empty($sessiondata)){
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     $no = 1;
                                     if(count($acctsavingsmemberdetail)>0){
-                                    ?> 
+                                    ?>
                                     @foreach($acctsavingsmemberdetail as $key => $val)
                                         <tr>
                                             <td style="text-align: center">{{ $no }}</td>
@@ -151,8 +151,8 @@ if (empty($sessiondata)){
                                             <td>{{ $val['transaction_date'] }}</td>
                                             <td>{{ $val['mutation_code'] }}</td>
                                             <td style="text-align: right">{{ number_format($val['principal_savings_amount'], 2) }}</td>
-                                            <td style="text-align: right">{{ number_format($val['special_savings_amount'], 2) }}</td>
                                             <td style="text-align: right">{{ number_format($val['mandatory_savings_amount'], 2) }}</td>
+                                            <td style="text-align: right">{{ number_format($val['special_savings_amount'], 2) }}</td>
                                             <td style="text-align: right">{{ number_format($val['last_balance'], 2) }}</td>
                                             <td>{{ $val['operated_name'] }}</td>
                                         </tr>
@@ -185,15 +185,15 @@ if (empty($sessiondata)){
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Daftar Anggota</h3>
-    
+
                     <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                         <span class="bi bi-x-lg"></span>
                     </div>
                 </div>
-    
+
                 <div class="modal-body" id="modal-body">
                 </div>
-    
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                 </div>
