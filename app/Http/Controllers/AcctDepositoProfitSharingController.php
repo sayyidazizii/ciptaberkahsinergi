@@ -208,6 +208,7 @@ class AcctDepositoProfitSharingController extends Controller
                 $depositoaccount->save();
 
                 AcctDepositoProfitSharing::where('deposito_account_id',$request->deposito_account_id)
+                ->where('deposito_profit_sharing_amount',0.00)
                 ->update(['deposito_account_last_balance' => $depositoaccount['deposito_account_amount']]);
             }
 
