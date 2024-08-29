@@ -3163,7 +3163,7 @@ class AcctCreditsAccountController extends Controller
         $monthname 					= Configuration::Month();
 
          $acctcreditsaccount			= AcctCreditsAccount::withoutGlobalScopes()
-         ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+         ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'acct_credits.credits_fine', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
         ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
         ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
         ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
@@ -3276,49 +3276,15 @@ class AcctCreditsAccountController extends Controller
         /*print_r($preference_company);*/
 
         $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:10px\"><i>“Hai orang-orang yang beriman, penuhilah akad-akad (akad) itu……....”</i></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:10px\";><i>(Terjemahan QS : Al-Maidah 1)</i></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;  \" width=\"100%\">
-                        <div style=\"font-size:10px;margin-top: 0;\"><i>”Hai orang-orang yang beriman, janganlah kamu saling memakan harta sesamamu dengan jalan bathil, kecuali dengan jalan </i></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 35%;\">
-                    <td style=\"text-align:center;  \" width=\"100%\">
-                        <div style=\"font-size:10px;margin-top: 0;\"><i>perniagaan yang berlaku suka sama suka diantaramu......”</i></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:10px\"><i>(Terjemahan QS : An-Nisa’ 29)</i></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:10px\"><i>Roh seorang mukmin masih terkatung-katung (sesudah wafatnya ) sampai utangnya di dunia dilunasi ..... (HR. Ahmad )</i></div>
-                    </td>
-                 </tr>
-
-             </table>
-             <br><br>
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px; font-weight:bold\"><u>AKAD PEMBIAYAAN ".$credits_name."</u></div>
+                        <div style=\"font-size:14px; font-weight:bold\"><u>PERJANJIAN PINJAMAN ".$credits_name."</u></div>
                     </td>
                  </tr>
                  <tr  style=\"line-height: 50%;\">
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px\">No. : ".$acctcreditsaccount['credits_account_serial']."</div>
+                        <div style=\"font-size:14px\">Nomor : PBM.".$acctcreditsaccount['credits_account_serial']."</div>
                     </td>
                  </tr>
 
@@ -3333,75 +3299,19 @@ class AcctCreditsAccountController extends Controller
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:left;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Pada hari ini <b>".$dayname[$day]."</br> tanggal <b>".$date."</b> bulan <b>".$monthname[$month]."</br>  tahun <b>".$year."</br> oleh dan antara pihak-pihak:</div>
+                        <div style=\"font-size:12px;\">Pada hari ini Perjanjian Pinjaman ini (selanjutnya disebut “Perjanjian Pinjaman”). dibuat dan di tandatangani pada hari ".$dayname[$day].", tanggal ".$date." - ".$monthname[$month]." - ".$year." (Dua Puluh Satu Agustus Dua Ribu Dua Puluh Empat), oleh dan antara :</div>
                     </td>
                  </tr>
                  <br>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Yang bertanda tangan dibawah ini,</div>
-                    </td>
-                 </tr>
                  <br>
              </table>
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr style=\"line-height: 60%;\">
+                 <tr>
                     <td style=\"text-align:left;\" width=\"5%\">
                         <div style=\"font-size:12px;\">1.</div>
                     </td>
-                    <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">Nama</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"2%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">Jabatan</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"2%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">No. Identitas</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"2%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">Alamat</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"2%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify;\" colspan=\"3\">
-                        <div style=\"font-size:12px;\"><br>
-                            Dalam hal ini bertindak dalam jabatannya dan berdasarkan Surat Kuasa Pengurus No : 006/SK/KP.RAJA/JATIM/2017 dengan sah mewakili Koperasi Syariah “Rizky Amanah Jaya” Jawa Timur yang berkedudukan di Dsn Sukabumi 001/004 Kelurahan Siman Kecamatan Kepung Kabupaten Kediri, untuk selanjutnya disebut sebagai  PIHAK I <br></div>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Koperasi Konsumen Cipta Berkah Sinergi, NIK 3313100090006, NIB 0408240022144   berkedudukan di Sukoharjo yang  beralamat di Kalongan Kulon Rt.002 Rw.014 Ds.Papahan Kec.Tasikmadu dan diwakili oleh ANTONIUS IRAWAN EKO SULISTYO . dalam kedudukannya selaku MANAGER (selanjutnya disebut ‘PEMBERI PINJAMAN”)</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3423,25 +3333,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">Jabatan</div>
+                        <div style=\"font-size:12px;\">Pekerjaan</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"2%\">
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
                         <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"15%\">
-                        <div style=\"font-size:12px;\">No. Identitas</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"2%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3456,40 +3354,248 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
                     </td>
                  </tr>
+                 <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:left;\" width=\"15%\">
+                        <div style=\"font-size:12px;\">No. KTP</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"2%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"80%\">
+                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."  (Selanjutnya disebut “Peminjam“)</div>
+                    </td>
+                 </tr>
                  <tr>
                      <td style=\"text-align:left;\" width=\"5%\"></td>
                     <td style=\"text-align:justify;\" colspan=\"3\">
-                        <div style=\"font-size:12px;\">Bertindak  untuk  dan  atas  nama  diri   sendiri, untuk selanjutnya disebut  sebagai PIHAK  II <br></div>
+                        <div style=\"font-size:12px;\">Bahwa KOPERASI dan PEMINJAM telah saling setuju untuk membuat. Melaksanakan dan mematuhi Perjanjian ini dengan syarat-syarat dan ketentuan-ketentuan sebagai berikut :<br></div>
                     </td>
                  </tr>
              </table>
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr>
-                    <td style=\"text-align:justify;\" colspan=\"4\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Para pihak terlebih dahulu menerangkan hal-hal berikut ini.</div>
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>Pasal 1</b></div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>FASILITAS PINJAMAN</b></div>
+                    </td>
+                 </tr>
+             </table>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">KOPERASI setuju untuk memberikan pinjaman uang melalui fasilitas kredit kepada PEMINJAM. 
+                        Fasilitas PINJAMAN yang diberikan kepada PEMINJAM:
+                        </div>
+                    </td>
+                 </tr>
+             </table>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr style=\"line-height: 60%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jenis Pinjaman</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"25%\">
+                        <div style=\"font-size:12px;text-align: left\">".$acctcreditsaccount['credits_name']."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pokok Pinjaman</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">Rp.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_amount'], 2)."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Suku Bunga</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"25%\">
+                        <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_interest'])." % Menurun per 30 hari</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify; \" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jangka Waktu</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify; \" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: left\">".$acctcreditsaccount['credits_account_period']."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Biaya Administrasi</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">Rp.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_adm_cost'], 2)."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Biaya Provisi </div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">Rp.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_provisi'], 2)."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Biaya Notaris </div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">Rp.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_notaris'], 2)."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Biaya Asuransi  </div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">Rp.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"18%\">
+                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_insurance'], 2)."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Denda Keterlambatan  </div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;text-align: left\">".$acctcreditsaccount['credits_fine']." X Sisa Pokok Pinjaman</div>
+                    </td>
+                 </tr>
+                  <tr style=\"line-height: 50%;\">
+                     <td style=\"text-align:left;\" width=\"5%\"></td>
+                    <td style=\"text-align:justify;\" width=\"40%\">
+                        <div style=\"font-size:12px;\">	&nbsp;&nbsp;(Selanjutnya disebut .<i><u>“Fasilitas Pinjaman“</u></i>)</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"3%\">
+                        <div style=\"font-size:12px;\"></div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"30%\">
+                        <div style=\"font-size:12px;text-align: left\"></div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>Pasal 2. HAK DAN KEWAJIBAN PEMINJAM</b></div>
+                    </td>
+                 </tr>
+             </table>
+              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">1.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Sehubungan dengan Perjanjian Pinjaman ini, PEMINJAM mempunyai kewajiban mengelola pinjaman selama jangka waktu perjanjian yang telah disepakati. </div>
                     </td>
                  </tr>
                  <tr>
-                    <td style=\"text-align:justify;\" colspan=\"4\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK I dan PIHAK II, yang secara bersama-sama untuk selanjutnya disebut Para Pihak, bertindak dalam kedudukannya masing-masing sebagaimana tersebut di atas, terlebih dahulu menerangkan bahwa:</div>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">2.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Membayarkan bunga yang diperhitungkan perhari dari Sisa Pokok Hutang yang ada maksimal 30 hari terhitung dari tanggal perjanjian kredit dan atau dari tanggal angsuran terakhir</div>
+                    </td>
+                 </tr>
+                  <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">3.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Mengembalikan seluruh pinjaman pokok berikut bunga, beserta denda (jika ada) sesuai dengan perjanjian yang telah disepakati.</div>
+                    </td>
+                 </tr>
+                  <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">4.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">PEMINJAM sewaktu waktu mendapatkan saran dan informasi penting mengenai pinjaman selama masa jangka waktu pinjaman berlangsung dan informasi penting lainnya mengenai produk pruduk lain yang ada di Koperasi Konsumen CIpta Berkah Sinergi</div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>PASAL 3. KETENTUAN KOPERASI</b></div>
+                    </td>
+                 </tr>
+             </table>
+              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">1.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">PEMINJAM berjanji dan mengikat diri untuk tunduk kepada segala ketentuan ketentuan dan kebiasaan kebiasaan yang beralaku pada KOPERASI, baik yang berlaku sekarang maupun dikemudian hari. </div>
                     </td>
                  </tr>
                  <tr>
-                     <td style=\"text-align:left;\" width=\"5%\">-</td>
-                    <td style=\"text-align:justify;\" colspan=\"3\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Berdasarkan formulir permohonan pembiayaan konsumtif tanggal 26 Desember 2016 PIHAK II telah mengajukan permohonan pembiayaan (..............................................).</div>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">2.</div>
                     </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\">-</td>
-                    <td style=\"text-align:justify;\" colspan=\"3\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Berdasarkan Surat Keputusan Pembiayaan Nomor tanggal 13 JANUARI 2017 yang  merupakan  bagian  yang  tidak  terpisahkan  dari Akad ini,  PIHAK I  telah menyetujui penyaluran pembiayaan sesuai dengan syarat-syarat dan ketentuan yang diatur dalam Akad ini.</div>
-                    </td>
-                 </tr>
-                 <br>
-                 <tr>
-                    <td style=\"text-align:justify;\" colspan=\"4\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Berdasarkan hal-hal tersebut di atas, Para Pihak dengan ini sepakat mengadakan Akad Pembiayaan Murabahah (untuk selanjutnya disebut Akad) dengan ketentuan-ketentuan dan syarat-syarat berikut ini.</div>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Segala biaya penagihan yang timbul dari Perjanjian Pinjaman ini, termasuk biaya sita, biaya lelang, biaya Kuasa hukum dan biaya lain lain menjadi tanggungan PEMINJAM</div>
                     </td>
                  </tr>
              </table>
@@ -3505,12 +3611,202 @@ class AcctCreditsAccountController extends Controller
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr style=\"line-height: 60%;\">
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 1</b></div>
+                        <div style=\"font-size:12px\"><b>PASAL.4 JAMINAN</b></div>
+                    </td>
+                 </tr>
+             </table>
+        ";
+
+        $pdf::writeHTML($tblheader, true, false, false, false, '');
+
+        $tblket = "
+              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">1.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Guna menjamin tertib pembayaran sejumlah uang yang terhutang atau pelunasan pinjaman sebagaimana dimaksud ayat 1 Pasal ini tepat pada waktu yang telah disepakati oleh Para Pihak berdasarkan Perjanjian Pinjaman ini, maka PEMINJAM berjanji dan dengan ini mengikatkan diri untuk membuat dan menandatangani akta pengikatan jaminan dan dengan ini menyerahkan kepada KOPERASI, yang pengalihan hak kepemilikannya dibuktikan dengan dokumen atau perjanjian-perjanjian yang dibuat dalam bentuk, jumlah dan isi yang memuaskan KOPERASI , yaitu : - </div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">2.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">PEMINJAM memberikan kuasa kepada KOPERASI untuk menjual hak milik PEMINJAM sebagaimana tertuang dalam Surat Kuasa Untuk Menjual/ Mengalihkan Hak Atas Jaminan  terlampir, apabila dikemudian hari terjadi tunggakan yang merugikan KOPERASI.</div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>PASAL. 5 PENIADAAN JAMINAN</b></div>
+                    </td>
+                 </tr>
+             </table>
+
+            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Dengan mengabaikan ketentuan seperti yang diatur dalam pasal 4 diatas, PEMBERI PINJAMAN dapat meniadakan penyerahan jaminan oleh PEMINJAM apabila PEMBERI PINJAMAN memutuskan lain. </div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>PASAL. 6 TATA CARA PEMBAYARAN
+                    </b></div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Definisi</b></div>
+                        <div style=\"font-size:12px\"><b>
+                    HAK DAN KEWAJIBAN SERTA BERAKHIRNYA PERJANJIAN
+                    </b></div>
+                    </td>
+                 </tr>
+             </table>
+              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">1.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">PEMINJAM wajib membayar angsuran bunga yang untuk pertama kalinya ditetapkan pada maksimal tanggal 21 - 09 - 2024 pembayaran angsuran bunga dapat dipercepat oleh PEMINJAM dari tanggal pembayaran angsuran bunga yang seharusnya, sehingga tanggal pembayaran angsuran bunga berikutnya adalah 30 (tiga puluh ) hari dari tanggal  angsuran bunga yang dipercepat tersebut. </div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">2.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">PEMINJAM  wajib membayar denda (jika ada) terlebih dahulu sebelum membayar angsuran bunga, selanjutnya atas setiap pembayaran bunga tersebut akan digunakan untuk membayar bunga dan sisanya (jika ada) untuk membayar angsuran pokok. Atas setiap keterlambatan pembayaran angsuran PEMINJAM setuju untuk membayar denda keterlambatan sebesar 0,5% (5 permil) per hari dari sisa jumlah pokok pinjaman. </div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">3.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Mengenai tempat pembayaran angsuran dapat dilakukan dikantor KOPERASI, ada pun jika tanggal jatuh tempo pembayaran jatuh tempo bertepatan dengan hari libur / tanggal merah dimana kantor KOPERASI tutup, maka pembayaran angsuran dimajukan 1 (satu) hari sebelum hari libur dan/atau kantor KOPERASI tutup. </div>
+                    </td>
+                 </tr>
+                  <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">4.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Pembukuan yang dimiliki oleh KOPERASI mengenai pencatatan pembayaran angsuran yang telah diterima merupakan suatu bukti yang kuat dan mutlak serta mengikat PEMINJAM dan/atau KOPERASI.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">5.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Dengan diterimanya Fasilitas dana pinjaman dari KOPERASI, PEMINJAM setuju untuk menyerahkan barang sebagai Barang Jaminan. PEMINJAM setuju dan mengikatkan diri untuk memelihara barang jaminan tersebut dengan sebaik baiknya, dan tidak diperkenankan/dilarang untuk menyewakan, meminjamkan, menggadaikan menjual dan/atau mengalihkan barang tersebut kepada pihak lain ataupun siapapun dengan bentuk dan cara apapun juga.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">6.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Segala bentuk resiko hilang atau musnahnya barang jaminan karena sebab apapun sepenuhnya menjadi tanggung jawab PEMINJAM, sehingga tidak mengurangi, meniadakan atau menunda sepenuhnya tanggung jawab PEMINJAM akan kewajiban nya kepada PEMEBERI KREDIT.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">7.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Perjanjian ini berakhir apabila PEMINJAM sudah menyelesaikan semua hutangnya kepada KOPERASI. Bilamana kredit tidak dibayar lunas pada waktu yang ditetapkan, maka  KOPERASI berhak untuk menjual seluruh jaminan dan/atau harta lain milik PEMINJAM sehubungan dengan pinjaman ini baik secara dibawah tangan maupun dimuka umum, untuk  mana atas KOPERASI dan atas kerelaan sendiri tanpa paksaan. PEMINJAM memberi kuasa penuh kepada KOPERASI untuk melakukan penjualan atas barang jaminan dan/atau harta lain milik PEMINJAM  tersebut dan/atau menerima uang hasil penjualan barang jaminan dan memperhitungkannya dengan seluruh/sisa Hutang yang masih ada dari KOPERASI.</div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b>PASAL. 7 LAIN-LAIN</b></div>
+                    </td>
+                 </tr>
+             </table>
+              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">1.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">KOPERASI dan PEMINJAM dengan ini, sepakat dan setuju untuk memberlakukan seluruh ketentuan-ketentuan yang diatur KOPERASI karena ketentuan tersebut  mengikat PEMINJAM dan KOPERASI serta merupakan satu kesatuan dan bagian yang tidak dapat dipisahkan dengan Perjanjian ini</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">2.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Seluruh Lampiran dari Perjanjian ini merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Perjanjian ini.</div>
+                    </td>
+                 </tr>
+             </table>
+        ";
+
+        $pdf::writeHTML($tblket, true, false, false, false, '');
+
+        //--------------------------------------------------------------------------------------------------------------------------------
+
+        // add a page
+        $pdf::AddPage();
+        $tblheader = "
+            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">3.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Perjanjian  ini  mengikat  Para  Pihak  yang sah,  para  pengganti  atau pihak-pihak  yang menerima hak dari  masing-masing Para Pihak.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">4.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Perjanjian ini memuat, dan karenanya menggantikan  semua pengertian dan kesepakatan yang telah dicapai oleh Para  Pihak  sebelum ditandatanganinya Perjanjian ini, baik tertulis maupun lisan, mengenai hal yang sama.</div>
+                    </td>
+                 </tr>
+                   <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">5.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Jika salah satu atau sebagian ketentuan-ketentuan dalam Perjanjian ini menjadi batal atau tidak berlaku, maka tidak mengakibatkan seluruh Perjanjian ini menjadi batal atau tidak berlaku seluruhnya. </div>
+                    </td>
+                 </tr>
+                   <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">6.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Apabila ada hal-hal yang belum diatur atau belum cukup diatur dalam Perjanjian ini, maka KOPERASI dan PEMINJAM akan mengaturnya bersama secara musyawarah untuk mufakat dalam suatu Perjanjian tambahan (Addendum) yang ditandatangani oleh Para Pihak.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"5%\">
+                        <div style=\"font-size:12px;\">7.</div>
+                    </td>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Tiap Perjanjian tambahan (Addendum) dari Perjanjian ini merupakan satu kesatuan yang tidak terpisahkan dari Perjanjian ini.</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:justify;\" width=\"95%\">
+                        <div style=\"font-size:12px;\">Demikian Perjanjian ini dibuat dengan itikad baik untuk dipatuhi dan setelah ketentuan-ketentuan ini dibaca dan dipelajari dengan seksama oleh PEMINJAM dan isinya telah dimengerti oleh PEMINJAM dengan penuh kesadaran dan tanggung jawab tanpa ada unsur paksaan dan tekanan dari pihak manapun menandatangani Perjanjian pada tanggal dan tahun sebagaimana tersebut diatas. dilaksanakan oleh Para Pihak di atas kertas yang bermeterai cukup dalam dua rangkap, yang masing-masing disimpan oleh KOPERASI dan PEMINJAM, dan masing-masing berlaku sebagai aslinya.</div>
                     </td>
                  </tr>
              </table>
@@ -3520,1462 +3816,11 @@ class AcctCreditsAccountController extends Controller
         $pdf::writeHTML($tblheader, true, false, false, false, '');
 
         $tblket = "
+             <br><br>
+
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr>
+                 <tr>
                     <td style=\"text-align:left;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Dalam Akad ini, yang dimaksud dengan :</div>
-                    </td>
-                 </tr>
-             </table>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Akad Pembiayaan Murabahah”</b> adalah akad pembiayaan suatu barang dengan menegaskan harga belinya kepada PIHAK II dan PIHAK II membayar kepada PIHAK I dengan harga yang lebih sebagai keuntungan yang disepakati.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Barang”</b> Adalah barang yang menjadi objek dalam Akad Pembiayaan Murabahah ini, yang meliputi segala jenis atau macam barang yang dihalalkan oleh syariah, baik zat maupun cara perolehannya.
-                        </div>
-                    </td>
-
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">3.</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Pemasok atau Suplier”</b> Adalah pihak ketiga yang ditunjuk atau disetujui oleh PIHAK I untuk menyediakan barang yang akan dibeli oleh PIHAK I dan selanjutnya akan dijual kepada PIHAK II.</div>
-                    </td>
-
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">4.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Harga Beli”</b> Adalah sejumlah uang yang dikeluarkan PIHAK I untuk membeli barang dari pemasok yang diminta oleh PIHAK II dan disetujui oleh PIHAK I berdasar Surat Persetujuan Prinsip dari PIHAK I kepada PIHAK II, termasuk di dalamnya biaya-biaya langsung yang terkait dengan pembelian barang tersebut.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\">
-                         <div style=\"font-size:12px;font-weight:bold\">5.</div>
-                     </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Keuntungan”</b> Adalah keuntungan PIHAK I atas terjadinya jual beli al-Murabahah ini yang disetujui oleh PIHAK I dan PIHAK II yang ditetapkan dalam Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">6.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Harga Jual”</b> Adalah harga beli ditambah dengan sejumlah keuntungan PIHAK I yang disepakati oleh PIHAK I dan PIHAK II yang ditetapkan dalam Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">7.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Agunan”</b> Adalah jaminan tambahan, baik berupa benda bergerak maupun benda tidak bergerak yang diserahkan oleh Pemilik Agunan kepada PIHAK I guna menjamin pelunasan utang/kewajiban PIHAK II.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">8.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Dokumen Jaminan”</b> Adalah segala macam dan bentuk surat bukti tentang kepemilikan atau hak-hak lainnya atas barang yang dijadikan jaminan bagi terlaksananya kewajiban PIHAK II terhadap PIHAK I berdasarkan Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">9.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Hari Kerja PIHAK I”</b> Adalah hari pelayanan kantor dari Senin hingga Jumat mulai pukul 08.30 hingga 16.00.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;font-weight:bold\">10.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\"><b>“Cidera Janji”</b> Adalah keadaan tidak dilaksanakannya sebagian atau seluruh kewajiban PIHAK II yang menyebabkan PIHAK I dapat menghentikan seluruh atau sebagian pembayaran atas harga beli barang termasuk biaya-biaya yang terkait, serta sebelum berakhirnya jangka waktu akad ini menagih dengan seketika dan sekaligus jumlah kewajiban PIHAK II kepada PIHAK I.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 2</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pembiayaan</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Harga barang berupa .................................................. yang dijual PIHAK I kepada PIHAK II sebagai pembeli disepakati dan diterima dengan harga Rp 00.000,- (Ribu Rupiah) dengan perincian sebagai berikut :</div>
-                    </td>
-                 </tr>
-             </table>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr style=\"line-height: 60%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">•	&nbsp; Harga Perolehan</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"3%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">Rp.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_net_price'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">•	&nbsp; Keuntungan PIHAK I</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"3%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">Rp.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_margin'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">•	&nbsp; Harga Jual PIHAK I</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"3%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">Rp.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_sell_price'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify; \" width=\"30%\">
-                        <div style=\"font-size:12px;\">•	&nbsp; Uang Muka PIHAK II</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"3%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:justify; \" width=\"5%\">
-                        <div style=\"font-size:12px;\">Rp.</div>
-                    </td>
-                    <td style=\"text-align:justify; \" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_um'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 50%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">•	&nbsp; Pembiayaan yang Diangsur</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"3%\">
-                        <div style=\"font-size:12px;\">:</div>
-                    </td>
-                    <td style=\"text-align:justify;border-top: 1px solid black\" width=\"5%\">
-                        <div style=\"font-size:12px;\">Rp.</div>
-                    </td>
-                    <td style=\"text-align:justify;border-top: 1px solid black\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_amount'], 2)."</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Sehingga kewajiban atau utang yang harus dibayar oleh PIHAK II kepada PIHAK I adalah Rp ".number_format($acctcreditsaccount['credits_account_amount'], 2)." (".$this->numtotxt($acctcreditsaccount['credits_account_amount']).")</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Harga jual PIHAK I tersebut pada ayat 2 tidak termasuk biaya-biaya administrasi, seperti biaya notaris, meterai dan lain-lain sejenisnya, yang oleh kedua belah pihak telah disepakati dibebankan sepenuhnya kepada Pihak Kedua.</div>
-                    </td>
-                 </tr>
-             </table>
-
-
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        //--------------------------------------------------------------------------------------------------------------------------------
-
-        // add a page
-        $pdf::AddPage();
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 3</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Jangka Waktu</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">PIHAK II berjanji dan dengan ini mengikatkan diri kepada PIHAK I untuk membayar utang sebagaimana tersebut pada pasal 2 akad ini jangka  waktu 48 (Empat Puluh Delapan) bulan terhitung sejak tanggal ditanda-tanganinya Akad ini, atau Berakhir pada tanggal 13 Januari 2021, atau dengan cara mengangsur pada tiap bulan pada hari kerja PIHAK I, masing-masing sebesar Rp. 1.050.000,- (Satu juta Lima puluh Ribu Rupiah) sesuai dengan jadwal dan besarnya angsuran yang telah ditetapkan. </div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Bila tanggal jatuh tempo atau saat pembayaran angsuran jatuh tidak pada hari kerja PIHAK I, maka PIHAK II berjanji dan dengan ini mengikatkan diri untuk melakukan pembayaran kepada PIHAK I pada hari pertama PIHAK I bekerja kembali.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 4</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Kuasa PIHAK I atas Rekening PIHAK II</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Untuk memenuhi kewajibannya kepada PIHAK I, dengan ini PIHAK II memberi kuasa kepada PIHAK I, yang mana merupakan bagian yang tidak terpisahkan dari Akad ini yang tidak akan berakhir oleh sebab-sebab yang ditentukan dalam KUH Perdata, untuk sewaktu-waktu tanpa persetujuan terlebih dahulu dari PIHAK II, membebani dan/atau mendebet Tabungan dan/atau rekening lain PIHAK II yang ada pada PIHAK I, untuk pembayaran pembiayaan, Denda, Ganti rugi, Premi asuransi, biaya-biaya pengikatan barang Agunan, dan biaya lainnya yang timbul karena dan untuk pelaksanaan akad ini.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 5</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Agunan</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Segala harta kekayaan PIHAK II, baik yang bergerak maupun yang tidak bergerak, baik yang sudah ada maupun yang akan ada dikemudian hari, menjadi jaminan bagi pelunasan seluruh utang PIHAK II yang timbul karena Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Guna lebih menjamin pembayaran kembali utang, PIHAK II menyerahkan Agunan kepada PIHAK I. Perubahan dan penggantian Agunan-agunan tersebut dapat dilakukan berdasarkan kesepakatan tertulis Para Pihak. Sedangkan jenis dan pengikatan Agunan tersebut sebagaimana tercantum dalam rincian sebagai berikut:</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr  style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">a.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">Tanah dan Bangunan</div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"60%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                 </tr>";
-                $tblaguanan = '';
-                 if(!empty($agunansertifikat)){
-                     foreach ($agunansertifikat as $key => $val) {
-                         $tblaguanan .= "
-                             <tr style=\"line-height: 60%;\">
-                                 <td style=\"text-align:left;\" width=\"5%\"></td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\"></div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"30%\">
-                                    <div style=\"font-size:12px;\">Atas nama</div>
-                                </td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\">:</div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"60%\">
-                                    <div style=\"font-size:12px;\">".$val['credits_agunan_shm_atas_nama']."</div>
-                                </td>
-                             </tr>
-                             <tr style=\"line-height: 60%;\">
-                                 <td style=\"text-align:left;\" width=\"5%\"></td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\"></div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"30%\">
-                                    <div style=\"font-size:12px;\">No Dokumen</div>
-                                </td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\">:</div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"60%\">
-                                    <div style=\"font-size:12px;\">".$val['credits_agunan_shm_no_sertifikat']."</div>
-                                </td>
-                             </tr>
-                             <tr style=\"line-height: 60%;\">
-                                 <td style=\"text-align:left;\" width=\"5%\"></td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\"></div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"30%\">
-                                    <div style=\"font-size:12px;\">Luas</div>
-                                </td>
-                                <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\">:</div>
-                                </td>
-                                <td style=\"text-align:justify;\" width=\"60%\">
-                                    <div style=\"font-size:12px;\">".$val['credits_agunan_shm_luas']."</div>
-                                </td>
-                             </tr>
-                             <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Alamat</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kelurahan</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kecamatan</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kabupaten</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Provinsi</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         ";
-                     }
-                 } else {
-                     $tblaguanan = "
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Atas nama</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">No Dokumen</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Luas</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Alamat</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kelurahan</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kecamatan</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Kabupaten</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Provinsi</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                     ";
-                 }
-
-
-                 $tblakhir = "
-
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket.$tblaguanan.$tblakhir, true, false, false, false, '');
-
-        //--------------------------------------------------------------------------------------------------------------------------------
-
-        // add a page
-        $pdf::AddPage();
-        $tblket = "
-             <br><br>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr style=\"line-height: 60%;\">
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">Kendaraan / Sepeda Motor  </div>
-                    </td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"60%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                 </tr>";
-
-             if(!empty($agunanbpkb)){
-                $tblaguananbpkb='';
-                 foreach ($agunanbpkb as $key => $val) {
-                     $tblaguananbpkb .= "
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Nama Pemilik</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nama']."</div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">No Reg</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nomor']."</div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Merek / Type</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">No Mesin</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_mesin']."</div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">No Rangka</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_rangka']."</div>
-                            </td>
-                         </tr>
-                         <tr style=\"line-height: 60%;\">
-                             <td style=\"text-align:left;\" width=\"5%\"></td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"30%\">
-                                <div style=\"font-size:12px;\">Tahun Pembuatan</div>
-                            </td>
-                            <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">:</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"60%\">
-                                <div style=\"font-size:12px;\"></div>
-                            </td>
-                         </tr>
-                     ";
-                 }
-             } else {
-                 $tblaguananbpkb = "
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">Nama Pemilik</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">No Reg</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">Merek / Type</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">No Mesin</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">No Rangka</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                     <tr style=\"line-height: 60%;\">
-                         <td style=\"text-align:left;\" width=\"5%\"></td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"30%\">
-                            <div style=\"font-size:12px;\">Tahun Pembuatan</div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"5%\">
-                            <div style=\"font-size:12px;\">:</div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"60%\">
-                            <div style=\"font-size:12px;\"></div>
-                        </td>
-                     </tr>
-                 ";
-             }
-
-             $tblakhirbpkb ="
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Pengikatan : Jaminan diikat Hak Tanggungan sebesar Rp. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".number_format($total_agunan, 2)." Biaya pengikatan menjadi beban Pihak Kedua.</div>
-                    </td>
-                 </tr>
-             </table>
-        ";
-
-        $pdf::writeHTML($tblket.$tblaguananbpkb.$tblakhirbpkb, true, false, false, false, '');
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\" style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 6</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\" style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Biaya, Potongan dan Pajak-Pajak</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">PIHAK II wajib membayar kepada PIHAK I secara  bayar dimuka biaya-biaya sebagai berikut:</div>
-                    </td>
-                 </tr>
-             </table>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">a.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; By Jasa Saksi & Juru Tulis</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\">".number_format($acctcreditsaccount['credits_account_notaris'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">b.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; By Admin</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\">".number_format($acctcreditsaccount['credits_account_adm_cost'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">c.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; By Materai</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\">".number_format($acctcreditsaccount['credits_account_materai'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">d.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; Tabungan</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">e.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; Simp. Pokok</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\">".number_format($acctcreditsaccount['credits_account_materai'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">f.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; Asuransi</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;\">".number_format($acctcreditsaccount['credits_account_insurance'], 2)."</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\">g.</div>
-                    </td>
-                    <td style=\"text-align:left;\" colspan=\"3\" width=\"80%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; Biaya Notaris dan biaya lainnya yang timbul karena dan untuk pelaksanaan Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:right;\" width=\"10%\">
-                        <div style=\"font-size:12px;\"></div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;\">&nbsp;&nbsp; Jumlah</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"8%\">
-                        <div style=\"font-size:12px;font-weight:bold\">: Rp</div>
-                    </td>
-                    <td style=\"text-align:right;\" width=\"18%\">
-                        <div style=\"font-size:12px;font-weight:bold\"></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Dalam hal PIHAK II cidera janji tidak melakukan pembayaran/melunasi utangnya ke-pada PIHAK I, sehingga PIHAK I perlu menggunakan jasa Penasihat Hukum/Kuasa untuk menagihnya, maka PIHAK II berjanji dan dengan ini mengikatkan diri untuk membayar seluruh biaya jasa Penasihat Hukum, jasa penagihan dan jasa-jasa lainnya sepanjang hal itu dapat dibuktikan secara sah menurut hukum.<br><br></div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">3.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Setiap pembayaran/pelunasan utang sehubungan dengan Akad ini dan/atau akad lain yang terkait dengan Akad ini dan mengikat PIHAK I dan PIHAK II, dilakukan oleh PIHAK II kepada PIHAK I tanpa potongan, pungutan, bea, pajak dan/atau biaya-biaya lainnya, kecuali jika potongan tersebut diharuskan berdasarkan peraturan perundang-undangan yang berlaku.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 7</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Hak PIHAK I untuk Mengakhiri Jangka Waktu Utang</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Menyimpang dari jangka waktu yang telah ditentukan dalam Akad ini, PIHAK I dapat mengakhiri jangka waktu utang dengan mengesampingkan ketentuan yang tercantum dalam Kitab Undang-Undang Hukum Perdata, sehingga PIHAK II wajib membayar lunas seketika dan sekaligus seluruh utangnya dalam tenggang waktu yang ditetapkan oleh PIHAK I kepada PIHAK II, apabila PIHAK II dinyatakan cidera janji (wanprestasi) berdasarkan pasal 11 ayat (1) Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Apabila setelah jangka waktu utang karena sebab apapun juga dan menurut pertimbangan PIHAK I, PIHAK II tidak melunasi utangnya berdasarkan akad ini, PIHAK I berhak mengambil tindakan hukum dengan cara apapun dan melaksanakan haknya berdasarkan Akad ini dan/atau dokumen jaminan yang merupakan satu kesatuan dan bagian yang tak terpisahkan dengan Akad ini.</div>
-                    </td>
-                 </tr>
-             </table>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        //--------------------------------------------------------------------------------------------------------------------------------
-
-        // add a page
-        $pdf::AddPage();
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 8</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Peristiwa Cidera Janji</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Menyimpang dari ketentuan dalam Pasal 4 Akad ini, PIHAK I berhak untuk menagih pembayaran dari PIHAK II atau siapa pun juga yang memperoleh hak darinya, atas seluruh atau sebagian jumlah utang PIHAK II kepada PIHAK I berdasarkan Akad ini, untuk dibayar dengan seketika dan sekaligus, tanpa diperlukan adanya surat pemberitahuan, surat teguran, atau surat lainnya, apabila terjadi salah satu hal atau peristiwa tersebut di bawah ini :</div>
-                    </td>
-                 </tr>
-             </table>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">a.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II tidak melaksanakan kewajiban pembayaran/pelunasan utang tepat pada waktu yang diperjanjikan sesuai dengan tanggal jatuh tempo atau jadwal angsuran yang ditetapkan dalam Surat Sanggup Membayar yang telah diserahkan PIHAK II kepada PIHAK I ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">b.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II tidak melakukan pelunasan utang yang jatuh tempo ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">c.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Kekayaan PIHAK II seluruhnya atau sebagian termasuk tetapi tidak terbatas pada barang yang menjadi Agunan, beralih kepada pihak lain, musnah atau hilang, disita oleh instansi yang berwenang atau mendapat tuntutan dari pihak lain yang menurut pertimbangan PIHAK I dapat mempengaruhi kondisi Utang dan/atau PIHAK II ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">d.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II melakukan perbuatan dan/atau terjadinya peristiwa dalam bentuk dan dengan nama apapun yang atas pertimbangan PIHAK I dapat mengancam kelangsungan pembayaran Utang PIHAK II sehingga kewajiban PIHAK II kepada PIHAK I menjadi tidak terjamin sebagaimana mestinya ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">e.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II dinyatakan tidak berhak lagi menguasai harta kekayaannya baik menurut peraturan perundang-undangan maupun menurut putusan pengadilan, termasuk tetapi tidak terbatas pada pernyataan pailit oleh Pengadilan dan/atau PIHAK II likuidasi ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">f.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Bilamana terhadap PIHAK II diajukan gugatan perdata atau tuntutan pidana dan/atau terdapat putusan atas perkara-perkara tersebut yang menurut pertimbangan PIHAK I pertimbangan mana adalah mengikat terhadap PIHAK II dapat mempengaruhi kemampuan PIHAK II untuk membayar kembali utang kepada PIHAK I ;</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">g.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Terdapat kewajiban atau utang kewajiban pembayaran berdasarkan akad yang dibuat PIHAK II dengan pihak lain, baik sekarang ataupun dikemudian hari, menjadi dapat ditagih pembayarannya dan sekaligus sebelum tanggal pembayaran yang telah ditetapkan, disebabkan PIHAK II melakukan kelalaian atau pelanggaran terhadap akad tersebut.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">PIHAK II menyetujui bahwa apabila terjadi kejadian cidera janji sebagaimana dimaksud dalam ayat (1) pasal ini, maka PIHAK I secara sepihak dapat:</div>
-                    </td>
-                 </tr>
-             </table>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">a.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Melakukan penyelamatan dan penyelesaian utang sebagaimana dimaksud dalam pasal 12 akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">b.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Mengakhiri jangka waktu utang sebagaimana dimaksud dalam pasal 11 akad ini.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-        $pdf::setCellHeightRatio(0.9);
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-        $pdf::setCellHeightRatio(1);
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 9</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Kewenangan PIHAK I Dalam Rangka,Penyelamatan dan Penyelesaian Utang</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Dalam rangka penyelamatan dan penyelesaian Utang, PIHAK I berwenang melakukan hal-hal sebagai berikut:</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">a.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Menggunakan jasa pihak ketiga untuk melakukan penagihan, pelunasan utang, apabila dianggap perlu oleh PIHAK I</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">b.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Mengumumkan nama PIHAK II berikut agunannya, apabila menurut penilaian PIHAK I, PIHAK II tidak dapat melaksanakan pembayaran utang</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">c.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II mengijinkan memasuki objek Agunan untuk memasang papan tanda, stiker, atau bentuk-bentuk lainnya yang dipasang ke atau dituliskan pada objek Agunan Utang.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">d.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">PIHAK II menyetujui bahwa tindakan-tindakan yang dilakukan PIHAK I dalam pasal ini bukan merupakan pencemaran nama baik PIHAK II ataupun perbuatan tidak menyenangkan dan bukan pula tindakan yang melanggar hukum, sehingga PIHAK II tidak akan mengajukan gugatan perdata maupun pengaduan pidana.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                     <td style=\"text-align:left;\" width=\"5%\"></td>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">e.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"90%\">
-                        <div style=\"font-size:12px;\">Melakukan tindakan-tindakan dan upaya-upaya hukum lainnya yang dianggap perlu oleh PIHAK I sebagai upaya penyelamatan dan penyelesaian utang, baik yang dilakukan sendiri oleh PIHAK I maupun oleh pihak ketiga yang ditunjuk.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-        $pdf::setCellHeightRatio(0.9);
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-        $pdf::setCellHeightRatio(1);
-
-        //--------------------------------------------------------------------------------------------------------------------------------
-
-        // add a page
-        $pdf::AddPage();
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 10</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Penyelesaian Perselisihan</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Dalam hal terjadi perbedaan pendapat atau penafsiran atas hal-hal yang tercantum di dalam Surat Akad ini atau terjadi perselisihan atau sengketa dalam pelaksanaannya, para pihak sepakat untuk menyelesaikannya secara musyawarah untuk mufakat.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Apabila musyawarah untuk mufakat telah diupayakan namun perbedaan pendapat atau penafsiran, perselisihan atau sengketa tidak dapat diselesaikan oleh kedua belah pihak, maka para pihak bersepakat, dan dengan ini berjanji serta mengikatkan diri satu ter-hadap yang lain, untuk menyelesaikannya melalui Pengadilan Agama Kabupaten Malang</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">3.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Para pihak sepakat, dan dengan ini mengikatkan diri satu terhadap yang lain, bahwa pendapat hukum (legal opinion) dan/atau putusan yang ditetapkan oleh Pengadilan Agama Kabupaten Malang tersebut bersifat final dan mengikat (final and binding).</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 11</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Domisili dan Pemberitahuan</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Alamat para pihak sebagaimana yang tercantum pada kalimat-kalimat awal Surat Akad ini merupakan alamat tetap dan tidak berubah bagi masing-masing pihak yang bersangkutan, dan ke alamat-alamat itu pula secara sah segala surat-menyurat atau komunikasi di antara kedua pihak akan dilakukan.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Apabila dalam pelaksanaan akad ini terjadi perubahan alamat, maka pihak yang berubah alamatnya tersebut wajib memberitahukan kepada pihak lainnya alamat barunya dengan surat tercatat atau surat tertulis yang disertai tanda bukti penerimaan dari pihak lainnya.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">3.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Selama tidak ada pemberitahuan tentang perubahan alamat sebagaimana dimaksud pada ayat 2 pasal ini, maka surat-menyurat atau komunikasi yang dilakukan ke alamat yang tercantum pada awal Surat Akad dianggap sah menurut hukum.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 12</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Addendum</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Hal-hal yang belum diatur dan/atau belum cukup diatur dan/atau diperlukan perubahan syarat-syarat dalam Akad ini, para pihak sepakat untuk menuangkan dalam suatu Persetujuan Perubahan Akad Utang yang ditandatangani oleh Para Pihak, yang merupakan satu kesatuan serta bagian yang tidak terpisahkan dari Akad ini.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        //--------------------------------------------------------------------------------------------------------------------------------
-
-        // add a page
-        $pdf::AddPage();
-        $tblheader = "
-            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Pasal 13</b></div>
-                    </td>
-                 </tr>
-                 <tr style=\"line-height: 60%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:12px\"><b>Penutup</b></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">1.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Sebelum Surat Akad ini ditandatangani oleh PIHAK II, PIHAK II mengakui dengan sebenarnya, dan tidak lain dari yang sebenarnya, bahwa PIHAK II telah membaca dengan cermat atau dibacakan kepadanya seluruh isi Akad ini berikut semua surat dan/atau dokumen yang menjadi lampiran Surat Akad ini, sehingga oleh karena itu PIHAK II memahami sepenuhnya segala yang akan menjadi akibat hukum setelah PIHAK II menandatangani Surat Akad ini.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">2.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Apabila ada hal-hal yang belum diatur atau belum cukup diatur dalam Akad ini, maka PIHAK II dan PIHAK I akan mengaturnya bersama secara musyawarah untuk mufakat dalam suatu Addendum.</div>
-                    </td>
-                 </tr>
-                 <tr>
-                    <td style=\"text-align:left;\" width=\"5%\">
-                        <div style=\"font-size:12px;\">3.</div>
-                    </td>
-                    <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Tiap Addendum dari Akad ini merupakan satu kesatuan yang tidak terpisahkan dari Akad ini.</div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-        ";
-
-        $pdf::writeHTML($tblket, true, false, false, false, '');
-
-        $tblket = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">
-                            <p>Pihak Pertama dan Pihak Kedua sepakat dan dengan ini mengikatkan diri satu terhadap yang lain, bahwa untuk Akad ini dan segala akibatnya memberlakukan syariah Islam dan peraturan perundang-undangan lain yang tidak bertentangan dengan syariah.</p>
-                            <p>Demikianlah, Surat Akad ini dibuat dan ditandatangani oleh PIHAK I dan PIHAK II di atas kertas yang bermeterai cukup dalam dua rangkap, yang masing-masing disimpan oleh PIHAK I dan PIHAK II, dan masing-masing berlaku sebagai aslinya.</p></div>
-                    </td>
-                 </tr>
-             </table>
-             <br><br>
-
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                 <tr>
-                    <td style=\"text-align:right;\" width=\"100%\">
                         <div style=\"font-size:12px;\">
                             ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
                     </td>
@@ -4985,23 +3830,31 @@ class AcctCreditsAccountController extends Controller
 
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                  <tr>
-                    <td style=\"text-align:center;\" width=\"50%\" height=\"100px\">
+                    <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
                         <div style=\"font-size:12px;\">
-                            PIHAK I,</div>
+                            PEMBERI PINJAMAN</div>
                     </td>
-                    <td style=\"text-align:center;\" width=\"50%\" height=\"100px\">
+                    <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
                         <div style=\"font-size:12px;\">
-                            PIHAK II,</div>
+                            Peminjam</div>
+                    </td>
+                     <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
+                        <div style=\"font-size:12px;\">
+                            Menyetujui</div>
                     </td>
                  </tr>
                  <tr>
-                    <td style=\"text-align:center;\" width=\"50%\">
+                    <td style=\"text-align:center;\" width=\"30%\">
                         <div style=\"font-size:12px;font-weight:bold\">
                             ".$this->getBranchManager($acctcreditsaccount['branch_id'])."</div>
                     </td>
-                    <td style=\"text-align:center;\" width=\"50%\" >
+                    <td style=\"text-align:center;\" width=\"30%\" >
                         <div style=\"font-size:12px;font-weight:bold\">
                             ".$acctcreditsaccount['member_name']."</div>
+                    </td>
+                    <td style=\"text-align:center;\" width=\"30%\" >
+                        <div style=\"font-size:12px;font-weight:bold\">
+                            </div>
                     </td>
                  </tr>
              </table>
@@ -5009,6 +3862,8 @@ class AcctCreditsAccountController extends Controller
         ";
 
         $pdf::writeHTML($tblket, true, false, false, false, '');
+
+        //--------------------------------------------------------------------------------------------------------------------------------
 
         ob_clean();
 
