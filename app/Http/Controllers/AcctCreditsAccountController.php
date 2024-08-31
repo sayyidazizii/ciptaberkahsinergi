@@ -3155,44 +3155,40 @@ class AcctCreditsAccountController extends Controller
         $pdf::Output($filename, 'I');
     }
 
-    public function printAkad($credits_account_id){
-
-
+    public function printAkad($credits_account_id)
+    {
         $memberidentity				= Configuration::MemberIdentity();
         $dayname 					= Configuration::DayName();
         $monthname 					= Configuration::Month();
 
-         $acctcreditsaccount			= AcctCreditsAccount::withoutGlobalScopes()
-         ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'acct_credits.credits_fine', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-        ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-        ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-        ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-        ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-        ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-        ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-        ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
-        ->where('acct_credits_account.data_state', 0)
-        ->where('acct_credits_account.credits_account_id', $credits_account_id)
-        ->first();
+        $acctcreditsaccount			= AcctCreditsAccount::withoutGlobalScopes()
+            ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'acct_credits.credits_fine', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id','=','core_province.province_id')
+            ->join('core_city', 'core_member.city_id','=','core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
+            ->where('acct_credits_account.data_state', 0)
+            ->where('acct_credits_account.credits_account_id', $credits_account_id)
+            ->first();
 
         $acctcreditsagunan			= AcctCreditsAgunan::where('credits_account_id',$credits_account_id)
         ->get();
-
-        if($acctcreditsaccount['credits_id'] == 5 && $acctcreditsaccount['credits_id'] == 6){
-            $credits_name = 'MURABAHAH';
-        } else {
-            $credits_name = '';
-        }
 
         $date 	= date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
         $day 	= date('D', (strtotime($acctcreditsaccount['credits_account_date'])));
         $month 	= date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
         $year 	= date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
 
-        // print_r($acctcreditsaccount);exit;
-
+        $paymentDate = $acctcreditsaccount['credits_account_payment_date'];
+        $formattedDate = date('d-m-Y', strtotime($paymentDate));
 
         $total_agunan = 0;
+        $htmlAgunanBPKB = '';
+        $htmlAgunanSertifikat = '';
+
         foreach ($acctcreditsagunan as $key => $val) {
             if($val['credits_agunan_type'] == 1){
                 $agunanbpkb[] = array (
@@ -3201,6 +3197,24 @@ class AcctCreditsAccountController extends Controller
                     'credits_agunan_bpkb_no_mesin'			=> $val['credits_agunan_bpkb_no_mesin'],
                     'credits_agunan_bpkb_no_rangka'			=> $val['credits_agunan_bpkb_no_rangka'],
                 );
+
+                 // Membuat HTML untuk data BPKB
+                if (!empty($agunanbpkb)) {
+                    foreach ($agunanbpkb as $key => $bpkb) {
+                        $htmlAgunanBPKB .= '
+                        <tr>
+                            <td style="text-align:left;" width="5%">
+                                <div style="font-size:12px;"></div>
+                            </td>
+                            <td style="text-align:left;" width="5%">
+                                <div style="font-size:12px;">' . ($key + 1) . '.</div>
+                            </td>
+                            <td style="text-align:justify;" width="95%">
+                                <div style="font-size:12px;">BPKB atas nama: ' . $bpkb['credits_agunan_bpkb_nama'] . ', Nomor: ' . $bpkb['credits_agunan_bpkb_nomor'] . ', No Mesin: ' . $bpkb['credits_agunan_bpkb_no_mesin'] . ', No Rangka: ' . $bpkb['credits_agunan_bpkb_no_rangka'] . '</div>
+                            </td>
+                        </tr>';
+                    }
+                }
             } else if($val['credits_agunan_type'] == 2){
                 $agunansertifikat[] = array (
                     'credits_agunan_shm_no_sertifikat'		=> $val['credits_agunan_shm_no_sertifikat'],
@@ -3208,48 +3222,36 @@ class AcctCreditsAccountController extends Controller
                     'credits_agunan_shm_atas_nama'			=> $val['credits_agunan_shm_atas_nama'],
 
                 );
+                // Membuat HTML untuk data Sertifikat
+                if (!empty($agunansertifikat)) {
+                    foreach ($agunansertifikat as $key => $sertifikat) {
+                        $htmlAgunanSertifikat .= '
+                        <tr>   
+                            <td style="text-align:left;" width="5%">
+                                <div style="font-size:12px;"></div>
+                            </td>
+                            <td style="text-align:left;" width="5%">
+                                <div style="font-size:12px;">' . ($key + 1) . '.</div>
+                            </td>
+                            <td style="text-align:justify;" width="95%">
+                                <div style="font-size:12px;">Sertifikat No: ' . $sertifikat['credits_agunan_shm_no_sertifikat'] . ', Luas: ' . $sertifikat['credits_agunan_shm_luas'] . ', Atas Nama: ' . $sertifikat['credits_agunan_shm_atas_nama'] . '</div>
+                            </td>
+                        </tr>';
+                    }
+                }
             }
 
             $total_agunan = $total_agunan + $val['credits_agunan_bpkb_taksiran'] + $val['credits_agunan_shm_taksiran'];
         }
 
-        // print_r($acctcreditsagunan);exit;
-
         // create new PDF document
 
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
-        // Check the example n. 29 for viewer preferences
-        // set document information
-        /*$pdf::SetCreator(PDF_CREATOR);
-        $pdf::SetAuthor('');
-        $pdf::SetTitle('');
-        $pdf::SetSubject('');
-        $pdf::SetKeywords('TCPDF, PDF, example, test, guide');*/
-
-        // set default header data
-        /*$pdf::SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE);
-        $pdf::SetSubHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_STRING);*/
-
-        // set header and footer fonts
-        /*$pdf::setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-        $pdf::setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));*/
-
-        // set default monospaced font
-        /*$pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);*/
-
-        // set margins
-        /*$pdf::SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);*/
 
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
 
         $pdf::SetMargins(20, 10, 20); // put space of 10 on top
-        /*$pdf::SetHeaderMargin(PDF_MARGIN_HEADER);*/
-        /*$pdf::SetFooterMargin(PDF_MARGIN_FOOTER);*/
-
-        // set auto page breaks
-        /*$pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);*/
-
         // set image scale factor
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
@@ -3259,36 +3261,43 @@ class AcctCreditsAccountController extends Controller
             $pdf::setLanguageArray($l);
         }
 
-        // ---------------------------------------------------------
-
         // set font
         $pdf::SetFont('helvetica', 'B', 20);
 
         // add a page
         $pdf::AddPage();
 
-        /*$pdf::Write(0, 'Example of HTML tables', '', 0, 'L', true, 0, false, false, 0);*/
-
         $pdf::SetFont('helvetica', '', 12);
 
         // -----------------------------------------------------------------------------
 
         /*print_r($preference_company);*/
+        if($acctcreditsaccount['credits_id'] == 4 ){
+            $creditsNo = 'PBM';
+        }elseif($acctcreditsaccount['credits_id'] == 9){
+            $creditsNo = 'PE';
+        }elseif($acctcreditsaccount['credits_id'] == 3){
+            $creditsNo = 'PT';
+        }else{
+            $creditsNo = 'PB';
+        }
+
+
 
         $tblheader = "
-             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
-                <tr>
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px; font-weight:bold\"><u>PERJANJIAN PINJAMAN ".$credits_name."</u></div>
-                    </td>
-                 </tr>
-                 <tr  style=\"line-height: 50%;\">
-                    <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px\">Nomor : PBM.".$acctcreditsaccount['credits_account_serial']."</div>
-                    </td>
-                 </tr>
+                <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                    <tr>
+                        <td style=\"text-align:center;\" width=\"100%\">
+                            <div style=\"font-size:14px; font-weight:bold\"><u>PERJANJIAN PINJAMAN</u></div>
+                        </td>
+                    </tr>
+                    <tr  style=\"line-height: 50%;\">
+                        <td style=\"text-align:center;\" width=\"100%\">
+                            <div style=\"font-size:14px\">Nomor : $creditsNo.".$acctcreditsaccount['credits_account_serial']."</div>
+                        </td>
+                    </tr>
 
-             </table>
+                </table>
         ";
 
         $pdf::setCellHeightRatio(0.8);
@@ -3311,7 +3320,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">1.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Koperasi Konsumen Cipta Berkah Sinergi, NIK 3313100090006, NIB 0408240022144   berkedudukan di Sukoharjo yang  beralamat di Kalongan Kulon Rt.002 Rw.014 Ds.Papahan Kec.Tasikmadu dan diwakili oleh ANTONIUS IRAWAN EKO SULISTYO . dalam kedudukannya selaku MANAGER (selanjutnya disebut ‘PEMBERI PINJAMAN”)</div>
+                        <div style=\"font-size:12px;\">Koperasi Konsumen Cipta Berkah Sinergi, NIK 3313100090006, NIB 0408240022144   berkedudukan di Sukoharjo yang  beralamat di Kalongan Kulon Rt.002 Rw.014 Ds.Papahan Kec.Tasikmadu dan diwakili oleh ANTONIUS IRAWAN EKO SULISTYO , SE   . dalam kedudukannya selaku MANAGER (selanjutnya disebut ‘PEMBERI PINJAMAN”)</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3626,9 +3635,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">1.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Guna menjamin tertib pembayaran sejumlah uang yang terhutang atau pelunasan pinjaman sebagaimana dimaksud ayat 1 Pasal ini tepat pada waktu yang telah disepakati oleh Para Pihak berdasarkan Perjanjian Pinjaman ini, maka PEMINJAM berjanji dan dengan ini mengikatkan diri untuk membuat dan menandatangani akta pengikatan jaminan dan dengan ini menyerahkan kepada KOPERASI, yang pengalihan hak kepemilikannya dibuktikan dengan dokumen atau perjanjian-perjanjian yang dibuat dalam bentuk, jumlah dan isi yang memuaskan KOPERASI , yaitu : - </div>
+                        <div style=\"font-size:12px;\">Guna menjamin tertib pembayaran sejumlah uang yang terhutang atau pelunasan pinjaman sebagaimana dimaksud ayat 1 Pasal ini tepat pada waktu yang telah disepakati oleh Para Pihak berdasarkan Perjanjian Pinjaman ini, maka PEMINJAM berjanji dan dengan ini mengikatkan diri untuk membuat dan menandatangani akta pengikatan jaminan dan dengan ini menyerahkan kepada KOPERASI, yang pengalihan hak kepemilikannya dibuktikan dengan dokumen atau perjanjian-perjanjian yang dibuat dalam bentuk, jumlah dan isi yang memuaskan KOPERASI , yaitu : </div>
                     </td>
+                    
                  </tr>
+                 $htmlAgunanBPKB
+                 $htmlAgunanSertifikat
+                
                  <tr>
                     <td style=\"text-align:left;\" width=\"5%\">
                         <div style=\"font-size:12px;\">2.</div>
@@ -3676,7 +3689,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">1.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">PEMINJAM wajib membayar angsuran bunga yang untuk pertama kalinya ditetapkan pada maksimal tanggal 21 - 09 - 2024 pembayaran angsuran bunga dapat dipercepat oleh PEMINJAM dari tanggal pembayaran angsuran bunga yang seharusnya, sehingga tanggal pembayaran angsuran bunga berikutnya adalah 30 (tiga puluh ) hari dari tanggal  angsuran bunga yang dipercepat tersebut. </div>
+                        <div style=\"font-size:12px;\">PEMINJAM wajib membayar angsuran bunga yang untuk pertama kalinya ditetapkan pada maksimal tanggal ".$paymentDate." pembayaran angsuran bunga dapat dipercepat oleh PEMINJAM dari tanggal pembayaran angsuran bunga yang seharusnya, sehingga tanggal pembayaran angsuran bunga berikutnya adalah 30 (tiga puluh ) hari dari tanggal  angsuran bunga yang dipercepat tersebut. </div>
                     </td>
                  </tr>
                  <tr>
@@ -3831,26 +3844,29 @@ class AcctCreditsAccountController extends Controller
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                  <tr>
                     <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
-                        <div style=\"font-size:12px;\">
+                        <div style=\"font-size:12px;font-weight:bold\">
                             PEMBERI PINJAMAN</div>
                     </td>
                     <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
-                        <div style=\"font-size:12px;\">
+                        <div style=\"font-size:12px;font-weight:bold\">
                             Peminjam</div>
                     </td>
                      <td style=\"text-align:center;\" width=\"30%\" height=\"100px\">
-                        <div style=\"font-size:12px;\">
-                            Menyetujui</div>
+                        <div style=\"font-size:12px;font-weight:bold\">
+                            Menyetujui<br>
+                            Suami/Istri</div>
                     </td>
                  </tr>
                  <tr>
                     <td style=\"text-align:center;\" width=\"30%\">
                         <div style=\"font-size:12px;font-weight:bold\">
-                            ".$this->getBranchManager($acctcreditsaccount['branch_id'])."</div>
+                            <u>".$this->getBranchManager($acctcreditsaccount['branch_id'])."</u>
+                            <br>
+                            Manajer</div>
                     </td>
                     <td style=\"text-align:center;\" width=\"30%\" >
                         <div style=\"font-size:12px;font-weight:bold\">
-                            ".$acctcreditsaccount['member_name']."</div>
+                            <u>".$acctcreditsaccount['member_name']."</u></div>
                     </td>
                     <td style=\"text-align:center;\" width=\"30%\" >
                         <div style=\"font-size:12px;font-weight:bold\">
@@ -3865,18 +3881,125 @@ class AcctCreditsAccountController extends Controller
 
         //--------------------------------------------------------------------------------------------------------------------------------
 
+        $pdf::AddPage();
+        $tblheader = "
+            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:center;\" width=\"100%\">
+                        <div style=\"font-size:12px\"><b><u>TANDA TERIMA UANG PEMINJAM (TTUP)</u></b></div>
+                    </td>
+                 </tr>
+             </table>
+        ";
+
+        $pdf::writeHTML($tblheader, true, false, false, false, '');
+
+        $tblket = "
+             <br><br>
+
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                <tr>
+                    <td style=\"text-align:left;\" width=\"100%\">
+                        <div style=\"font-size:12px; font-weight:bold;\">Saya yang bertanda tangan dibawah ini : </div>
+                    </td>
+                </tr>
+                <br>
+            </table>
+            <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr style=\"line-height: 60%;\">
+                    
+                    <td style=\"text-align:left;\" width=\"15%\">
+                        <div style=\"font-size:12px;\">Nama</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"2%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"80%\">
+                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:left;\" width=\"15%\">
+                        <div style=\"font-size:12px;\">Pekerjaan</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"2%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"80%\">
+                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:left;\" width=\"15%\">
+                        <div style=\"font-size:12px;\">Alamat</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"2%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"80%\">
+                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                    </td>
+                 </tr>
+                 <tr style=\"line-height: 60%;\">
+                    <td style=\"text-align:left;\" width=\"15%\">
+                        <div style=\"font-size:12px;\">No. KTP</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"2%\">
+                        <div style=\"font-size:12px;\">:</div>
+                    </td>
+                    <td style=\"text-align:left;\" width=\"80%\">
+                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."  <br><br>(Selanjutnya disebut “Peminjam“)</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:justify;\" colspan=\"3\">
+                        <div style=\"font-size:12px;\">Menyatakan dengan ini menerima dari KOPERASI KONSUMEN CIPTA BERKAH SINERGI (Pemberi Pinjaman) sejumlah  Rp. ".number_format($acctcreditsaccount['credits_account_amount'], 2)." ( ".$this->numtotxt($acctcreditsaccount['credits_account_amount'])." )</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:justify;\" colspan=\"3\">
+                        <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : PBM.01/PP/001/1217 tertanggal ".$date." - ".$month." - ".$year." (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
+                    </td>
+                 </tr>
+             </table>
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"100%\">
+                        <div style=\"font-size:12px;\">
+                            ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
+                    </td>
+                 </tr>
+             </table>
+             <br><br>
+
+             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"30%\" height=\"100px\">
+                        <div style=\"font-size:12px;font-weight:bold\">
+                            Peminjam</div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td style=\"text-align:left;\" width=\"30%\" >
+                        <div style=\"font-size:12px;font-weight:bold\">
+                            <u>".$acctcreditsaccount['member_name']."</u></div>
+                    </td>
+                 </tr>
+             </table>
+            
+
+        ";
+
+        $pdf::writeHTML($tblket, true, false, false, false, '');
+
+        //--------------------------------------------------------------------------------------------------------------------------------
+        
         ob_clean();
 
-        $filename = 'Akad_'.$credits_name.'_'.$acctcreditsaccount['member_name'].'.pdf';
+        $filename = 'Akad_'. $acctcreditsaccount['credits_name'].'_'.$acctcreditsaccount['member_name'].'.pdf';
         $pdf::Output($filename, 'I');
 
         // exit;
-        // -----------------------------------------------------------------------------
-
-        //Close and output PDF document
-        // $filename = 'IST Test '.$testingParticipantData['participant_name'].'.pdf';
-        // $pdf::Output($filename, 'I');
-
         //============================================================+
         // END OF FILE
         //============================================================+
