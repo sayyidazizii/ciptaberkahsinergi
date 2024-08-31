@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsAccountDetail;
-use App\Models\AcctSavingsAccountDetailTemp;
-use App\Models\AcctSavingsAccountTemp;
-use App\Models\AcctSavingsProfitSharing;
-use App\Models\AcctSavingsProfitSharingTemp;
-use App\Models\AcctSavingsProfitSharingLog;
-use App\Models\AcctSavingsTransferMutation;
-use App\Models\AcctSavingsTransferMutationTo;
 use App\Models\CoreBranch;
 use App\Models\CoreMember;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\Models\SavingsProfitSharingLog;
-use App\Models\SystemPeriodLog;
-use App\DataTables\AcctSavingsProfitSharingDataTable;
+use App\Models\AcctAccount;
+use App\Models\AcctSavings;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
-use Carbon\Carbon;
+use App\Models\SystemPeriodLog;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctSavingsAccountTemp;
+use App\Models\SavingsProfitSharingLog;
+use App\Models\AcctSavingsAccountDetail;
+use App\Models\AcctSavingsProfitSharing;
+use App\Models\AcctSavingsProfitSharingLog;
+use App\Models\AcctSavingsTransferMutation;
+use App\Models\PreferenceTransactionModule;
+use App\Models\AcctSavingsAccountDetailTemp;
+use App\Models\AcctSavingsProfitSharingTemp;
+use App\Models\AcctSavingsTransferMutationTo;
+use App\DataTables\AcctSavingsProfitSharingDataTable;
 
 class AcctSavingsProfitSharingController extends Controller
 {
@@ -229,7 +230,7 @@ class AcctSavingsProfitSharingController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             $message = array(
-                'pesan' => 'Bunga Tabungan gagal dihitung',
+                'pesan' => 'Bunga Tabungan gagal dihitung: '.$e->getMessage(),
                 'alert' => 'error'
             );
             return redirect('savings-profit-sharing')->with($message);
@@ -501,7 +502,7 @@ class AcctSavingsProfitSharingController extends Controller
             } catch (\Exception $e) {
                 DB::rollback();
                 $message = array(
-                    'pesan' => 'Bunga Tabungan gagal dihitung',
+                    'pesan' => 'Bunga Tabungan gagal dihitung'.$e->getMessage(),
                     'alert' => 'error'
                 );
             }
