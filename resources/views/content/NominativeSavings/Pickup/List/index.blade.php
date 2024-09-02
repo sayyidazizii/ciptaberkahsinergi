@@ -20,15 +20,34 @@
             <div id="kt_card_collapsible" class="collapse">
                 <div class="card-body pt-6">
                     <div class="row mb-6">
-                        <div class="col-lg-6 col-md-6 fv-row">
-                            <label class="col-lg-6 col-form-label fw-bold fs-6 required">{{ __('Tanggal Mulai') }}</label>
+                        <div class="col-lg-4 fv-row">
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Tanggal Mulai') }}</label>
                             <input name="start_date" class="date form-control form-control-lg form-control-solid" placeholder="Tanggal" autocomplete="off" value="{{ old('start_date', $sessiondata['start_date'] ?? '') }}"/>
                         </div>
-                        <div class="col-lg-6 col-md-6 fv-row">
-                            <label class="col-lg-6 col-form-label fw-bold fs-6 required">{{ __('Tanggal Akhir') }}</label>
+                        <div class="col-lg-4 fv-row">
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Tanggal Akhir') }}</label>
                             <input name="end_date" class="date form-control form-control-lg form-control-solid" placeholder="Tanggal" autocomplete="off" value="{{ old('end_date', $sessiondata['end_date'] ?? '') }}"/>
                         </div>
+                        <div class="col-lg-4 fv-row">
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('BO') }}</label>
+                            <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                <option value="">{{ __('Pilih bo..') }}</option>
+                                @foreach($coreoffice as $key => $value)
+                                    <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] === old('office_id', '' ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-4 fv-row">
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Cabang') }}</label>
+                            <select name="branch_id" id="branch_id" aria-label="{{ __('Cabang') }}" data-control="select2" data-placeholder="{{ __('Pilih cabang..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                <option value="">{{ __('Pilih cabang..') }}</option>
+                                @foreach($corebranch as $key => $value)
+                                    <option data-kt-flag="{{ $value['branch_id'] }}" value="{{ $value['branch_id'] }}" {{ $value['branch_id'] === old('branch_id', '' ?? '') ? 'selected' :'' }}>{{ $value['branch_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
+                    
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <a href="{{ route('nomv-sv-pickup.filter-reset') }}" class="btn btn-danger me-2" id="kt_filter_cancel">
