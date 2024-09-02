@@ -521,7 +521,7 @@ class BalanceSheetController extends Controller
                                 }
 
                                 if($valRight['report_type2'] == 7){
-                                    $last_balance2 	= $this->getAccountAmount($valRight['account_id2'], $month, $month, $last_year, empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'],1);
+                                    $last_balance2 	= $this->getAccountAmount($valRight['account_id2'], $month, $month, $last_year, empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'],2);
                                     $tblitem_right4 = "";
 
                                     $account_amount2_shu[$valRight['report_no']] = $last_balance2;
@@ -864,6 +864,8 @@ class BalanceSheetController extends Controller
 
         $period = $day." ".$month_name." ".$year;
         $branchname 					= $this->getBranchName($sesi['branch_id']);
+        $grand_total_account_pendapatan = 0;
+        $grand_total_account_amount_beban = 0;
 
         
         if(!empty($acctbalancesheetreport_left && $acctbalancesheetreport_right)){
@@ -1079,8 +1081,7 @@ class BalanceSheetController extends Controller
                     }
 
                     if($valRight['report_type2']	== 7){
-                        $last_balance2 = $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
-
+                        $last_balance2 = $this->getAccountAmount($valRight['account_id2'], $month, $month, $last_year, empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'],2);
                         if (empty($last_balance2)){
                             $last_balance2 = 0;
                         }
@@ -1147,7 +1148,37 @@ class BalanceSheetController extends Controller
                             // $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
                             
-                            $grand_total_account_amount2 += $total_account_amount2;
+                            $grand_total_account_pendapatan += $total_account_amount2;
+                        }
+                    }
+
+                    if($valRight['report_type2'] == 9){
+                        if(!empty($valRight['report_formula2']) && !empty($valRight['report_operator2'])){
+                            $report_formula2 	= explode('#', $valRight['report_formula2']);
+                            $report_operator2 	= explode('#', $valRight['report_operator2']);
+
+                            $total_account_amount_beban	= 0;
+                            for($i = 0; $i < count($report_formula2); $i++){
+                                if($report_operator2[$i] == '-'){
+                                    if($total_account_amount_beban == 0 ){
+                                        $total_account_amount_beban = $total_account_amount_beban + $account_amount2_bottom[$report_formula2[$i]];
+                                    } else {
+                                        $total_account_amount_beban = $total_account_amount_beban - $account_amount2_bottom[$report_formula2[$i]];
+                                    }
+                                } else if($report_operator2[$i] == '+'){
+                                    if($total_account_amount_beban == 0){
+                                        $total_account_amount_beban = $total_account_amount_beban + $account_amount2_bottom[$report_formula2[$i]];
+                                    } else {
+                                        $total_account_amount_beban = $total_account_amount_beban + $account_amount2_bottom[$report_formula2[$i]];
+                                    }
+                                }
+                            }
+
+                            // $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
+                            // $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount_beban);
+
+                            
+                            $grand_total_account_amount_beban += $total_account_amount_beban;
                         }
                     }
 
@@ -1181,15 +1212,13 @@ class BalanceSheetController extends Controller
                         }
                     }
 
-                    // if($valRight['report_type2']	== 5){
-                    //     $last_balance210 = $this->getSHUTahunBerjalan($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $month, $year);		
+                    if($valRight['report_type2'] == 10){
+                        $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
 
-                    //     if (empty($last_balance210)){
-                    //         $last_balance210 = 0;
-                    //     }
-
-                    //     $account_amount210_top[$valRight['report_no']] = $last_balance210;
-                    // }
+                        // $account_amount210_top[$valRight['report_no']] = $shu;
+                        $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
+                        $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$shu);
+                    }
                     
                     if($valRight['report_type2'] == 6){
                         if(!empty($valRight['report_formula2']) && !empty($valRight['report_operator2'])){
@@ -1217,7 +1246,9 @@ class BalanceSheetController extends Controller
                             $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
                             
-                            $grand_total_account_amount2 = $total_account_amount2;
+                            // $grand_total_account_amount2 = $total_account_amount2;
+                            $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
+                            $grand_total_account_amount2 =  $total_account_amount2 + $shu;
                         }
                     }
                 }else{
