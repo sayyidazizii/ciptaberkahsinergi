@@ -424,7 +424,7 @@
                                                 ";
                                                     if($val['report_type2']	== 7){
                                                         
-                                                        $last_balance2 	= BalanceSheetController::getAccountAmount($val['account_id2'],$month, $month, $last_year,empty($session['branch_id']) ? auth()->user()->branch_id : $session['branch_id'],1);
+                                                        $last_balance2 	= BalanceSheetController::getAccountAmount($val['account_id2'],$month, $month, $last_year,empty($session['branch_id']) ? auth()->user()->branch_id : $session['branch_id'],2);
 
                                                         $account_amount2_bottom_shu[$val['report_no']] = $last_balance2;
                                                     }
