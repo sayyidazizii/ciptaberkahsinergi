@@ -3173,6 +3173,7 @@ class AcctCreditsAccountController extends Controller
             ->where('acct_credits_account.data_state', 0)
             ->where('acct_credits_account.credits_account_id', $credits_account_id)
             ->first();
+        // dd($acctcreditsaccount);
 
         $acctcreditsagunan			= AcctCreditsAgunan::where('credits_account_id',$credits_account_id)
         ->get();
@@ -3440,7 +3441,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"25%\">
-                        <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_interest'])." % Menurun per 30 hari</div>
+                        <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_interest'],2)." % Menurun per 30 hari</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
