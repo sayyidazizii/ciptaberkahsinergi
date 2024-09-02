@@ -3,38 +3,55 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use App\DataTables\NominativeSavingsPickupDataTable;
+use App\Models\User;
+use App\Models\CoreBranch;
+use App\Models\CoreMember;
+use App\Models\CoreOffice;
 use App\Models\AcctAccount;
 use App\Models\AcctCredits;
+use App\Models\AcctSavings;
+use Illuminate\Http\Request;
+use App\Models\PreferenceCompany;
 use App\Models\AcctCreditsAccount;
 use App\Models\AcctCreditsPayment;
 use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctSavings;
 use App\Models\AcctSavingsAccount;
+use App\Models\AcctJournalVoucherItem;
 use App\Models\AcctSavingsCashMutation;
 use App\Models\AcctSavingsMemberDetail;
-use App\Models\CoreMember;
-use App\Models\PreferenceCompany;
+use Illuminate\Support\Facades\Session;
 use App\Models\PreferenceTransactionModule;
-use App\Models\User;
+use App\DataTables\NominativeSavingsPickupDataTable;
 
 class AcctNominativeSavingsPickupController extends Controller
 {
     public function index(NominativeSavingsPickupDataTable $datatable) {
 
        $sessiondata = Session::get('pickup-data');
+
+       $branch_id          = auth()->user()->branch_id;
+        if($branch_id == 0){
+            $corebranch         = CoreBranch::where('data_state', 0)
+            ->get();
+            $coreoffice = CoreOffice::where('data_state', 0)->get();
+        }else{
+            $corebranch         = CoreBranch::where('data_state', 0)
+            ->where('branch_id', $branch_id)
+            ->get();
+            $coreoffice = CoreOffice::where('branch_id', $branch_id)
+            ->where('data_state', 0)->get();
+        }
        
     //    dd($sessiondata);
-       return $datatable->render('content.NominativeSavings.Pickup.List.index',['sessiondata'=>$sessiondata]);
+       return $datatable->render('content.NominativeSavings.Pickup.List.index',['sessiondata'=>$sessiondata,'corebranch'=>$corebranch,'coreoffice'=>$coreoffice]);
     }
     public function filter(Request $request) {
         $filter = Session::get('pickup-data');
         $filter['start_date'] = $request->start_date;
         $filter['end_date'] = $request->end_date;
         $filter['pickup_type'] = $request->pickup_type;
+        $filter['branch_id'] = $request->branch_id;
+        $filter['office_id'] = $request->office_id;
         Session::put('pickup-data', $filter);
         return redirect()->route('nomv-sv-pickup.index');
     }

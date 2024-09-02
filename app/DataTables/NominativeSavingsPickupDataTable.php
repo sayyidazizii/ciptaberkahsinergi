@@ -19,24 +19,9 @@ class NominativeSavingsPickupDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            // ->editColumn('savings_profit_sharing', function (AcctSavings $model) {
-            //     $savingsprofitsharing = Configuration::SavingsProfitSharing();
-
-            //     return $savingsprofitsharing[$model->savings_profit_sharing];
-            // })
             ->addColumn('action', 'content.NominativeSavings.Pickup.List._action-menu');
     }
 
-    // public function query(AcctSavingsCashMutation $model)
-    // {
-    //     $sessiondata = Session::get('pickup-data');
-    //     // return $model->newQuery()->with('member','mutation')
-    //     // ->where('data_state', 0)
-    //     // ->where('savings_cash_mutation_status', 1)
-    //     // ->where('savings_cash_mutation_date','>=',Carbon::parse($sessiondata['start_date']??Carbon::now())->format('Y-m-d'))
-    //     // ->where('savings_cash_mutation_date','<=',Carbon::parse($sessiondata['end_date']??Carbon::now())->format('Y-m-d'))
-    //     // ;
-    // }
 
     public function query()
     {
@@ -47,6 +32,7 @@ class NominativeSavingsPickupDataTable extends DataTable
                 'end_date'      => date('Y-m-d'),
                 'credits_id'    => null,
                 'branch_id'     => auth()->user()->branch_id,
+                'office_id'     => null,
             );
         }
         if(!$sessiondata['branch_id'] || !$sessiondata['branch_id']==0){
@@ -100,6 +86,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id)
+        ->where('acct_savings_account.office_id', $sessiondata['office_id'])
         ->where('acct_savings_cash_mutation.pickup_state', 0);
 
 
@@ -124,6 +111,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id)
+        ->where('acct_savings_account.office_id', $sessiondata['office_id'])
         ->where('acct_savings_cash_mutation.pickup_state', 0);
 
 
