@@ -3279,7 +3279,9 @@ class AcctCreditsAccountController extends Controller
             $creditsNo = 'PE';
         }elseif($acctcreditsaccount['credits_id'] == 3){
             $creditsNo = 'PT';
-        }else{
+        }elseif($acctcreditsaccount['credits_id'] == 1){
+            $creditsNo = 'PM';
+        }else {
             $creditsNo = 'PB';
         }
 
@@ -3959,7 +3961,7 @@ class AcctCreditsAccountController extends Controller
                  </tr>
                  <tr>
                     <td style=\"text-align:justify;\" colspan=\"3\">
-                        <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : PBM.01/PP/001/1217 tertanggal ".$date." - ".$month." - ".$year." (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
+                        <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : $creditsNo.".$acctcreditsaccount['credits_account_serial']." tertanggal ".$date." - ".$month." - ".$year." (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
                     </td>
                  </tr>
              </table>
