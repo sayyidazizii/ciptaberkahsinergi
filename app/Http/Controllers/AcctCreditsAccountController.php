@@ -3300,7 +3300,7 @@ class AcctCreditsAccountController extends Controller
         $creditsPeriod = $creditsPaymentPeriodMapping->get($acctcreditsaccount['credits_payment_period'], '-');
 
     // start suku bunga || denda || pelunasan --------------------------------------------------
-        $paymentType   = $acctcreditsaccount['credits_payment_type'];
+        $paymentType   = $acctcreditsaccount['payment_type_id'];
         $interestRate  = " ";
         $fine          = " ";
         $repayment     = " ";
@@ -3751,7 +3751,7 @@ class AcctCreditsAccountController extends Controller
 
     //pasal
         //menurun
-        if($acctcreditsaccount['credits_payment_type'] == 4){
+        if($acctcreditsaccount['payment_type_id'] == 4){
 
             $tblket = "
               <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -4219,6 +4219,61 @@ class AcctCreditsAccountController extends Controller
                             </td>
                         </tr>
                     </table>
+                    <BR>
+                    <BR>
+
+                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                        <tr style=\"line-height: 60%;\">
+                            <td style=\"text-align:center;\" width=\"100%\">
+                                <div style=\"font-size:12px\"><b>PASAL. 8 PERSELISIHAN</b></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                        <tr>
+                            <td style=\"text-align:left;\" width=\"5%\">
+                                <div style=\"font-size:12px;\"></div>
+                            </td>
+                            <td style=\"text-align:justify;\" width=\"95%\">
+                                <div style=\"font-size:12px;\">Atas perjanjian ini beserta pelaksanaannya dan seluruh akibat hukumnya, KOPERASI dan PEMINJAM sepakat untuk memilih domisili Hukum yang umum dan tetap di kepaniteraan Pengadilan Negeri yang wilayah hukumnya meliputi tempat dimana Perjanjian Pinjaman ini ditandatangani.</div>
+                            </td>
+                        </tr>
+                    </table>
+                    <BR>
+                    <BR>
+                    <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                        <tr style=\"line-height: 60%;\">
+                            <td style=\"text-align:center;\" width=\"100%\">
+                                <div style=\"font-size:12px\"><b>PASAL. 9 LAIN-LAIN</b></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+                        <tr>
+                            <td style=\"text-align:left;\" width=\"5%\">
+                                <div style=\"font-size:12px;\">1.</div>
+                            </td>
+                            <td style=\"text-align:justify;\" width=\"95%\">
+                                <div style=\"font-size:12px;\">KOPERASI dan PEMINJAM dengan ini, sepakat dan setuju untuk memberlakukan seluruh ketentuan-ketentuan yang diatur KOPERASI karenanya ketentuan tersebut  mengikat PEMINJAM dan PEMBERI KREDIT serta merupakan satu kesatuan dan bagian yang tidak dapat dipisahkan dengan Perjanjian ini.</div>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td style=\"text-align:left;\" width=\"5%\">
+                                <div style=\"font-size:12px;\">2.</div>
+                            </td>
+                            <td style=\"text-align:justify;\" width=\"95%\">
+                                <div style=\"font-size:12px;\">Seluruh Lampiran dari Perjanjian ini merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Perjanjian ini.</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style=\"text-align:left;\" width=\"5%\">
+                                <div style=\"font-size:12px;\">3.</div>
+                            </td>
+                            <td style=\"text-align:justify;\" width=\"95%\">
+                                <div style=\"font-size:12px;\">Perjanjian  ini  mengikat  Para  Pihak  yang sah,  para  pengganti  atau pihak-pihak  yang menerima hak dari  masing-masing Para Pihak.</div>
+                            </td>
+                        </tr>
+                    </table>
                 ";
 
                 $pdf::writeHTML($tblket, true, false, false, false, '');
@@ -4231,18 +4286,10 @@ class AcctCreditsAccountController extends Controller
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr>
                             <td style=\"text-align:left;\" width=\"5%\">
-                                <div style=\"font-size:12px;\">3.</div>
-                            </td>
-                            <td style=\"text-align:justify;\" width=\"95%\">
-                                <div style=\"font-size:12px;\">Perjanjian  ini  mengikat  Para  Pihak  yang sah,  para  pengganti  atau pihak-pihak  yang menerima hak dari  masing-masing Para Pihak.</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style=\"text-align:left;\" width=\"5%\">
                                 <div style=\"font-size:12px;\">4.</div>
                             </td>
                             <td style=\"text-align:justify;\" width=\"95%\">
-                                <div style=\"font-size:12px;\">Perjanjian ini memuat, dan karenanya menggantikan  semua pengertian dan kesepakatan yang telah dicapai oleh Para  Pihak  sebelum ditandatanganinya Perjanjian ini, baik tertulis maupun lisan, mengenai hal yang sama.</div>
+                                <div style=\"font-size:12px;\">Perjanjian ini memuat, dan karenanya menggantikan  semua pengertian dan kesepakatan yang telah dicapai oleh Para  Pihak  sebelum ditandatanganinya Perjanjian ini, baik tertulis maupun lisan, mengenai hal yang sama.  </div>
                             </td>
                         </tr>
                         <tr>
@@ -4258,7 +4305,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px;\">6.</div>
                             </td>
                             <td style=\"text-align:justify;\" width=\"95%\">
-                                <div style=\"font-size:12px;\">Apabila ada hal-hal yang belum diatur atau belum cukup diatur dalam Perjanjian ini, maka KOPERASI dan PEMINJAM akan mengaturnya bersama secara musyawarah untuk mufakat dalam suatu Perjanjian tambahan (Addendum) yang ditandatangani oleh Para Pihak.</div>
+                                <div style=\"font-size:12px;\">Apabila ada hal-hal yang belum diatur atau belum cukup diatur dalam Perjanjian ini, maka KOPERASI  dan PEMINJAM akan mengaturnya bersama secara musyawarah untuk mufakat dalam suatu Perjanjian tambahan (Addendum) yang ditandatangani oleh Para Pihak.</div>
                             </td>
                         </tr>
                         <tr>
