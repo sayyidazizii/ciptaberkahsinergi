@@ -2,15 +2,16 @@
 
 namespace App\DataTables;
 
-use App\Models\AcctCreditsAccount;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
+use App\Helpers\Configuration;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
+use App\Models\AcctCreditsAccount;
+use App\Models\AcctCreditsPayment;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
-use App\Helpers\Configuration;
+use Illuminate\Database\Eloquent\Builder;
 
 class AcctCreditsAccountHistoryDataTable extends DataTable
 {
@@ -25,18 +26,17 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->editColumn('credits_account_date', function (AcctCreditsAccount $model) {
-                return date('d-m-Y', strtotime($model->credits_account_date));
+            ->editColumn('credits_payment_date', function (AcctCreditsPayment $model) {
+                return date('d-m-Y', strtotime($model->credits_payment_date));
             })
-            ->editColumn('credits_account_amount', function (AcctCreditsAccount $model) {
-                return number_format($model->credits_account_amount, 2);
+            ->editColumn('credits_payment_amount', function (AcctCreditsPayment $model) {
+                return number_format($model->credits_payment_amount, 2);
             })
-            ->editColumn('credits_account_interest', function (AcctCreditsAccount $model) {
-                return number_format($model->credits_account_interest, 2);
+            ->editColumn('credits_payment_principal', function (AcctCreditsPayment $model) {
+                return number_format($model->credits_payment_principal, 2);
             })
-            ->editColumn('credits_account_status', function (AcctCreditsAccount $model) {
-                $creditsapprovestatus = Configuration::CreditsApproveStatus();
-                return $creditsapprovestatus[$model->credits_account_status];
+            ->editColumn('credits_payment_interest', function (AcctCreditsPayment $model) {
+                return number_format($model->credits_payment_interest, 2);
             })
             ->addColumn('action', 'content.AcctCreditsAccountHistory.List._action-menu');
     }
@@ -44,10 +44,10 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\AcctCreditsAccount/AcctCreditsAccountDataTable $model
+     * @param \App\Models\AcctCreditsPayment/AcctCreditsAccountHistoryDataTable $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(AcctCreditsAccount $model)
+    public function query(AcctCreditsPayment $model)
     {
         $sessiondata = session()->get('filter_creditsaccounthistory');
         if(!$sessiondata){
@@ -62,11 +62,11 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
             $sessiondata['branch_id'] = auth()->user()->branch_id;
         }
 
-        $querydata = $model->newQuery()->with('member','credit','sourcefund')->where('credits_account_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-		->where('credits_account_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-        ->whereHas('member',function (Builder $query) use($sessiondata) {
-            $query->where('branch_id',  $sessiondata['branch_id']??Auth::user()->branch_id);
-        });
+        $querydata = $model->newQuery()->with('member','credit','account')->where('credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+		->where('credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])));
+        // ->whereHas('member',function (Builder $query) use($sessiondata) {
+        //     $query->where('branch_id',  $sessiondata['branch_id']??Auth::user()->branch_id);
+        // });
         if($sessiondata['credits_id']){
             $querydata = $querydata->where('credits_id', $sessiondata['credits_id']);
         }
@@ -100,14 +100,14 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::make('credits_account_id')->title(__('No'))->data('DT_RowIndex'),
-            Column::make('credits_account_serial')->title(__('No Rekening')),
+            Column::make('credits_payment_id')->title(__('No'))->data('DT_RowIndex'),
+            Column::make('account.credits_account_serial')->title(__('No Rekening')),
             Column::make('member.member_name')->title(__('Nama Anggota')),
             Column::make('credit.credits_name')->title(__('Jenis Pinjaman')),
-            Column::make('sourcefund.source_fund_name')->title(__('Sumber Dana')),
-            Column::make('credits_account_date')->title(__('Tanggal Pinjam')),
-            Column::make('credits_account_amount')->title(__('Pokok')),
-            Column::make('credits_account_status')->title(__('Status')),
+            Column::make('credits_payment_date')->title(__('Tanggal Angsur')),
+            Column::make('credits_payment_principal')->title(__('Pokok')),
+            Column::make('credits_payment_interest')->title(__('Bunga')),
+            Column::make('credits_payment_amount')->title(__('Total')),
             Column::computed('action')
                     ->title(__('Aksi'))
                     ->exportable(false)
