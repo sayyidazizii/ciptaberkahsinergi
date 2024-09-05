@@ -3,28 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctCredits;
-use App\Models\AcctCreditsAccount;
-use App\Models\AcctCreditsPayment;
-use App\Models\AcctMutation;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsCashMutation;
-use App\Models\AcctSavingsMemberDetail;
 use App\Models\CoreBranch;
 use App\Models\CoreMember;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\DataTables\AcctCreditsPaymentDebet\AcctCreditsPaymentDebetDataTable;
-use App\DataTables\AcctCreditsPaymentDebet\AcctCreditsAccountDataTable;
-use App\DataTables\AcctCreditsPaymentDebet\AcctSavingsAccountDataTable;
+use App\Models\AcctAccount;
+use App\Models\AcctCredits;
+use App\Models\AcctSavings;
+use App\Models\AcctMutation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctCreditsAccount;
+use App\Models\AcctCreditsPayment;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctSavingsCashMutation;
+use App\Models\AcctSavingsMemberDetail;
+use App\Models\PreferenceTransactionModule;
+use App\DataTables\AcctCreditsPaymentDebet\AcctCreditsAccountDataTable;
+use App\DataTables\AcctCreditsPaymentDebet\AcctSavingsAccountDataTable;
+use App\DataTables\AcctCreditsPaymentDebet\AcctCreditsPaymentDebetDataTable;
 
 class AcctCreditsPaymentDebetController extends Controller
 {
@@ -263,6 +264,7 @@ class AcctCreditsPaymentDebetController extends Controller
 				'credits_payment_type'				        => 1,
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
+				'pickup_date'								=> date('Y-m-d'),
             );
             AcctCreditsPayment::create($data);
 
@@ -310,6 +312,7 @@ class AcctCreditsPaymentDebetController extends Controller
                 "savings_cash_mutation_opening_balance" => $acctsavingsaccount['savings_account_last_balance'],
                 "savings_cash_mutation_last_balance" 	=> $last_balance,
                 "savings_cash_mutation_amount" 			=> $data['credits_payment_amount'],
+				"pickup_date"						    => date('Y-m-d'),
                 "savings_cash_mutation_remark"	 		=> "Pembayaran Kredit No.".$request->credits_account_serial,
             );
             AcctSavingsCashMutation::create($mutasi_data);
@@ -326,6 +329,7 @@ class AcctCreditsPaymentDebetController extends Controller
                     "savings_cash_mutation_opening_balance" => $last_balance,
                     "savings_cash_mutation_last_balance" 	=> $last_balance_after_fine,
                     "savings_cash_mutation_amount" 			=> $data['credits_payment_fine'],
+				    "pickup_date"							=> date('Y-m-d'),
                     "savings_cash_mutation_remark"	 		=> "Pembayaran Denda Atas Kredit No.".$request->credits_account_serial,
                 );
                 AcctSavingsCashMutation::create($mutasi_data);
@@ -508,6 +512,10 @@ class AcctCreditsPaymentDebetController extends Controller
             );
         } catch (\Exception $e) {
             DB::rollback();
+             // Catat pesan error ke dalam log Laravel
+            Log::error('Terjadi kesalahan saat menambah Angsuran Debet Tabungan: ' . $e->getMessage(), [
+                'stackTrace' => $e->getTraceAsString(), // Menyertakan stack trace untuk detail lebih lanjut
+            ]);
             $message = array(
                 'pesan' => 'Angsuran Debet Tabungan gagal ditambah',
                 'alert' => 'error'

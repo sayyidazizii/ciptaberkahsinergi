@@ -21,6 +21,7 @@ class AcctCreditsAccountHistoryController extends Controller
     {
         $sessiondata = session()->get('filter_creditsaccounthistory');
 
+        // dd($sessiondata);
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 0){
             $corebranch         = CoreBranch::where('data_state', 0)
