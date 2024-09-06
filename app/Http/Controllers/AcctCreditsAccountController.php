@@ -3578,7 +3578,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">1.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"95%\">
-                        <div style=\"font-size:12px;\">Koperasi Konsumen Cipta Berkah Sinergi, NIK 3313100090006, NIB 0408240022144   berkedudukan di Sukoharjo yang  beralamat di Kalongan Kulon Rt.002 Rw.014 Ds.Papahan Kec.Tasikmadu dan diwakili oleh ANTONIUS IRAWAN EKO SULISTYO , SE   . dalam kedudukannya selaku MANAGER (selanjutnya disebut <b>”PEMBERI PINJAMAN”</b>)</div>
+                        <div style=\"font-size:12px;\">Koperasi Konsumen Cipta Berkah Sinergi, NIK 3313100090006, NIB 0408240022144   berkedudukan di Karanganyar yang  beralamat di Kalongan Kulon Rt.002 Rw.014 Ds.Papahan Kec.Tasikmadu dan diwakili oleh ANTONIUS IRAWAN EKO SULISTYO , SE   . dalam kedudukannya selaku MANAGER (selanjutnya disebut <b>”PEMBERI PINJAMAN”</b>)</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
