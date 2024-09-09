@@ -551,7 +551,7 @@ class AcctCreditsAccountController extends Controller
                 $data_debet = array (
                     'journal_voucher_id'			=> $journal_voucher_id,
                     'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
+                    'journal_voucher_description'	=> 'Pendapatan Administrasi '.$data_journal['journal_voucher_title'],
                     'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
                     'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
                     'account_id_default_status'		=> $account_id_default_status,
@@ -569,7 +569,7 @@ class AcctCreditsAccountController extends Controller
                 $data_credit = array (
                     'journal_voucher_id'			=> $journal_voucher_id,
                     'account_id'					=> $preferencecompany['account_mutation_adm_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
+                    'journal_voucher_description'	=> 'Pendapatan Administrasi '.$data_journal['journal_voucher_title'],
                     'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
                     'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
                     'account_id_default_status'		=> $account_id_default_status,
