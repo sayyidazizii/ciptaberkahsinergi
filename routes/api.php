@@ -34,7 +34,7 @@ Route::group(['middleware'=> ['auth:sanctum']], function(){
     Route::post('PostSavingsByNo/{savings_account_no}', [ApiController::class, 'PostSavingsByNo']);
     Route::post('PostSavingsByMember/{member_id}', [ApiController::class, 'PostSavingsByMember']);
     Route::post('PrintmutationByMember/{member_id}', [ApiController::class, 'PrintmutationByMember']);
-    Route::post('PostSavingsmutation', [ApiController::class, 'GetDeposit']);
+    Route::post('ListSavingsmutation', [ApiController::class, 'GetSavings']);
     Route::post('GetWithdraw', [ApiController::class, 'GetWithdraw']);
 
 
