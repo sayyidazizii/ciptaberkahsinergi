@@ -43,6 +43,9 @@ class AcctCreditsAgunanDataTable extends DataTable
 				}else if($model->credits_agunan_type == 7){
 					return 'ATM / Jamsostek';
 				}
+                else if($model->credits_agunan_type == 8){
+					return 'Lain - Lain';
+				}
             })
             ->editColumn('credits_agunan_shm_taksiran', function (AcctCreditsAgunan $model) {
                 if($model->credits_agunan_shm_taksiran){
