@@ -88,6 +88,7 @@ class AcctCreditsAccountController extends Controller
             ->get();
         }
         $daftaragunan = session()->get('array_creditsaccountangunan');
+
         return view('content.AcctCreditsAccount.Add.index', compact('coremember','creditid','datasession','coreoffice','sumberdana','acctsavingsaccount','daftaragunan'));
     }
 
@@ -215,6 +216,8 @@ class AcctCreditsAccountController extends Controller
                         $credits_agunan_type 	= 6;
                     }else if($val['credits_agunan_type'] == 'ATM / Jamsostek'){
                         $credits_agunan_type 	= 7;
+                    }else if($val['credits_agunan_type'] == 'Lain-lain'){
+                        $credits_agunan_type 	= 8;
                     }
                     $dataagunan = array (
                         'credits_account_id'						=> $acctcreditsaccount_last['credits_account_id'],
