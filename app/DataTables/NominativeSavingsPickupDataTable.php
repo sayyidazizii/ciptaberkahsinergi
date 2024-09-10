@@ -19,7 +19,10 @@ class NominativeSavingsPickupDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addIndexColumn()
-            ->addColumn('action', 'content.NominativeSavings.Pickup.List._action-menu');
+            ->addColumn('action', 'content.NominativeSavings.Pickup.List._action-menu')
+            ->editColumn('jumlah', function ($query) {
+                return number_format($query->jumlah, 2);
+            });
     }
 
 
@@ -43,7 +46,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         $querydata1 = AcctCreditsPayment::selectRaw(
         '1 As type,
         credits_payment_id As id,
-        credits_payment_date As tanggal,
+        acct_credits_payment.created_at As tanggal,
         username As operator,
         member_name As anggota,
         credits_account_serial As no_transaksi,
@@ -68,7 +71,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         $querydata2 = AcctSavingsCashMutation::selectRaw(
             '2 As type,
             savings_cash_mutation_id As id,
-            savings_cash_mutation_date As tanggal,
+            acct_savings_cash_mutation.created_at As tanggal,
             username As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
@@ -94,7 +97,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         $querydata3 = AcctSavingsCashMutation::selectRaw(
             '3 As type,
             savings_cash_mutation_id As id,
-            savings_cash_mutation_date As tanggal,
+            acct_savings_cash_mutation.created_at As tanggal,
             username As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
