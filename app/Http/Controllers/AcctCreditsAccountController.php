@@ -38,22 +38,22 @@ class AcctCreditsAccountController extends Controller
         Session::forget('member_creditsaccount');
         Session::forget('data_creditsaccount');
         Session::forget('credit-token');
-        $acctcredits = AcctCredits::select('credits_id','credits_name')
-        ->where('data_state',0)
-        ->orderBy('credits_number','ASC')
-        ->get();
-        $branch_id          = auth()->user()->branch_id;
-        if($branch_id == 0){
-            $corebranch         = CoreBranch::where('data_state', 0)
+        $acctcredits = AcctCredits::select('credits_id', 'credits_name')
+            ->where('data_state', 0)
+            ->orderBy('credits_number', 'ASC')
             ->get();
-        }else{
-            $corebranch         = CoreBranch::where('data_state', 0)
-            ->where('branch_id', $branch_id)
-            ->get();
+        $branch_id = auth()->user()->branch_id;
+        if ($branch_id == 0) {
+            $corebranch = CoreBranch::where('data_state', 0)
+                ->get();
+        } else {
+            $corebranch = CoreBranch::where('data_state', 0)
+                ->where('branch_id', $branch_id)
+                ->get();
         }
         $datasession = Session::get('filter_creditsaccount');
 
-        return $dataTable->render('content.AcctCreditsAccount.List.index', compact('acctcredits','corebranch','datasession'));
+        return $dataTable->render('content.AcctCreditsAccount.List.index', compact('acctcredits', 'corebranch', 'datasession'));
     }
 
     public static function getApproveStatus($approve_status_id)
@@ -63,52 +63,52 @@ class AcctCreditsAccountController extends Controller
 
     public function add()
     {
-        $branch_id          = auth()->user()->branch_id;
-        if(empty(Session::get('credit-token'))){
-            Session::put('credit-token',Str::uuid());
+        $branch_id = auth()->user()->branch_id;
+        if (empty(Session::get('credit-token'))) {
+            Session::put('credit-token', Str::uuid());
         }
         $coremember = session()->get('member_creditsaccount');
-        $creditid = AcctCredits::select('credits_id','credits_name')
-        ->where('data_state',0)
-        ->orderBy('credits_number','ASC')
-        ->get();
+        $creditid = AcctCredits::select('credits_id', 'credits_name')
+            ->where('data_state', 0)
+            ->orderBy('credits_number', 'ASC')
+            ->get();
         $datasession = session()->get('data_creditsaccount');
-        $coreoffice = CoreOffice::select('office_id','office_name')
-        ->where('data_state', 0)
-        ->get();
-        $sumberdana = AcctSourceFund::select('source_fund_id','source_fund_name')
-        ->where('data_state', 0)
-        ->get();
-        if($branch_id == 0){
-            $acctsavingsaccount = AcctSavingsAccount::with('member','savingdata')
+        $coreoffice = CoreOffice::select('office_id', 'office_name')
+            ->where('data_state', 0)
             ->get();
-        }else{
-            $acctsavingsaccount = AcctSavingsAccount::with('member','savingdata')
-            ->where('branch_id',$branch_id)
+        $sumberdana = AcctSourceFund::select('source_fund_id', 'source_fund_name')
+            ->where('data_state', 0)
             ->get();
+        if ($branch_id == 0) {
+            $acctsavingsaccount = AcctSavingsAccount::with('member', 'savingdata')
+                ->get();
+        } else {
+            $acctsavingsaccount = AcctSavingsAccount::with('member', 'savingdata')
+                ->where('branch_id', $branch_id)
+                ->get();
         }
         $daftaragunan = session()->get('array_creditsaccountangunan');
-        return view('content.AcctCreditsAccount.Add.index', compact('coremember','creditid','datasession','coreoffice','sumberdana','acctsavingsaccount','daftaragunan'));
+        return view('content.AcctCreditsAccount.Add.index', compact('coremember', 'creditid', 'datasession', 'coreoffice', 'sumberdana', 'acctsavingsaccount', 'daftaragunan'));
     }
 
     public function filter(Request $request)
     {
-        if($request->start_date){
+        if ($request->start_date) {
             $start_date = $request->start_date;
-        }else{
+        } else {
             $start_date = date('d-m-Y');
         }
-        if($request->end_date){
+        if ($request->end_date) {
             $end_date = $request->end_date;
-        }else{
+        } else {
             $end_date = date('d-m-Y');
         }
 
         $sessiondata = array(
-            'start_date'    => $start_date,
-            'end_date'      => $end_date,
-            'credits_id'    => $request->credits_id,
-            'branch_id'     => $request->branch_id,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'credits_id' => $request->credits_id,
+            'branch_id' => $request->branch_id,
         );
 
         session()->put('filter_creditsaccount', $sessiondata);
@@ -130,19 +130,19 @@ class AcctCreditsAccountController extends Controller
 
     public function selectMember($member_id)
     {
-        $coremember = CoreMember::with('city','kecamatan')->where('member_id', $member_id)->first();
+        $coremember = CoreMember::with('city', 'kecamatan')->where('member_id', $member_id)->first();
         $data = array(
-            'member_id'                             => $coremember->member_id,
-            'member_no'                             => $coremember->member_no,
-            'member_name'                           => $coremember->member_name,
-            'member_address'                        => $coremember->city->city_name.", ".$coremember->kecamatan->kecamatan_name.", ".$coremember->member_address,
-            'member_date_of_birth'                  => $coremember->member_date_of_birth,
-            'member_gender'                         => $coremember->member_gender,
-            'member_phone'                          => $coremember->member_phone,
-            'city_name'                             => $coremember->city->city_name,
-            'kecamatan_name'                        => $coremember->kecamatan->kecamatan_name,
-            'member_mother'                         => $coremember->member_mother,
-            'member_identity_no'                    => $coremember->member_identity_no,
+            'member_id' => $coremember->member_id,
+            'member_no' => $coremember->member_no,
+            'member_name' => $coremember->member_name,
+            'member_address' => $coremember->city->city_name . ", " . $coremember->kecamatan->kecamatan_name . ", " . $coremember->member_address,
+            'member_date_of_birth' => $coremember->member_date_of_birth,
+            'member_gender' => $coremember->member_gender,
+            'member_phone' => $coremember->member_phone,
+            'city_name' => $coremember->city->city_name,
+            'kecamatan_name' => $coremember->kecamatan->kecamatan_name,
+            'member_mother' => $coremember->member_mother,
+            'member_identity_no' => $coremember->member_identity_no,
         );
         Session::put('member_creditsaccount', $data);
         return redirect('credits-account/add');
@@ -150,44 +150,44 @@ class AcctCreditsAccountController extends Controller
 
     public function processAdd(Request $request)
     {
-        if(empty(Session::get('credit-token'))){
-            return redirect('credits-account/detail')->with(['pesan' => 'Data Credit Berjangka berhasil ditambah -','alert' => 'success']);
+        if (empty(Session::get('credit-token'))) {
+            return redirect('credits-account/detail')->with(['pesan' => 'Data Credit Berjangka berhasil ditambah -', 'alert' => 'success']);
         }
         $token = Session::get('credit-token');
         // dump(date('Y-m-d', strtotime($request->credit_account_due_date)));
         // dd($request->all());
         $daftaragunan = session()->get('array_creditsaccountangunan');
-        $data = array (
-            "credits_account_date" 						=> date('Y-m-d', strtotime($request->credit_account_date)),
-            "member_id"									=> $request->member_id,
-            "office_id"									=> $request->office_id,
-            "source_fund_id"							=> $request->sumberdana,
-            "credits_id"								=> $request->credits_id,
-            "branch_id"									=> auth()->user()->branch_id,
-            "payment_preference_id"						=> $request->payment_preference_id,
-            "payment_type_id"							=> $request->payment_type_id,
-            "credits_payment_period"					=> $request->payment_period,
-            "credits_account_period"					=> $request->credit_account_period,
-            "credits_account_due_date"					=> date('Y-m-d', strtotime($request->credit_account_due_date)),
-            "credits_account_amount"					=> $request->credits_account_last_balance_principal,
-            "credits_account_interest"					=> $request->credit_account_interest,
-            "credits_account_provisi"					=> empty($request->credit_account_provisi) ? 0 : $request->credit_account_provisi,
-            "credits_account_komisi"					=> empty($request->credit_account_komisi) ? 0 : $request->credit_account_komisi,
-            "credits_account_adm_cost"					=> empty($request->credit_account_adm_cost) ? 0 : $request->credit_account_adm_cost,
-            "credits_account_insurance"					=> empty($request->credit_account_insurance) ? 0 : $request->credit_account_insurance,
-            "credits_account_materai"					=> empty($request->credit_account_materai) ? 0 : $request->credit_account_materai,
-            "credits_account_risk_reserve"				=> empty($request->credit_account_risk_reserve) ? 0 : $request->credit_account_risk_reserve,
-            "credits_account_stash"						=> empty($request->credit_account_stash) ? 0 : $request->credit_account_stash,
-            "credits_account_principal"					=> empty($request->credit_account_principal) ? 0 : $request->credit_account_principal,
-            "credits_account_amount_received"			=> $request->credit_account_amount_received,
-            "credits_account_principal_amount"			=> $request->credits_account_principal_amount,
-            "credits_account_interest_amount"			=> $request->credits_account_interest_amount,
-            "credits_account_payment_amount"			=> $request->credit_account_payment_amount,
-            "credits_account_last_balance"				=> $request->credits_account_last_balance_principal,
-            "credits_account_payment_date"				=> date('Y-m-d', strtotime($request->credit_account_payment_to)),
-            "savings_account_id"						=> $request->savings_account_id,
-            "created_id"								=> auth()->user()->user_id,
-            "credits_token"                             => $token
+        $data = array(
+            "credits_account_date" => date('Y-m-d', strtotime($request->credit_account_date)),
+            "member_id" => $request->member_id,
+            "office_id" => $request->office_id,
+            "source_fund_id" => $request->sumberdana,
+            "credits_id" => $request->credits_id,
+            "branch_id" => auth()->user()->branch_id,
+            "payment_preference_id" => $request->payment_preference_id,
+            "payment_type_id" => $request->payment_type_id,
+            "credits_payment_period" => $request->payment_period,
+            "credits_account_period" => $request->credit_account_period,
+            "credits_account_due_date" => date('Y-m-d', strtotime($request->credit_account_due_date)),
+            "credits_account_amount" => $request->credits_account_last_balance_principal,
+            "credits_account_interest" => $request->credit_account_interest,
+            "credits_account_provisi" => empty($request->credit_account_provisi) ? 0 : $request->credit_account_provisi,
+            "credits_account_komisi" => empty($request->credit_account_komisi) ? 0 : $request->credit_account_komisi,
+            "credits_account_adm_cost" => empty($request->credit_account_adm_cost) ? 0 : $request->credit_account_adm_cost,
+            "credits_account_insurance" => empty($request->credit_account_insurance) ? 0 : $request->credit_account_insurance,
+            "credits_account_materai" => empty($request->credit_account_materai) ? 0 : $request->credit_account_materai,
+            "credits_account_risk_reserve" => empty($request->credit_account_risk_reserve) ? 0 : $request->credit_account_risk_reserve,
+            "credits_account_stash" => empty($request->credit_account_stash) ? 0 : $request->credit_account_stash,
+            "credits_account_principal" => empty($request->credit_account_principal) ? 0 : $request->credit_account_principal,
+            "credits_account_amount_received" => $request->credit_account_amount_received,
+            "credits_account_principal_amount" => $request->credits_account_principal_amount,
+            "credits_account_interest_amount" => $request->credits_account_interest_amount,
+            "credits_account_payment_amount" => $request->credit_account_payment_amount,
+            "credits_account_last_balance" => $request->credits_account_last_balance_principal,
+            "credits_account_payment_date" => date('Y-m-d', strtotime($request->credit_account_payment_to)),
+            "savings_account_id" => $request->savings_account_id,
+            "created_id" => auth()->user()->user_id,
+            "credits_token" => $token
         );
 
         DB::beginTransaction();
@@ -196,58 +196,58 @@ class AcctCreditsAccountController extends Controller
 
             AcctCreditsAccount::create($data);
 
-            $acctcreditsaccount_last = AcctCreditsAccount::with('member')->where('credits_token',$token)
-            ->orderBy('acct_credits_account.credits_account_id','DESC')->first();
+            $acctcreditsaccount_last = AcctCreditsAccount::with('member')->where('credits_token', $token)
+                ->orderBy('acct_credits_account.credits_account_id', 'DESC')->first();
 
-            if(!empty($daftaragunan)){
+            if (!empty($daftaragunan)) {
                 foreach ($daftaragunan as $key => $val) {
-                    if($val['credits_agunan_type'] == 'BPKB'){
-                        $credits_agunan_type	= 1;
-                    }else if($val['credits_agunan_type'] == 'Sertifikat') {
-                        $credits_agunan_type 	= 2;
-                    }else if($val['credits_agunan_type'] == 'Bilyet Simpanan Berjangka'){
-                        $credits_agunan_type 	= 3;
-                    }else if($val['credits_agunan_type'] == 'Elektro'){
-                        $credits_agunan_type 	= 4;
-                    }else if($val['credits_agunan_type'] == 'Dana Keanggotaan'){
-                        $credits_agunan_type 	= 5;
-                    }else if($val['credits_agunan_type'] == 'Tabungan'){
-                        $credits_agunan_type 	= 6;
-                    }else if($val['credits_agunan_type'] == 'ATM / Jamsostek'){
-                        $credits_agunan_type 	= 7;
+                    if ($val['credits_agunan_type'] == 'BPKB') {
+                        $credits_agunan_type = 1;
+                    } else if ($val['credits_agunan_type'] == 'Sertifikat') {
+                        $credits_agunan_type = 2;
+                    } else if ($val['credits_agunan_type'] == 'Bilyet Simpanan Berjangka') {
+                        $credits_agunan_type = 3;
+                    } else if ($val['credits_agunan_type'] == 'Elektro') {
+                        $credits_agunan_type = 4;
+                    } else if ($val['credits_agunan_type'] == 'Dana Keanggotaan') {
+                        $credits_agunan_type = 5;
+                    } else if ($val['credits_agunan_type'] == 'Tabungan') {
+                        $credits_agunan_type = 6;
+                    } else if ($val['credits_agunan_type'] == 'ATM / Jamsostek') {
+                        $credits_agunan_type = 7;
                     }
-                    $dataagunan = array (
-                        'credits_account_id'						=> $acctcreditsaccount_last['credits_account_id'],
-                        'credits_agunan_type'						=> $credits_agunan_type,
-                        'credits_agunan_date_in'                    => date('Y-m-d'),
-                        'credits_agunan_date_out'                   => date('Y-m-d'),
-                        'credits_agunan_shm_no_sertifikat'			=> $val['credits_agunan_shm_no_sertifikat'] || ' ',
-                        'credits_agunan_shm_atas_nama'				=> $val['credits_agunan_shm_atas_nama'],
-                        'credits_agunan_shm_luas'					=> $val['credits_agunan_shm_luas'],
-                        'credits_agunan_shm_no_gs'					=> $val['credits_agunan_shm_no_gs'],
-                        'credits_agunan_shm_gambar_gs'				=> $val['credits_agunan_shm_gambar_gs'],
-                        'credits_agunan_shm_kedudukan'				=> $val['credits_agunan_shm_kedudukan'],
-                        'credits_agunan_shm_taksiran'				=> $val['credits_agunan_shm_taksiran'],
-                        'credits_agunan_shm_keterangan'				=> $val['credits_agunan_shm_keterangan'],
-                        'credits_agunan_bpkb_nomor'					=> $val['credits_agunan_bpkb_nomor'],
-                        'credits_agunan_bpkb_type'					=> $val['credits_agunan_bpkb_type'],
-                        'credits_agunan_bpkb_nama'					=> $val['credits_agunan_bpkb_nama'] || ' ',
-                        'credits_agunan_bpkb_address'				=> $val['credits_agunan_bpkb_address'],
-                        'credits_agunan_bpkb_nopol'					=> $val['credits_agunan_bpkb_nopol'],
-                        'credits_agunan_bpkb_no_rangka'				=> $val['credits_agunan_bpkb_no_rangka'],
-                        'credits_agunan_bpkb_no_mesin'				=> $val['credits_agunan_bpkb_no_mesin'],
-                        'credits_agunan_bpkb_dealer_name'			=> $val['credits_agunan_bpkb_dealer_name'],
-                        'credits_agunan_bpkb_dealer_address'		=> $val['credits_agunan_bpkb_dealer_address'],
-                        'credits_agunan_bpkb_taksiran'				=> $val['credits_agunan_bpkb_taksiran'],
-                        'credits_agunan_bpkb_gross'					=> $val['credits_agunan_bpkb_gross'],
-                        'credits_agunan_bpkb_keterangan'			=> $val['credits_agunan_bpkb_keterangan'],
-                        'credits_agunan_atmjamsostek_nomor'			=> $val['credits_agunan_atmjamsostek_nomor'],
-                        'credits_agunan_atmjamsostek_nama'			=> $val['credits_agunan_atmjamsostek_nama'],
-                        'credits_agunan_atmjamsostek_bank'			=> $val['credits_agunan_atmjamsostek_bank'],
-                        'credits_agunan_atmjamsostek_taksiran'		=> $val['credits_agunan_atmjamsostek_taksiran'],
-                        'credits_agunan_atmjamsostek_keterangan'	=> $val['credits_agunan_atmjamsostek_keterangan'],
-                        'credits_agunan_other_keterangan'			=> $val['credits_agunan_other_keterangan'],
-                        "created_id"								=> auth()->user()->user_id,
+                    $dataagunan = array(
+                        'credits_account_id' => $acctcreditsaccount_last['credits_account_id'],
+                        'credits_agunan_type' => $credits_agunan_type,
+                        'credits_agunan_date_in' => date('Y-m-d'),
+                        'credits_agunan_date_out' => date('Y-m-d'),
+                        'credits_agunan_shm_no_sertifikat' => $val['credits_agunan_shm_no_sertifikat'] || ' ',
+                        'credits_agunan_shm_atas_nama' => $val['credits_agunan_shm_atas_nama'],
+                        'credits_agunan_shm_luas' => $val['credits_agunan_shm_luas'],
+                        'credits_agunan_shm_no_gs' => $val['credits_agunan_shm_no_gs'],
+                        'credits_agunan_shm_gambar_gs' => $val['credits_agunan_shm_gambar_gs'],
+                        'credits_agunan_shm_kedudukan' => $val['credits_agunan_shm_kedudukan'],
+                        'credits_agunan_shm_taksiran' => $val['credits_agunan_shm_taksiran'],
+                        'credits_agunan_shm_keterangan' => $val['credits_agunan_shm_keterangan'],
+                        'credits_agunan_bpkb_nomor' => $val['credits_agunan_bpkb_nomor'],
+                        'credits_agunan_bpkb_type' => $val['credits_agunan_bpkb_type'],
+                        'credits_agunan_bpkb_nama' => $val['credits_agunan_bpkb_nama'] || ' ',
+                        'credits_agunan_bpkb_address' => $val['credits_agunan_bpkb_address'],
+                        'credits_agunan_bpkb_nopol' => $val['credits_agunan_bpkb_nopol'],
+                        'credits_agunan_bpkb_no_rangka' => $val['credits_agunan_bpkb_no_rangka'],
+                        'credits_agunan_bpkb_no_mesin' => $val['credits_agunan_bpkb_no_mesin'],
+                        'credits_agunan_bpkb_dealer_name' => $val['credits_agunan_bpkb_dealer_name'],
+                        'credits_agunan_bpkb_dealer_address' => $val['credits_agunan_bpkb_dealer_address'],
+                        'credits_agunan_bpkb_taksiran' => $val['credits_agunan_bpkb_taksiran'],
+                        'credits_agunan_bpkb_gross' => $val['credits_agunan_bpkb_gross'],
+                        'credits_agunan_bpkb_keterangan' => $val['credits_agunan_bpkb_keterangan'],
+                        'credits_agunan_atmjamsostek_nomor' => $val['credits_agunan_atmjamsostek_nomor'],
+                        'credits_agunan_atmjamsostek_nama' => $val['credits_agunan_atmjamsostek_nama'],
+                        'credits_agunan_atmjamsostek_bank' => $val['credits_agunan_atmjamsostek_bank'],
+                        'credits_agunan_atmjamsostek_taksiran' => $val['credits_agunan_atmjamsostek_taksiran'],
+                        'credits_agunan_atmjamsostek_keterangan' => $val['credits_agunan_atmjamsostek_keterangan'],
+                        'credits_agunan_other_keterangan' => $val['credits_agunan_other_keterangan'],
+                        "created_id" => auth()->user()->user_id,
                     );
 
                     AcctCreditsAgunan::create($dataagunan);
@@ -276,34 +276,34 @@ class AcctCreditsAccountController extends Controller
     {
         $date = date('Ymdhis');
         $data_agunan = array(
-            'record_id' 								=> $request->tipe.$date,
-            'credits_agunan_type' 						=> $request->tipe,
-            'credits_agunan_bpkb_nomor' 				=> $request->bpkb_nomor,
-            'credits_agunan_bpkb_type' 					=> $request->bpkb_type,
-            'credits_agunan_bpkb_nopol' 				=> $request->bpkb_nopol,
-            'credits_agunan_bpkb_nama' 					=> $request->bpkb_nama,
-            'credits_agunan_bpkb_address' 				=> $request->bpkb_address,
-            'credits_agunan_bpkb_no_mesin' 				=> $request->bpkb_no_mesin,
-            'credits_agunan_bpkb_no_rangka'				=> $request->bpkb_no_rangka,
-            'credits_agunan_bpkb_dealer_name'			=> $request->bpkb_dealer_name,
-            'credits_agunan_bpkb_dealer_address'		=> $request->bpkb_dealer_address,
-            'credits_agunan_bpkb_taksiran' 				=> $request->bpkb_taksiran,
-            'credits_agunan_bpkb_gross' 				=> $request->bpkb_gross,
-            'credits_agunan_bpkb_keterangan'			=> $request->bpkb_keterangan,
-            'credits_agunan_shm_no_sertifikat' 			=> $request->shm_no_sertifikat,
-            'credits_agunan_shm_luas' 					=> $request->shm_luas,
-            'credits_agunan_shm_no_gs' 					=> $request->shm_no_gs,
-            'credits_agunan_shm_gambar_gs' 				=> $request->shm_tanggal_gs,
-            'credits_agunan_shm_atas_nama' 				=> $request->shm_atas_nama,
-            'credits_agunan_shm_kedudukan' 				=> $request->shm_kedudukan,
-            'credits_agunan_shm_taksiran' 				=> $request->shm_taksiran,
-            'credits_agunan_shm_keterangan'				=> $request->shm_keterangan,
-            'credits_agunan_atmjamsostek_nomor'			=> $request->atmjamsostek_nomor,
-            'credits_agunan_atmjamsostek_nama'			=> $request->atmjamsostek_nama,
-            'credits_agunan_atmjamsostek_bank'			=> $request->atmjamsostek_bank,
-            'credits_agunan_atmjamsostek_taksiran'		=> $request->atmjamsostek_taksiran,
-            'credits_agunan_atmjamsostek_keterangan'	=> $request->atmjamsostek_keterangan,
-            'credits_agunan_other_keterangan'			=> $request->other_keterangan
+            'record_id' => $request->tipe . $date,
+            'credits_agunan_type' => $request->tipe,
+            'credits_agunan_bpkb_nomor' => $request->bpkb_nomor,
+            'credits_agunan_bpkb_type' => $request->bpkb_type,
+            'credits_agunan_bpkb_nopol' => $request->bpkb_nopol,
+            'credits_agunan_bpkb_nama' => $request->bpkb_nama,
+            'credits_agunan_bpkb_address' => $request->bpkb_address,
+            'credits_agunan_bpkb_no_mesin' => $request->bpkb_no_mesin,
+            'credits_agunan_bpkb_no_rangka' => $request->bpkb_no_rangka,
+            'credits_agunan_bpkb_dealer_name' => $request->bpkb_dealer_name,
+            'credits_agunan_bpkb_dealer_address' => $request->bpkb_dealer_address,
+            'credits_agunan_bpkb_taksiran' => $request->bpkb_taksiran,
+            'credits_agunan_bpkb_gross' => $request->bpkb_gross,
+            'credits_agunan_bpkb_keterangan' => $request->bpkb_keterangan,
+            'credits_agunan_shm_no_sertifikat' => $request->shm_no_sertifikat,
+            'credits_agunan_shm_luas' => $request->shm_luas,
+            'credits_agunan_shm_no_gs' => $request->shm_no_gs,
+            'credits_agunan_shm_gambar_gs' => $request->shm_tanggal_gs,
+            'credits_agunan_shm_atas_nama' => $request->shm_atas_nama,
+            'credits_agunan_shm_kedudukan' => $request->shm_kedudukan,
+            'credits_agunan_shm_taksiran' => $request->shm_taksiran,
+            'credits_agunan_shm_keterangan' => $request->shm_keterangan,
+            'credits_agunan_atmjamsostek_nomor' => $request->atmjamsostek_nomor,
+            'credits_agunan_atmjamsostek_nama' => $request->atmjamsostek_nama,
+            'credits_agunan_atmjamsostek_bank' => $request->atmjamsostek_bank,
+            'credits_agunan_atmjamsostek_taksiran' => $request->atmjamsostek_taksiran,
+            'credits_agunan_atmjamsostek_keterangan' => $request->atmjamsostek_keterangan,
+            'credits_agunan_other_keterangan' => $request->other_keterangan
         );
 
         session()->push('array_creditsaccountangunan', $data_agunan);
@@ -311,12 +311,13 @@ class AcctCreditsAccountController extends Controller
         return session()->get('array_creditsaccountangunan');
     }
 
-    public function processDeleteArrayAgunan(Request $request){
+    public function processDeleteArrayAgunan(Request $request)
+    {
         $daftaragunan = collect(session()->get('array_creditsaccountangunan'));
-        $data = $daftaragunan->except($daftaragunan->where("record_id" , $request->record_id)->keys());
+        $data = $daftaragunan->except($daftaragunan->where("record_id", $request->record_id)->keys());
         session()->forget('array_creditsaccountangunan');
-        foreach ($data as $key => $val){
-        session()->push('array_creditsaccountangunan', $val);
+        foreach ($data as $key => $val) {
+            session()->push('array_creditsaccountangunan', $val);
         }
     }
 
@@ -332,32 +333,32 @@ class AcctCreditsAccountController extends Controller
     public function elementsAdd(Request $request)
     {
         $datases = session()->get('data_creditsaccount');
-        if(!$datases || $datases == ''){
-            $datases['credit_account_payment_amount']           = '';
-            $datases['credits_account_principal_amount']        = '';
-            $datases['credits_account_interest_amount']         = '';
-            $datases['credit_account_due_date']                 = '';
-            $datases['credit_account_payment_to']               = '';
-            $datases['credit_account_amount_received']          = '';
-            $datases['credit_account_interest']                 = '';
-            $datases['credits_id']                              = '';
-            $datases['payment_type_id']                         = '';
-            $datases['credit_account_date']                     = '';
-            $datases['credit_account_sales_name']               = '';
-            $datases['credit_account_period']                   = '';
-            $datases['credits_account_last_balance_principal']  = '';
-            $datases['credit_account_provisi']                  = '';
-            $datases['credit_account_komisi']                   = '';
-            $datases['credit_account_adm_cost']                 = '';
-            $datases['credit_account_insurance']                = '';
-            $datases['credit_account_materai']                  = '';
-            $datases['credit_account_risk_reserve']             = '';
-            $datases['credit_account_stash']                    = '';
-            $datases['credit_account_principal']                = '';
-            $datases['payment_period']                          = '';
-            $datases['sumberdana']                              = '';
-            $datases['office_id']                               = '';
-            $datases['savings_account_id']                      = '';
+        if (!$datases || $datases == '') {
+            $datases['credit_account_payment_amount'] = '';
+            $datases['credits_account_principal_amount'] = '';
+            $datases['credits_account_interest_amount'] = '';
+            $datases['credit_account_due_date'] = '';
+            $datases['credit_account_payment_to'] = '';
+            $datases['credit_account_amount_received'] = '';
+            $datases['credit_account_interest'] = '';
+            $datases['credits_id'] = '';
+            $datases['payment_type_id'] = '';
+            $datases['credit_account_date'] = '';
+            $datases['credit_account_sales_name'] = '';
+            $datases['credit_account_period'] = '';
+            $datases['credits_account_last_balance_principal'] = '';
+            $datases['credit_account_provisi'] = '';
+            $datases['credit_account_komisi'] = '';
+            $datases['credit_account_adm_cost'] = '';
+            $datases['credit_account_insurance'] = '';
+            $datases['credit_account_materai'] = '';
+            $datases['credit_account_risk_reserve'] = '';
+            $datases['credit_account_stash'] = '';
+            $datases['credit_account_principal'] = '';
+            $datases['payment_period'] = '';
+            $datases['sumberdana'] = '';
+            $datases['office_id'] = '';
+            $datases['savings_account_id'] = '';
         }
         $datases[$request->name] = $request->value;
         session()->put('data_creditsaccount', $datases);
@@ -365,175 +366,175 @@ class AcctCreditsAccountController extends Controller
 
     public function approving($credits_account_id)
     {
-        $paymenttype = Configuration::  PaymentType();
+        $paymenttype = Configuration::PaymentType();
         $acctcreditsaccount = AcctCreditsAccount::with('member')->find($credits_account_id);
 
-        return view('content.AcctCreditsAccount.Approve.index', compact('paymenttype','acctcreditsaccount'));
+        return view('content.AcctCreditsAccount.Approve.index', compact('paymenttype', 'acctcreditsaccount'));
     }
 
     public function processApproving(Request $request)
     {
         $acctcreditsaccount = AcctCreditsAccount::find($request->credits_account_id);
-        $acctcreditsaccount = AcctCreditsAccount::with('member','branch','credit')->find($request->credits_account_id);
-        if($acctcreditsaccount['credits_account_provisi'] != '' && $acctcreditsaccount['credits_account_provisi'] > 0){
+        $acctcreditsaccount = AcctCreditsAccount::with('member', 'branch', 'credit')->find($request->credits_account_id);
+        if ($acctcreditsaccount['credits_account_provisi'] != '' && $acctcreditsaccount['credits_account_provisi'] > 0) {
             $provisi = $acctcreditsaccount['credits_account_provisi'];
-        }else{
+        } else {
             $provisi = 0;
         }
 
-        if($acctcreditsaccount['credits_account_komisi'] != '' && $acctcreditsaccount['credits_account_komisi'] > 0){
+        if ($acctcreditsaccount['credits_account_komisi'] != '' && $acctcreditsaccount['credits_account_komisi'] > 0) {
             $komisi = $acctcreditsaccount['credits_account_komisi'];
-        }else{
+        } else {
             $komisi = 0;
         }
 
-        $transaction_module_code 				= 'PYB';
-        $transaction_module_id 					= PreferenceTransactionModule::where('transaction_module_code',$transaction_module_code)
-        ->first()
-        ->transaction_module_id;
-        $preferencecompany 						= PreferenceCompany::first();
-        $preferenceinventory 					= PreferenceInventory::first();
-        $journal_voucher_period 				= date("Ym", strtotime($acctcreditsaccount['credits_account_date']));
+        $transaction_module_code = 'PYB';
+        $transaction_module_id = PreferenceTransactionModule::where('transaction_module_code', $transaction_module_code)
+            ->first()
+            ->transaction_module_id;
+        $preferencecompany = PreferenceCompany::first();
+        $preferenceinventory = PreferenceInventory::first();
+        $journal_voucher_period = date("Ym", strtotime($acctcreditsaccount['credits_account_date']));
 
         DB::beginTransaction();
 
         try {
             AcctCreditsAccount::where('credits_account_id', $acctcreditsaccount->credits_account_id)
-            ->update([
-                'credits_approve_status' => 1,
-                'updated_id'             => Auth::id(),
-            ]);
+                ->update([
+                    'credits_approve_status' => 1,
+                    'updated_id' => Auth::id(),
+                ]);
 
             $data_journal = array(
-                'branch_id'						=> auth()->user()->branch_id,
-                'journal_voucher_period' 		=> $journal_voucher_period,
-                'journal_voucher_date'			=> date('Y-m-d'),
-                'journal_voucher_title'			=> 'PEMBIAYAAN '.$acctcreditsaccount['credits_name'].' '.$acctcreditsaccount['member_name'],
-                'journal_voucher_description'	=> 'PEMBIAYAAN '.$acctcreditsaccount['credits_name'].' '.$acctcreditsaccount['member_name'],
-                'transaction_module_id'			=> $transaction_module_id,
-                'transaction_module_code'		=> $transaction_module_code,
-                'transaction_journal_id' 		=> $acctcreditsaccount['credits_account_id'],
-                'transaction_journal_no' 		=> $acctcreditsaccount['credits_account_serial'],
-                'created_id'					=> Auth::id(),
+                'branch_id' => auth()->user()->branch_id,
+                'journal_voucher_period' => $journal_voucher_period,
+                'journal_voucher_date' => date('Y-m-d'),
+                'journal_voucher_title' => 'PEMBIAYAAN ' . $acctcreditsaccount['credits_name'] . ' ' . $acctcreditsaccount['member_name'],
+                'journal_voucher_description' => 'PEMBIAYAAN ' . $acctcreditsaccount['credits_name'] . ' ' . $acctcreditsaccount['member_name'],
+                'transaction_module_id' => $transaction_module_id,
+                'transaction_module_code' => $transaction_module_code,
+                'transaction_journal_id' => $acctcreditsaccount['credits_account_id'],
+                'transaction_journal_no' => $acctcreditsaccount['credits_account_serial'],
+                'created_id' => Auth::id(),
             );
             AcctJournalVoucher::create($data_journal);
 
-            $journal_voucher_id 				= AcctJournalVoucher::where('created_id',$data_journal['created_id'])
-            ->orderBy('journal_voucher_id', 'DESC')
-            ->first()
-            ->journal_voucher_id;
-            $receivable_account_id				= AcctCredits::where('credits_id',$acctcreditsaccount['credits_id'])
-            ->first()
-            ->receivable_account_id;
-            $account_id_default_status 			= AcctAccount::where('account_id',$receivable_account_id)
-            ->where('data_state',0)
-            ->first()
-            ->account_default_status;
+            $journal_voucher_id = AcctJournalVoucher::where('created_id', $data_journal['created_id'])
+                ->orderBy('journal_voucher_id', 'DESC')
+                ->first()
+                ->journal_voucher_id;
+            $receivable_account_id = AcctCredits::where('credits_id', $acctcreditsaccount['credits_id'])
+                ->first()
+                ->receivable_account_id;
+            $account_id_default_status = AcctAccount::where('account_id', $receivable_account_id)
+                ->where('data_state', 0)
+                ->first()
+                ->account_default_status;
 
-            $data_debet = array (
-                'journal_voucher_id'			=> $journal_voucher_id,
-                'account_id'					=> $receivable_account_id,
-                'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_amount'],
-                'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_amount'],
-                'account_id_default_status'		=> $account_id_default_status,
-                'account_id_status'				=> 0,
-                'created_id' 					=> auth()->user()->user_id,
+            $data_debet = array(
+                'journal_voucher_id' => $journal_voucher_id,
+                'account_id' => $receivable_account_id,
+                'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                'journal_voucher_amount' => $acctcreditsaccount['credits_account_amount'],
+                'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_amount'],
+                'account_id_default_status' => $account_id_default_status,
+                'account_id_status' => 0,
+                'created_id' => auth()->user()->user_id,
             );
             AcctJournalVoucherItem::create($data_debet);
 
-            $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-            ->where('data_state',0)
-            ->first()
-            ->account_default_status;
+            $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                ->where('data_state', 0)
+                ->first()
+                ->account_default_status;
 
-            $data_credit = array (
-                'journal_voucher_id'			=> $journal_voucher_id,
-                'account_id'					=> $preferencecompany['account_cash_id'],
-                'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_amount'],
-                'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_amount'],
-                'account_id_default_status'		=> $account_id_default_status,
-                'account_id_status'				=> 1,
-                'created_id' 					=> auth()->user()->user_id,
+            $data_credit = array(
+                'journal_voucher_id' => $journal_voucher_id,
+                'account_id' => $preferencecompany['account_cash_id'],
+                'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                'journal_voucher_amount' => $acctcreditsaccount['credits_account_amount'],
+                'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_amount'],
+                'account_id_default_status' => $account_id_default_status,
+                'account_id_status' => 1,
+                'created_id' => auth()->user()->user_id,
             );
             AcctJournalVoucherItem::create($data_credit);
 
             // biaya provisi
-            if($provisi != '' && $provisi > 0){
+            if ($provisi != '' && $provisi > 0) {
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $provisi,
-                    'journal_voucher_debit_amount'	=> $provisi,
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $provisi,
+                    'journal_voucher_debit_amount' => $provisi,
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_provision_income_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_provision_income_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_provision_income_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $provisi,
-                    'journal_voucher_credit_amount'	=> $provisi,
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_provision_income_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $provisi,
+                    'journal_voucher_credit_amount' => $provisi,
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
             }
 
-            if($komisi != '' && $komisi > 0){
+            if ($komisi != '' && $komisi > 0) {
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $komisi,
-                    'journal_voucher_debit_amount'	=> $komisi,
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $komisi,
+                    'journal_voucher_debit_amount' => $komisi,
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_commission_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_commission_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_commission_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $komisi,
-                    'journal_voucher_credit_amount'	=> $komisi,
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_commission_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $komisi,
+                    'journal_voucher_credit_amount' => $komisi,
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
@@ -541,275 +542,275 @@ class AcctCreditsAccountController extends Controller
             }
 
             //biaya admin
-            if($acctcreditsaccount['credits_account_adm_cost'] != '' && $acctcreditsaccount['credits_account_adm_cost'] > 0){
+            if ($acctcreditsaccount['credits_account_adm_cost'] != '' && $acctcreditsaccount['credits_account_adm_cost'] > 0) {
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferenceinventory['inventory_adm_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferenceinventory['inventory_adm_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_adm_cost'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_adm_cost'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_mutation_adm_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_mutation_adm_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_mutation_adm_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_mutation_adm_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_adm_cost'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_adm_cost'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
             }
 
-            if($acctcreditsaccount['credits_account_materai'] != '' && $acctcreditsaccount['credits_account_materai'] > 0){
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+            if ($acctcreditsaccount['credits_account_materai'] != '' && $acctcreditsaccount['credits_account_materai'] > 0) {
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_materai'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_materai'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_materai'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_materai'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_materai_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_materai_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_materai_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_materai'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_materai'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_materai_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_materai'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_materai'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
             }
 
-            if($acctcreditsaccount['credits_account_risk_reserve'] != '' && $acctcreditsaccount['credits_account_risk_reserve'] > 0){
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+            if ($acctcreditsaccount['credits_account_risk_reserve'] != '' && $acctcreditsaccount['credits_account_risk_reserve'] > 0) {
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_risk_reserve'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_risk_reserve'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_risk_reserve'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_risk_reserve'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_risk_reserve_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_risk_reserve_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_risk_reserve_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_risk_reserve'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_risk_reserve'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_risk_reserve_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_risk_reserve'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_risk_reserve'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
             }
 
-            if($acctcreditsaccount['credits_account_stash'] != '' && $acctcreditsaccount['credits_account_stash'] > 0){
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+            if ($acctcreditsaccount['credits_account_stash'] != '' && $acctcreditsaccount['credits_account_stash'] > 0) {
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_stash'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_stash'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_stash'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_stash'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_stash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_stash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_stash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_stash'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_stash'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_stash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_stash'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_stash'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
-                $data_detail = array (
-                    'branch_id'						=> auth()->user()->branch_id,
-                    'member_id'						=> $acctcreditsaccount->member_id,
-                    'mutation_id'					=> $preferencecompany['cash_deposit_id'],
-                    'transaction_date'				=> date('Y-m-d'),
-                    'principal_savings_amount'		=> 0,
-                    'special_savings_amount'		=> 0,
-                    'mandatory_savings_amount'		=> $acctcreditsaccount['credits_account_stash'],
-                    'operated_name'					=> auth()->user()->username,
-                    'created_id'                    => auth()->user()->user_id,
+                $data_detail = array(
+                    'branch_id' => auth()->user()->branch_id,
+                    'member_id' => $acctcreditsaccount->member_id,
+                    'mutation_id' => $preferencecompany['cash_deposit_id'],
+                    'transaction_date' => date('Y-m-d'),
+                    'principal_savings_amount' => 0,
+                    'special_savings_amount' => 0,
+                    'mandatory_savings_amount' => $acctcreditsaccount['credits_account_stash'],
+                    'operated_name' => auth()->user()->username,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctSavingsMemberDetail::create($data_detail);
 
-                CoreMember::where('member_id',$acctcreditsaccount->member_id)
-                ->update([
-                    'member_mandatory_savings_last_balance' => $acctcreditsaccount['member_mandatory_savings_last_balance'] + $acctcreditsaccount['credits_account_stash'],
-                    'updated_id' => auth()->user()->user_id,
-                ]);
+                CoreMember::where('member_id', $acctcreditsaccount->member_id)
+                    ->update([
+                        'member_mandatory_savings_last_balance' => $acctcreditsaccount['member_mandatory_savings_last_balance'] + $acctcreditsaccount['credits_account_stash'],
+                        'updated_id' => auth()->user()->user_id,
+                    ]);
 
             }
 
-            if($acctcreditsaccount['credits_account_principal'] != '' && $acctcreditsaccount['credits_account_principal'] > 0){
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+            if ($acctcreditsaccount['credits_account_principal'] != '' && $acctcreditsaccount['credits_account_principal'] > 0) {
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_principal'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_principal'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_principal'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_principal'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_principal_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_principal_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_principal_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_principal'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_principal'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_principal_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_principal'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_principal'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);
 
-                $data_detail = array (
-                    'branch_id'						=> auth()->user()->branch_id,
-                    'member_id'						=> $acctcreditsaccount->member_id,
-                    'mutation_id'					=> $preferencecompany['cash_deposit_id'],
-                    'transaction_date'				=> date('Y-m-d'),
-                    'principal_savings_amount'		=> 0,
-                    'special_savings_amount'		=> 0,
-                    'principal_savings_amount'		=> $acctcreditsaccount['credits_account_principal'],
-                    'operated_name'					=> auth()->user()->username,
-                    'created_id'                    => auth()->user()->user_id,
+                $data_detail = array(
+                    'branch_id' => auth()->user()->branch_id,
+                    'member_id' => $acctcreditsaccount->member_id,
+                    'mutation_id' => $preferencecompany['cash_deposit_id'],
+                    'transaction_date' => date('Y-m-d'),
+                    'principal_savings_amount' => 0,
+                    'special_savings_amount' => 0,
+                    'principal_savings_amount' => $acctcreditsaccount['credits_account_principal'],
+                    'operated_name' => auth()->user()->username,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctSavingsMemberDetail::create($data_detail);
 
-                CoreMember::where('member_id',$acctcreditsaccount->member_id)
-                ->update([
-                    'member_principal_savings_last_balance' => $acctcreditsaccount['member_principal_savings_last_balance'] + $acctcreditsaccount['credits_account_principal'],
-                    'updated_id' => auth()->user()->user_id,
-                ]);
+                CoreMember::where('member_id', $acctcreditsaccount->member_id)
+                    ->update([
+                        'member_principal_savings_last_balance' => $acctcreditsaccount['member_principal_savings_last_balance'] + $acctcreditsaccount['credits_account_principal'],
+                        'updated_id' => auth()->user()->user_id,
+                    ]);
 
             }
-            if($acctcreditsaccount['credits_account_insurance'] !='' && $acctcreditsaccount['credits_account_insurance'] > 0){
-                $account_id_default_status_insurance 			= AcctAccount::where('account_id',$preferencecompany['account_cash_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+            if ($acctcreditsaccount['credits_account_insurance'] != '' && $acctcreditsaccount['credits_account_insurance'] > 0) {
+                $account_id_default_status_insurance = AcctAccount::where('account_id', $preferencecompany['account_cash_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
                 // dd($account_id_default_status);
-                $data_debet = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_cash_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_insurance'],
-                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_insurance'],
-                    'account_id_default_status'		=> $account_id_default_status_insurance,
-                    'account_id_status'				=> 0,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_debet = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_cash_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_insurance'],
+                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_insurance'],
+                    'account_id_default_status' => $account_id_default_status_insurance,
+                    'account_id_status' => 0,
+                    'created_id' => auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
 
-                $account_id_default_status 			= AcctAccount::where('account_id',$preferencecompany['account_insurance_cost_id'])
-                ->where('data_state',0)
-                ->first()
-                ->account_default_status;
+                $account_id_default_status = AcctAccount::where('account_id', $preferencecompany['account_insurance_cost_id'])
+                    ->where('data_state', 0)
+                    ->first()
+                    ->account_default_status;
 
-                $data_credit = array (
-                    'journal_voucher_id'			=> $journal_voucher_id,
-                    'account_id'					=> $preferencecompany['account_insurance_cost_id'],
-                    'journal_voucher_description'	=> $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_insurance'],
-                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_insurance'],
-                    'account_id_default_status'		=> $account_id_default_status,
-                    'account_id_status'				=> 1,
-                    'created_id' 					=> auth()->user()->user_id,
+                $data_credit = array(
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $preferencecompany['account_insurance_cost_id'],
+                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
+                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_insurance'],
+                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_insurance'],
+                    'account_id_default_status' => $account_id_default_status,
+                    'account_id_status' => 1,
+                    'created_id' => auth()->user()->user_id,
                 );
                 AcctJournalVoucherItem::create($data_credit);
 
@@ -835,9 +836,9 @@ class AcctCreditsAccountController extends Controller
 
     public function reject($credits_account_id)
     {
-        $table                          = AcctCreditsAccount::findOrFail($credits_account_id);
-        $table->credits_approve_status  = 2;
-        $table->updated_id              = auth()->user()->user_id;
+        $table = AcctCreditsAccount::findOrFail($credits_account_id);
+        $table->credits_approve_status = 2;
+        $table->updated_id = auth()->user()->user_id;
 
         if ($table->save()) {
             $message = array(
@@ -856,55 +857,55 @@ class AcctCreditsAccountController extends Controller
 
     public function detail($credits_account_id)
     {
-        $creditid = AcctCredits::select('credits_id','credits_name')
-        ->where('data_state',0)
-        ->orderBy('credits_number','ASC')
-        ->get();
+        $creditid = AcctCredits::select('credits_id', 'credits_name')
+            ->where('data_state', 0)
+            ->orderBy('credits_number', 'ASC')
+            ->get();
         $datasession = session()->get('data_creditsaccount');
-        $coreoffice = CoreOffice::select('office_id','office_name')
-        ->where('data_state', 0)
-        ->get();
-        $sumberdana = AcctSourceFund::select('source_fund_id','source_fund_name')
-        ->where('data_state', 0)
-        ->get();
+        $coreoffice = CoreOffice::select('office_id', 'office_name')
+            ->where('data_state', 0)
+            ->get();
+        $sumberdana = AcctSourceFund::select('source_fund_id', 'source_fund_name')
+            ->where('data_state', 0)
+            ->get();
         $acctsavingsaccount = AcctSavingsAccount::with('member')
-        ->get();
+            ->get();
         $daftaragunan = session()->get('array_creditsaccountangunan');
         $paymenttype = Configuration::PaymentType();
         $paymentpreference = Configuration::PaymentPreference();
         $paymentperiod = Configuration::CreditsPaymentPeriod();
         $membergender = Configuration::MemberGender();
-        $creditsdata = AcctCreditsAccount::with('member','anggunan')->find($credits_account_id);
-        if($creditsdata['payment_type_id']== ''||$creditsdata['payment_type_id']==1){
-            $datapola 			= $this->flat($credits_account_id);
-        } else if($creditsdata['payment_type_id'] == 2){
-            $datapola 			= $this->anuitas($credits_account_id);
-        } else{
-            $datapola 			= $this->slidingrate($credits_account_id);
+        $creditsdata = AcctCreditsAccount::with('member', 'anggunan')->find($credits_account_id);
+        if ($creditsdata['payment_type_id'] == '' || $creditsdata['payment_type_id'] == 1) {
+            $datapola = $this->flat($credits_account_id);
+        } else if ($creditsdata['payment_type_id'] == 2) {
+            $datapola = $this->anuitas($credits_account_id);
+        } else {
+            $datapola = $this->slidingrate($credits_account_id);
         }
 
-        return view('content.AcctCreditsAccount.Detail.index', compact('creditid','creditsdata','datasession','coreoffice','sumberdana','acctsavingsaccount','daftaragunan','paymenttype','paymentpreference','paymentperiod','membergender','datapola','credits_account_id'));
+        return view('content.AcctCreditsAccount.Detail.index', compact('creditid', 'creditsdata', 'datasession', 'coreoffice', 'sumberdana', 'acctsavingsaccount', 'daftaragunan', 'paymenttype', 'paymentpreference', 'paymentperiod', 'membergender', 'datapola', 'credits_account_id'));
     }
 
     public function rate4(Request $request)
     {
-        $nprest 	= $request->nprest;
-        $vlrparc 	= $request->vlrparc;
-        $vp 		= $request->vp;
-        $guess 		= 0.25;
-        $maxit 		= 100;
-        $precision 	= 14;
-        $check 		= 1;
+        $nprest = $request->nprest;
+        $vlrparc = $request->vlrparc;
+        $vp = $request->vp;
+        $guess = 0.25;
+        $maxit = 100;
+        $precision = 14;
+        $check = 1;
         // $guess 		= round($guess,$precision);
-        for ($i=0 ; $i<$maxit ; $i++) {
-            $divdnd = $vlrparc - ( $vlrparc * (pow(1 + $guess , -$nprest)) ) - ($vp * $guess);
-            $divisor = $nprest * $vlrparc * pow(1 + $guess , (-$nprest - 1)) - $vp;
-            $newguess = $guess - ( $divdnd / $divisor );
+        for ($i = 0; $i < $maxit; $i++) {
+            $divdnd = $vlrparc - ($vlrparc * (pow(1 + $guess, -$nprest))) - ($vp * $guess);
+            $divisor = $nprest * $vlrparc * pow(1 + $guess, (-$nprest - 1)) - $vp;
+            $newguess = $guess - ($divdnd / $divisor);
             // $newguess = round($newguess, $precision);
             if ($newguess == $guess) {
-                if($check == 1){
-                return $newguess;
-                $check++;
+                if ($check == 1) {
+                    return $newguess;
+                    $check++;
                 }
             } else {
                 $guess = $newguess;
@@ -916,7 +917,7 @@ class AcctCreditsAccountController extends Controller
     public function getBranchCity($branch_id)
     {
         $data = CoreBranch::where('branch_id', $branch_id)
-        ->first();
+            ->first();
 
         return $data->branch_city;
     }
@@ -924,15 +925,15 @@ class AcctCreditsAccountController extends Controller
     public function getBranchManager($branch_id)
     {
         $data = CoreBranch::where('branch_id', $branch_id)
-        ->first();
+            ->first();
 
         return $data->branch_manager;
     }
 
     public function printNote($credits_account_id)
     {
-        $preferencecompany 		= PreferenceCompany::first();
-        $acctcreditsaccount	 	= AcctCreditsAccount::with('member','credit')->find($credits_account_id);
+        $preferencecompany = PreferenceCompany::first();
+        $acctcreditsaccount = AcctCreditsAccount::with('member', 'credit')->find($credits_account_id);
 
         $pdf = new TCPDF('P', PDF_UNIT, 'F4', true, 'UTF-8', false);
 
@@ -942,8 +943,8 @@ class AcctCreditsAccountController extends Controller
         $pdf::SetMargins(7, 7, 7, 7);
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -952,8 +953,8 @@ class AcctCreditsAccountController extends Controller
         $pdf::AddPage();
 
         $pdf::SetFont('helvetica', '', 12);
-        $img = "<img src=\"".public_path('storage/'.$preferencecompany['logo_koperasi'])."\" alt=\"\" width=\"700%\" height=\"300%\"/>";
-        $img ="";
+        $img = "<img src=\"" . public_path('storage/' . $preferencecompany['logo_koperasi']) . "\" alt=\"\" width=\"700%\" height=\"300%\"/>";
+        $img = "";
         $tbl = "
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"1\">
             <tr>
@@ -984,15 +985,15 @@ class AcctCreditsAccountController extends Controller
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jenis Pinjaman</div></td>
-                <td width=\"80%\"><div style=\"text-align: left;\">: ".$acctcreditsaccount->credit->credits_name."</div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: " . $acctcreditsaccount->credit->credits_name . "</div></td>
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Plafon</div></td>
-                <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsaccount['credits_account_amount'], 2)."</div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;" . number_format($acctcreditsaccount['credits_account_amount'], 2) . "</div></td>
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Tenor</div></td>
-                <td width=\"80%\"><div style=\"text-align: left;\">: ".$acctcreditsaccount['credits_account_period']." x </div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: " . $acctcreditsaccount['credits_account_period'] . " x </div></td>
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Pembayaran Tiap</div></td>
@@ -1007,7 +1008,7 @@ class AcctCreditsAccountController extends Controller
             <tr>
                 <td width=\"30%\"><div style=\"text-align: center;\"></div></td>
                 <td width=\"20%\"><div style=\"text-align: center;\"></div></td>
-                <td width=\"30%\"><div style=\"text-align: center;\">".$this->getBranchCity(auth()->user()->branch_id).", ".date('d-m-Y')."</div></td>
+                <td width=\"30%\"><div style=\"text-align: center;\">" . $this->getBranchCity(auth()->user()->branch_id) . ", " . date('d-m-Y') . "</div></td>
             </tr>
             <tr>
                 <td width=\"30%\"><div style=\"text-align: center;\">Pemeriksa</div></td>
@@ -1031,7 +1032,7 @@ class AcctCreditsAccountController extends Controller
             </tr>
         </table>";
 
-        $pdf::writeHTML($tbl1.$tbl2, true, false, false, false, '');
+        $pdf::writeHTML($tbl1 . $tbl2, true, false, false, false, '');
         $pdf::SetTitle('Kwitansi Pinjaman');
         $filename = 'Kwitansi.pdf';
         $pdf::Output($filename, 'I');
@@ -1039,62 +1040,62 @@ class AcctCreditsAccountController extends Controller
 
     public function printAkadold($credits_account_id)
     {
-        $memberidentity				= Configuration::MemberIdentity();
-        $dayname 					= Configuration::DayName();
-        $monthname 					= Configuration::Month();
+        $memberidentity = Configuration::MemberIdentity();
+        $dayname = Configuration::DayName();
+        $monthname = Configuration::Month();
 
-        $acctcreditsaccount			= AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-        ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-        ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-        ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-        ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-        ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-        ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-        ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
-        ->where('acct_credits_account.data_state', 0)
-        ->where('acct_credits_account.credits_account_id', $credits_account_id)
-        ->first();
+        $acctcreditsaccount = AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name', 'core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id', '=', 'core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id', '=', 'core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id', '=', 'core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id', '=', 'core_province.province_id')
+            ->join('core_city', 'core_member.city_id', '=', 'core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id', '=', 'core_kecamatan.kecamatan_id')
+            ->where('acct_credits_account.data_state', 0)
+            ->where('acct_credits_account.credits_account_id', $credits_account_id)
+            ->first();
 
-        $acctcreditsagunan			= AcctCreditsAgunan::where('credits_account_id',$credits_account_id)
-        ->get();
+        $acctcreditsagunan = AcctCreditsAgunan::where('credits_account_id', $credits_account_id)
+            ->get();
 
-        if($acctcreditsaccount['credits_id'] == 5 && $acctcreditsaccount['credits_id'] == 6){
+        if ($acctcreditsaccount['credits_id'] == 5 && $acctcreditsaccount['credits_id'] == 6) {
             $credits_name = 'MURABAHAH';
         } else {
             $credits_name = '';
         }
 
-        $date 	= date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $day 	= date('D', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $month 	= date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $year 	= date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $date = date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $day = date('D', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $month = date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $year = date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
 
         $total_agunan = 0;
         foreach ($acctcreditsagunan as $key => $val) {
-            if($val['credits_agunan_type'] == 1){
-                $agunanbpkb[] = array (
-                    'credits_agunan_bpkb_nama'				=> $val['credits_agunan_bpkb_nama'],
-                    'credits_agunan_bpkb_nomor'				=> $val['credits_agunan_bpkb_nomor'],
-                    'credits_agunan_bpkb_no_mesin'			=> $val['credits_agunan_bpkb_no_mesin'],
-                    'credits_agunan_bpkb_no_rangka'			=> $val['credits_agunan_bpkb_no_rangka'],
+            if ($val['credits_agunan_type'] == 1) {
+                $agunanbpkb[] = array(
+                    'credits_agunan_bpkb_nama' => $val['credits_agunan_bpkb_nama'],
+                    'credits_agunan_bpkb_nomor' => $val['credits_agunan_bpkb_nomor'],
+                    'credits_agunan_bpkb_no_mesin' => $val['credits_agunan_bpkb_no_mesin'],
+                    'credits_agunan_bpkb_no_rangka' => $val['credits_agunan_bpkb_no_rangka'],
                 );
-            } else if($val['credits_agunan_type'] == 2){
-                $agunansertifikat[] = array (
-                    'credits_agunan_shm_no_sertifikat'		=> $val['credits_agunan_shm_no_sertifikat'],
-                    'credits_agunan_shm_luas'				=> $val['credits_agunan_shm_luas'],
-                    'credits_agunan_shm_atas_nama'			=> $val['credits_agunan_shm_atas_nama'],
+            } else if ($val['credits_agunan_type'] == 2) {
+                $agunansertifikat[] = array(
+                    'credits_agunan_shm_no_sertifikat' => $val['credits_agunan_shm_no_sertifikat'],
+                    'credits_agunan_shm_luas' => $val['credits_agunan_shm_luas'],
+                    'credits_agunan_shm_atas_nama' => $val['credits_agunan_shm_atas_nama'],
 
                 );
-            }else if($val['credits_agunan_type'] == 7){
-                $agunanatmjamsostek[] = array (
-                    'credits_agunan_atmjamsostek_nomor'			=> $val['credits_agunan_atmjamsostek_nomor'],
-                    'credits_agunan_atmjamsostek_nama'			=> $val['credits_agunan_atmjamsostek_nama'],
-                    'credits_agunan_atmjamsostek_bank'			=> $val['credits_agunan_atmjamsostek_bank'],
-                    'credits_agunan_atmjamsostek_keterangan'	=> $val['credits_agunan_atmjamsostek_keterangan'],
+            } else if ($val['credits_agunan_type'] == 7) {
+                $agunanatmjamsostek[] = array(
+                    'credits_agunan_atmjamsostek_nomor' => $val['credits_agunan_atmjamsostek_nomor'],
+                    'credits_agunan_atmjamsostek_nama' => $val['credits_agunan_atmjamsostek_nama'],
+                    'credits_agunan_atmjamsostek_bank' => $val['credits_agunan_atmjamsostek_bank'],
+                    'credits_agunan_atmjamsostek_keterangan' => $val['credits_agunan_atmjamsostek_keterangan'],
                 );
             }
 
-            $total_agunan = (int)$total_agunan + (int)$val['credits_agunan_bpkb_taksiran'] + (int)$val['credits_agunan_shm_taksiran'] + (int)$val['credits_agunan_atmjamsostek_taksiran'];
+            $total_agunan = (int) $total_agunan + (int) $val['credits_agunan_bpkb_taksiran'] + (int) $val['credits_agunan_shm_taksiran'] + (int) $val['credits_agunan_atmjamsostek_taksiran'];
         }
 
 
@@ -1107,8 +1108,8 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -1118,20 +1119,20 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::SetFont('helvetica', '', 12);
 
-        $akad_payment_period 	= Configuration::CreditsPaymentPeriodAkad();
-        $monthname				= Configuration::Month();
-        $month 					= date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $day 					= date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $year 					= date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $month_due 				= date('m', (strtotime($acctcreditsaccount['credits_account_due_date'])));
-        $day_due 				= date('d', (strtotime($acctcreditsaccount['credits_account_due_date'])));
-        $year_due				= date('Y', (strtotime($acctcreditsaccount['credits_account_due_date'])));
-        $total_administration	= $acctcreditsaccount['credits_account_provisi'] + $acctcreditsaccount['credits_account_komisi'] + $acctcreditsaccount['credits_account_insurance'] + $acctcreditsaccount['credits_account_materai'] + $acctcreditsaccount['credits_account_risk_reserve'] + $acctcreditsaccount['credits_account_stash'] + $acctcreditsaccount['credits_account_adm_cost'] + $acctcreditsaccount['credits_account_principal'];
-        $pencairan				= $acctcreditsaccount['credits_account_amount'] - $total_administration;
+        $akad_payment_period = Configuration::CreditsPaymentPeriodAkad();
+        $monthname = Configuration::Month();
+        $month = date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $day = date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $year = date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $month_due = date('m', (strtotime($acctcreditsaccount['credits_account_due_date'])));
+        $day_due = date('d', (strtotime($acctcreditsaccount['credits_account_due_date'])));
+        $year_due = date('Y', (strtotime($acctcreditsaccount['credits_account_due_date'])));
+        $total_administration = $acctcreditsaccount['credits_account_provisi'] + $acctcreditsaccount['credits_account_komisi'] + $acctcreditsaccount['credits_account_insurance'] + $acctcreditsaccount['credits_account_materai'] + $acctcreditsaccount['credits_account_risk_reserve'] + $acctcreditsaccount['credits_account_stash'] + $acctcreditsaccount['credits_account_adm_cost'] + $acctcreditsaccount['credits_account_principal'];
+        $pencairan = $acctcreditsaccount['credits_account_amount'] - $total_administration;
 
-        $preferencecompany 			= PreferenceCompany::first();
-        $img1 = "<img src=\"".public_path('storage/logo/logomandirisejahteranoname.png')."\" alt=\"\" width=\"900%\" height=\"900%\"/>";
-        $img2 = "<img src=\"".public_path('storage/logo/logokoperasiindonesia.png')."\" alt=\"\" width=\"900%\" height=\"900%\"/>";
+        $preferencecompany = PreferenceCompany::first();
+        $img1 = "<img src=\"" . public_path('storage/logo/logomandirisejahteranoname.png') . "\" alt=\"\" width=\"900%\" height=\"900%\"/>";
+        $img2 = "<img src=\"" . public_path('storage/logo/logokoperasiindonesia.png') . "\" alt=\"\" width=\"900%\" height=\"900%\"/>";
 
         $tblkop = "
                 <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -1166,12 +1167,12 @@ class AcctCreditsAccountController extends Controller
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px; font-weight:bold\"><u>AKAD PEMBIAYAAN ".$credits_name."</u></div>
+                        <div style=\"font-size:14px; font-weight:bold\"><u>AKAD PEMBIAYAAN " . $credits_name . "</u></div>
                     </td>
                 </tr>
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px\">No. : ".$acctcreditsaccount['credits_account_serial']."</div>
+                        <div style=\"font-size:14px\">No. : " . $acctcreditsaccount['credits_account_serial'] . "</div>
                     </td>
                 </tr>
 
@@ -1180,18 +1181,18 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::writeHTML($tblkop, true, false, false, false, '');
 
-        if($acctcreditsaccount['credits_id'] == 16 || $acctcreditsaccount['credits_id'] == 17 || $acctcreditsaccount['credits_id'] == 18){
+        if ($acctcreditsaccount['credits_id'] == 16 || $acctcreditsaccount['credits_id'] == 17 || $acctcreditsaccount['credits_id'] == 18) {
 
-        $tblheader = "
+            $tblheader = "
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px; font-weight:bold\"><u>SURAT PERJANJIAN HUTANG - PIUTANG ".$credits_name."</u></div>
+                        <div style=\"font-size:14px; font-weight:bold\"><u>SURAT PERJANJIAN HUTANG - PIUTANG " . $credits_name . "</u></div>
                     </td>
                 </tr>
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px; font-weight:bold\">No. : ".$acctcreditsaccount['credits_account_serial']."</div>
+                        <div style=\"font-size:14px; font-weight:bold\">No. : " . $acctcreditsaccount['credits_account_serial'] . "</div>
                     </td>
                 </tr>
 
@@ -1228,7 +1229,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1242,7 +1243,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1254,7 +1255,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1266,7 +1267,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1278,7 +1279,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_phone']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_phone'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1290,7 +1291,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px; font-weight:bold;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_name']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_name'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -1326,10 +1327,10 @@ class AcctCreditsAccountController extends Controller
                 <tr>
                     <td style=\"text-align:left;\" width=\"100%\">
                         <div style=\"font-size:12px;\">
-                        Dengan ini Pihak kedua menerima fasilitas kredit dari Pihak pertama dengan sistem angsuran : <b>Installment</b> : Angsuran Pokok dan Bunga dibayar tiap ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]." hingga saat jatuh tempo.
+                        Dengan ini Pihak kedua menerima fasilitas kredit dari Pihak pertama dengan sistem angsuran : <b>Installment</b> : Angsuran Pokok dan Bunga dibayar tiap " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . " hingga saat jatuh tempo.
                         <br>
                         Pinjaman yang disetujui kepada Pihak kedua adalah sebesar
-                        <b>Rp.".Configuration::nominal($acctcreditsaccount['credits_account_amount'])." ( Rupiah ).</b>
+                        <b>Rp." . Configuration::nominal($acctcreditsaccount['credits_account_amount']) . " ( Rupiah ).</b>
                         </div>
                     </td>
                 </tr>
@@ -1343,7 +1344,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"><b>: </b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($total_administration)."</b></div>
+                        <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($total_administration) . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -1354,18 +1355,18 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"><b>: </b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($pencairan)."</b></div>
+                        <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($pencairan) . "</b></div>
                     </td>
                 </tr>
                 <tr>
                     <td style=\"text-align:left;\" width=\"25%\">
-                        <div style=\"font-size:12px;\">Angsuran /".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."</div>
+                        <div style=\"font-size:12px;\">Angsuran /" . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"2%\">
                         <div style=\"font-size:12px;\"><b>: </b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_payment_amount'])."</b></div>
+                        <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_payment_amount']) . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -1376,7 +1377,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"><b>: </b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>".$acctcreditsaccount['credits_account_period'].' '.$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                        <div style=\"font-size:12px;\"><b>" . $acctcreditsaccount['credits_account_period'] . ' ' . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -1387,7 +1388,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"><b>:</b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>".$day.' '.$monthname[$month].' '.$year." s/d ".$day_due.' '.$monthname[$month_due].' '.$year_due."</b></div>
+                        <div style=\"font-size:12px;\"><b>" . $day . ' ' . $monthname[$month] . ' ' . $year . " s/d " . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -1398,7 +1399,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\"><b>:</b></div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"70%\">
-                        <div style=\"font-size:12px;\"><b>Tanggal ".$day." setiap ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."nya</b></div>
+                        <div style=\"font-size:12px;\"><b>Tanggal " . $day . " setiap " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "nya</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -1426,8 +1427,8 @@ class AcctCreditsAccountController extends Controller
             </table>
                 ";
 
-            if($acctcreditsaccount['credits_id'] != 18){
-                $tblheader .="
+            if ($acctcreditsaccount['credits_id'] != 18) {
+                $tblheader .= "
                 <br/>
                 <br/><table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
@@ -1449,16 +1450,16 @@ class AcctCreditsAccountController extends Controller
                             <br>";
                 $no = 1;
                 foreach ($acctcreditsagunan as $key => $val) {
-                    if($val['credits_agunan_type'] == 2){
-                        $tblheader .= "<b>".$no.". No. Sertifikat : ".$val['credits_agunan_shm_no_sertifikat']."</b><br>";
+                    if ($val['credits_agunan_type'] == 2) {
+                        $tblheader .= "<b>" . $no . ". No. Sertifikat : " . $val['credits_agunan_shm_no_sertifikat'] . "</b><br>";
                         $no++;
                     }
-                    if($val['credits_agunan_type'] == 7){
+                    if ($val['credits_agunan_type'] == 7) {
                         $tblheader .= "
                         <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                             <tr>
                                 <td style=\"text-align:left;\" width=\"5%\">
-                                    <div style=\"font-size:12px;\">".$no.'. '."</div>
+                                    <div style=\"font-size:12px;\">" . $no . '. ' . "</div>
                                 </td>
                                 <td style=\"text-align:left;\" width=\"25%\">
                                     <div style=\"font-size:12px;\"><b>No. ATM Asli</b></div>
@@ -1467,7 +1468,7 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\"><b>: </b></div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"70%\">
-                                    <div style=\"font-size:12px;\"><b>".$val['credits_agunan_atmjamsostek_nomor']."</b></div>
+                                    <div style=\"font-size:12px;\"><b>" . $val['credits_agunan_atmjamsostek_nomor'] . "</b></div>
                                 </td>
                             </tr>
                             <tr>
@@ -1481,7 +1482,7 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\"><b>: </b></div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"70%\">
-                                    <div style=\"font-size:12px;\"><b>".$val['credits_agunan_atmjamsostek_keterangan']."</b></div>
+                                    <div style=\"font-size:12px;\"><b>" . $val['credits_agunan_atmjamsostek_keterangan'] . "</b></div>
                                 </td>
                             </tr>
                         </table>";
@@ -1490,7 +1491,7 @@ class AcctCreditsAccountController extends Controller
 
                 }
             }
-            if($acctcreditsaccount['credits_id'] == 18){
+            if ($acctcreditsaccount['credits_id'] == 18) {
                 $tblheader .= "
                             </div>
                         </td>
@@ -1508,7 +1509,7 @@ class AcctCreditsAccountController extends Controller
                         </td>
                     </tr>
                 </table>";
-            }else{
+            } else {
                 $tblheader .= "
                             </div>
                         </td>
@@ -1551,26 +1552,26 @@ class AcctCreditsAccountController extends Controller
                 </tr>
                     <br/>";
 
-                if($acctcreditsaccount['credits_id'] == 18){
-                    $tblheader .= "<br/>
+            if ($acctcreditsaccount['credits_id'] == 18) {
+                $tblheader .= "<br/>
                     <br/>
                     <br/>
                     <br/>
                     <br/>";
-                }
+            }
 
-                $tblheader .= "<tr>
+            $tblheader .= "<tr>
                     <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Demikian Surat Perjanjian Hutang Piutang ini ditandatangani di Kantor KSU \"MANDIRI SEJAHTERA\" di kabupaten Karanganyar, Kecamatan Kebakkrmat, Desa Kemiri, <b>".$day.' '.$monthname[$month].' '.$year."</b></div>
+                        <div style=\"font-size:12px;\">Demikian Surat Perjanjian Hutang Piutang ini ditandatangani di Kantor KSU \"MANDIRI SEJAHTERA\" di kabupaten Karanganyar, Kecamatan Kebakkrmat, Desa Kemiri, <b>" . $day . ' ' . $monthname[$month] . ' ' . $year . "</b></div>
                     </td>
                 </tr>
             </table>
             <br><br>
         ";
 
-        $pdf::writeHTML($tblheader, true, false, false, false, '');
+            $pdf::writeHTML($tblheader, true, false, false, false, '');
 
-        $tblket = "
+            $tblket = "
 
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
@@ -1592,27 +1593,27 @@ class AcctCreditsAccountController extends Controller
                     </td>
                     <td style=\"text-align:center;\" width=\"50%\">
                         <div style=\"font-size:12px;font-weight:bold\">
-                            ".$acctcreditsaccount['member_name']."</div>
+                            " . $acctcreditsaccount['member_name'] . "</div>
                     </td>
                 </tr>
             </table>
 
         ";
 
-        $pdf::writeHTML($tblket, true, false, false, false, '');
+            $pdf::writeHTML($tblket, true, false, false, false, '');
 
-        }else if($acctcreditsaccount['credits_id'] == 13){
+        } else if ($acctcreditsaccount['credits_id'] == 13) {
 
             $tblheader = "
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:14px; font-weight:bold\"><u>PERJANJIAN PEMBIAYAAN KONSUMEN ".$credits_name."</u></div>
+                            <div style=\"font-size:14px; font-weight:bold\"><u>PERJANJIAN PEMBIAYAAN KONSUMEN " . $credits_name . "</u></div>
                         </td>
                         </tr>
                         <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:14px; font-weight:bold\">No. : ".$acctcreditsaccount['credits_account_serial']."</div>
+                            <div style=\"font-size:14px; font-weight:bold\">No. : " . $acctcreditsaccount['credits_account_serial'] . "</div>
                         </td>
                         </tr>
 
@@ -1649,7 +1650,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                         </td>
                         </tr>
                         <tr>
@@ -1663,7 +1664,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "</div>
                         </td>
                         </tr>
                         <tr>
@@ -1675,7 +1676,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                         </td>
                         </tr>
                         <tr>
@@ -1687,7 +1688,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                         </td>
                         </tr>
                         <tr>
@@ -1699,7 +1700,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_phone']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_phone'] . "</div>
                         </td>
                         </tr>
                         <tr>
@@ -1748,8 +1749,8 @@ class AcctCreditsAccountController extends Controller
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     ";
 
-    foreach ($acctcreditsagunan as $key => $val) {
-        $tblheader .= "
+            foreach ($acctcreditsagunan as $key => $val) {
+                $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"5%\">
                         </td>
@@ -1760,7 +1761,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_type']." / Satu</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_type'] . " / Satu</div>
                         </td>
                     </tr>
                     <tr>
@@ -1773,7 +1774,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_keterangan']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_keterangan'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1786,7 +1787,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_rangka']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_no_rangka'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1799,7 +1800,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_mesin']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_no_mesin'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1812,7 +1813,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nomor']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_nomor'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1825,7 +1826,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nama']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_nama'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1843,7 +1844,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal($val['credits_agunan_bpkb_taksiran'])."</div>
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal($val['credits_agunan_bpkb_taksiran']) . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1858,12 +1859,12 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal($val['credits_agunan_bpkb_gross'])."</div>
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal($val['credits_agunan_bpkb_gross']) . "</div>
                         </td>
                     </tr>
                     <br>";
-    }
-    $tblheader .= "
+            }
+            $tblheader .= "
                     </table>
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
@@ -1890,8 +1891,8 @@ class AcctCreditsAccountController extends Controller
                             </div>
                         </td>
                     </tr>";
-    foreach ($acctcreditsagunan as $key => $val) {
-        $tblheader .= "<tr>
+            foreach ($acctcreditsagunan as $key => $val) {
+                $tblheader .= "<tr>
                         <td style=\"text-align:left;\" width=\"5%\">
                         </td>
                         <td style=\"text-align:left;\" width=\"25%\">
@@ -1903,7 +1904,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_dealer_name']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_dealer_name'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -1918,12 +1919,12 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_dealer_address']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_dealer_address'] . "</div>
                         </td>
                     </tr>
                     ";
-    }
-        $tblheader .= "
+            }
+            $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"5%\">
                         </td>
@@ -1977,61 +1978,61 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_amount'])."</div>
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_amount']) . "</div>
                         </td>
                     </tr>";
 
-                if($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1){
-                    $datapola=$this->flat($credits_account_id);
-                }else if ($acctcreditsaccount['payment_type_id'] == 2){
-                    $datapola=$this->anuitas($credits_account_id);
-                }else if($acctcreditsaccount['payment_type_id'] == 3){
-                    $datapola=$this->slidingrate($credits_account_id);
-                }else if($acctcreditsaccount['payment_type_id'] == 4){
-                    $datapola=$this->menurunharian($credits_account_id);
-                }
+            if ($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1) {
+                $datapola = $this->flat($credits_account_id);
+            } else if ($acctcreditsaccount['payment_type_id'] == 2) {
+                $datapola = $this->anuitas($credits_account_id);
+            } else if ($acctcreditsaccount['payment_type_id'] == 3) {
+                $datapola = $this->slidingrate($credits_account_id);
+            } else if ($acctcreditsaccount['payment_type_id'] == 4) {
+                $datapola = $this->menurunharian($credits_account_id);
+            }
 
-                $sumPembiayaan = 0;
-                foreach ($datapola as $key => $val) {
-                    $sumPembiayaan += round($val['angsuran'],-3);
-                }
+            $sumPembiayaan = 0;
+            foreach ($datapola as $key => $val) {
+                $sumPembiayaan += round($val['angsuran'], -3);
+            }
 
-                $hutangpembiayaan = ($acctcreditsaccount['credits_account_amount']*$acctcreditsaccount['credits_account_interest']/100*$acctcreditsaccount['credits_account_period'])+$acctcreditsaccount['credits_account_amount'];
-                $roundPembiayaan=round($hutangpembiayaan,-3);
-                $sisaRoundPembiayaan = $roundPembiayaan - $hutangpembiayaan;
+            $hutangpembiayaan = ($acctcreditsaccount['credits_account_amount'] * $acctcreditsaccount['credits_account_interest'] / 100 * $acctcreditsaccount['credits_account_period']) + $acctcreditsaccount['credits_account_amount'];
+            $roundPembiayaan = round($hutangpembiayaan, -3);
+            $sisaRoundPembiayaan = $roundPembiayaan - $hutangpembiayaan;
 
-                if($acctcreditsaccount['payment_type_id'] == 3){
-                    $tblheader .= "
-                    <tr>
-                        <td style=\"text-align:left;\" width=\"25%\">
-                            <div style=\"font-size:12px;\">
-                            Bunga
-                            </div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"2%\">
-                            <div style=\"font-size:12px;\"><b>: </b></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".($acctcreditsaccount['credits_account_interest']+0)."% menurun</div>
-                        </td>
-                    </tr>";
-                }else{
-                    $tblheader .= "
-                    <tr>
-                        <td style=\"text-align:left;\" width=\"25%\">
-                            <div style=\"font-size:12px;\">
-                            Bunga
-                            </div>
-                        </td>
-                        <td style=\"text-align:left;\" width=\"2%\">
-                            <div style=\"font-size:12px;\"><b>: </b></div>
-                        </td>
-                        <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal(($acctcreditsaccount['credits_account_amount']*$acctcreditsaccount['credits_account_interest']/100*$acctcreditsaccount['credits_account_period'])+$sisaRoundPembiayaan)."</div>
-                        </td>
-                    </tr>";
-                }
+            if ($acctcreditsaccount['payment_type_id'] == 3) {
                 $tblheader .= "
+                    <tr>
+                        <td style=\"text-align:left;\" width=\"25%\">
+                            <div style=\"font-size:12px;\">
+                            Bunga
+                            </div>
+                        </td>
+                        <td style=\"text-align:left;\" width=\"2%\">
+                            <div style=\"font-size:12px;\"><b>: </b></div>
+                        </td>
+                        <td style=\"text-align:justify;\" width=\"68%\">
+                            <div style=\"font-size:12px;\">" . ($acctcreditsaccount['credits_account_interest'] + 0) . "% menurun</div>
+                        </td>
+                    </tr>";
+            } else {
+                $tblheader .= "
+                    <tr>
+                        <td style=\"text-align:left;\" width=\"25%\">
+                            <div style=\"font-size:12px;\">
+                            Bunga
+                            </div>
+                        </td>
+                        <td style=\"text-align:left;\" width=\"2%\">
+                            <div style=\"font-size:12px;\"><b>: </b></div>
+                        </td>
+                        <td style=\"text-align:justify;\" width=\"68%\">
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal(($acctcreditsaccount['credits_account_amount'] * $acctcreditsaccount['credits_account_interest'] / 100 * $acctcreditsaccount['credits_account_period']) + $sisaRoundPembiayaan) . "</div>
+                        </td>
+                    </tr>";
+            }
+            $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">
@@ -2042,7 +2043,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal($sumPembiayaan)."</div>
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal($sumPembiayaan) . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2055,7 +2056,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$day.' '.$monthname[$month].' '.$year." s/d ".$day_due.' '.$monthname[$month_due].' '.$year_due."</div>
+                            <div style=\"font-size:12px;\">" . $day . ' ' . $monthname[$month] . ' ' . $year . " s/d " . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2068,12 +2069,12 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['credits_account_period']." Kali</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['credits_account_period'] . " Kali</div>
                         </td>
                     </tr>";
 
-                if($acctcreditsaccount['payment_type_id'] == 3){
-                    $tblheader .="
+            if ($acctcreditsaccount['payment_type_id'] == 3) {
+                $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">
@@ -2084,11 +2085,11 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Pokok + Bunga ".($acctcreditsaccount['credits_account_interest']+0)."% setiap ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."nya</b></div>
+                            <div style=\"font-size:12px;\"><b>Pokok + Bunga " . ($acctcreditsaccount['credits_account_interest'] + 0) . "% setiap " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "nya</b></div>
                         </td>
                     </tr>";
-                }else{
-                    $tblheader .="
+            } else {
+                $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">
@@ -2099,11 +2100,11 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">Rp. ".Configuration::nominal(round($acctcreditsaccount['credits_account_payment_amount'],-3))." per ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."</div>
+                            <div style=\"font-size:12px;\">Rp. " . Configuration::nominal(round($acctcreditsaccount['credits_account_payment_amount'], -3)) . " per " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "</div>
                         </td>
                     </tr>";
-                }
-                $tblheader .="
+            }
+            $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">
@@ -2114,7 +2115,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$day_due.' '.$monthname[$month_due].' '.$year_due." yang merupakan batas terakhir pembayaran (terlampir)</div>
+                            <div style=\"font-size:12px;\">" . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . " yang merupakan batas terakhir pembayaran (terlampir)</div>
                         </td>
                     </tr>
                     <tr>
@@ -2158,14 +2159,14 @@ class AcctCreditsAccountController extends Controller
                     </tr>
                     </table>
                     <br><br>";
-                    $no_pasal = 2;
-        if($acctcreditsaccount['credits_account_insurance'] > 0){
-            $no_pasal += 1;
-            $tblheader .="
+            $no_pasal = 2;
+            if ($acctcreditsaccount['credits_account_insurance'] > 0) {
+                $no_pasal += 1;
+                $tblheader .= "
                 <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:12px\"><b>Pasal ".$no_pasal."</b></div>
+                            <div style=\"font-size:12px\"><b>Pasal " . $no_pasal . "</b></div>
                         </td>
                         </tr>
                         <tr>
@@ -2237,15 +2238,15 @@ class AcctCreditsAccountController extends Controller
                 // 	 ";
                 // }
 
-            $tblheader .="
+                $tblheader .= "
                     </table>
                     <br><br>";
-        }
-        $tblheader .="
+            }
+            $tblheader .= "
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:12px\"><b>Pasal ".($no_pasal+1)."</b></div>
+                            <div style=\"font-size:12px\"><b>Pasal " . ($no_pasal + 1) . "</b></div>
                         </td>
                         </tr>
                         <tr>
@@ -2264,7 +2265,7 @@ class AcctCreditsAccountController extends Controller
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:12px\"><b>Pasal ".($no_pasal+2)."</b></div>
+                            <div style=\"font-size:12px\"><b>Pasal " . ($no_pasal + 2) . "</b></div>
                         </td>
                         </tr>
                         <tr>
@@ -2317,7 +2318,7 @@ class AcctCreditsAccountController extends Controller
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:12px\"><b>Pasal ".($no_pasal+3)."</b></div>
+                            <div style=\"font-size:12px\"><b>Pasal " . ($no_pasal + 3) . "</b></div>
                         </td>
                         </tr>
                         <tr>
@@ -2382,27 +2383,27 @@ class AcctCreditsAccountController extends Controller
                     </tr>
                     ";
 
-                // if($acctcreditsaccount['payment_type_id'] == 3){
-                // 	$tblheader .="
-                // 	 <tr>
-                // 		<td style=\"text-align:left;\" width=\"5%\">
-                // 			<div style=\"font-size:12px;\">f.</div>
-                // 		</td>
-                // 		<td style=\"text-align:justify;\" width=\"95%\">
-                // 			<div style=\"font-size:12px;\">f.Biaya penitipan Jaminan sebesar Rp. 1.000,- Perhari akan dikenakan apabila pihak kedua tidak mengambil jaminan lebih dari 30 hari setelah masa kontrak berakhir dan atau lunas.</div>
-                // 		</td>
-                // 	 </tr>
-                // 	 ";
-                // }
+            // if($acctcreditsaccount['payment_type_id'] == 3){
+            // 	$tblheader .="
+            // 	 <tr>
+            // 		<td style=\"text-align:left;\" width=\"5%\">
+            // 			<div style=\"font-size:12px;\">f.</div>
+            // 		</td>
+            // 		<td style=\"text-align:justify;\" width=\"95%\">
+            // 			<div style=\"font-size:12px;\">f.Biaya penitipan Jaminan sebesar Rp. 1.000,- Perhari akan dikenakan apabila pihak kedua tidak mengambil jaminan lebih dari 30 hari setelah masa kontrak berakhir dan atau lunas.</div>
+            // 		</td>
+            // 	 </tr>
+            // 	 ";
+            // }
 
-                $tblheader .="
+            $tblheader .= "
                     </table>
                     <br><br>
 
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr>
                             <td style=\"text-align:center;\" width=\"100%\">
-                                <div style=\"font-size:12px\"><b>Pasal ".($no_pasal+4)."</b></div>
+                                <div style=\"font-size:12px\"><b>Pasal " . ($no_pasal + 4) . "</b></div>
                             </td>
                         </tr>
                         <tr>
@@ -2418,7 +2419,7 @@ class AcctCreditsAccountController extends Controller
                                 <br>
                                 <b>Para Pihak Telah Mengerti dan menyetujui setiap dan seluruh isi perjanjian Pembiayaan ini.</b>
                                 <br>
-                                Demikian Surat Perjanjian Pembiayaan Konsumen ini ditandatangani pada hari ini, <b>".$day.' '.$monthname[$month].' '.$year."</b>
+                                Demikian Surat Perjanjian Pembiayaan Konsumen ini ditandatangani pada hari ini, <b>" . $day . ' ' . $monthname[$month] . ' ' . $year . "</b>
                                 </div>
                             </td>
                         </tr>
@@ -2453,7 +2454,7 @@ class AcctCreditsAccountController extends Controller
                         </td>
                         <td style=\"text-align:center;\" width=\"50%\">
                             <div style=\"font-size:12px;font-weight:bold\">
-                                ".$acctcreditsaccount['member_name']."</div>
+                                " . $acctcreditsaccount['member_name'] . "</div>
                         </td>
                         </tr>
                     </table>
@@ -2462,7 +2463,7 @@ class AcctCreditsAccountController extends Controller
 
             $pdf::writeHTML($tblket, true, false, false, false, '');
 
-        }else if($acctcreditsaccount['credits_id'] == 14 || $acctcreditsaccount['credits_id'] == 15){
+        } else if ($acctcreditsaccount['credits_id'] == 14 || $acctcreditsaccount['credits_id'] == 15) {
 
             $tblheader = "
                 <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -2473,7 +2474,7 @@ class AcctCreditsAccountController extends Controller
                     </tr>
                     <tr>
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:14px; font-weight:bold\">No. : ".$acctcreditsaccount['credits_account_serial']."</div>
+                            <div style=\"font-size:14px; font-weight:bold\">No. : " . $acctcreditsaccount['credits_account_serial'] . "</div>
                         </td>
                     </tr>
 
@@ -2510,7 +2511,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2524,7 +2525,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2536,7 +2537,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2548,7 +2549,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2560,7 +2561,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px; font-weight:bold;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_phone']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_phone'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2630,7 +2631,7 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:left;\" width=\"100%\">
                             <div style=\"font-size:12px;\">
-                            Pinjaman yang disetujui kepada Pihak Kedua adalah sebesar <b> Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_amount'])."</b>
+                            Pinjaman yang disetujui kepada Pihak Kedua adalah sebesar <b> Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_amount']) . "</b>
                             </div>
                         </td>
                     </tr>
@@ -2644,7 +2645,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_amount']-$acctcreditsaccount['credits_account_amount_received'])."</b></div>
+                            <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_amount'] - $acctcreditsaccount['credits_account_amount_received']) . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2657,10 +2658,10 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_amount_received'])."</b></div>
+                            <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_amount_received']) . "</b></div>
                         </td>
                     </tr>";
-                if($acctcreditsaccount['payment_type_id'] == 3){
+            if ($acctcreditsaccount['payment_type_id'] == 3) {
                 $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
@@ -2670,7 +2671,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".($acctcreditsaccount['credits_account_interest']+0)."% menurun per".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                            <div style=\"font-size:12px;\"><b>" . ($acctcreditsaccount['credits_account_interest'] + 0) . "% menurun per" . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2683,7 +2684,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".$day.' '.$monthname[$month].' '.$year." s/d ".$day_due.' '.$monthname[$month_due].' '.$year_due."</b></div>
+                            <div style=\"font-size:12px;\"><b>" . $day . ' ' . $monthname[$month] . ' ' . $year . " s/d " . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2696,7 +2697,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".$acctcreditsaccount['credits_account_period']." Kali Jangka waktu kredit</b></div>
+                            <div style=\"font-size:12px;\"><b>" . $acctcreditsaccount['credits_account_period'] . " Kali Jangka waktu kredit</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2709,7 +2710,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Pokok + Bunga ".($acctcreditsaccount['credits_account_interest']+0)."% setiap ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."nya</b></div>
+                            <div style=\"font-size:12px;\"><b>Pokok + Bunga " . ($acctcreditsaccount['credits_account_interest'] + 0) . "% setiap " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "nya</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2722,22 +2723,22 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".$day_due.' '.$monthname[$month_due].' '.$year_due." yang merupakan batas terakhir pembayaran (terlampir)</b></div>
+                            <div style=\"font-size:12px;\"><b>" . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . " yang merupakan batas terakhir pembayaran (terlampir)</b></div>
                         </td>
                     </tr>";
-                }else{
-                $tblheader .="
+            } else {
+                $tblheader .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">
-                            Angsuran /".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."
+                            Angsuran /" . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "
                             </div>
                         </td>
                         <td style=\"text-align:left;\" width=\"2%\">
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Rp. ".Configuration::nominal($acctcreditsaccount['credits_account_payment_amount'])."</b></div>
+                            <div style=\"font-size:12px;\"><b>Rp. " . Configuration::nominal($acctcreditsaccount['credits_account_payment_amount']) . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2750,7 +2751,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".$acctcreditsaccount['credits_account_period'].' '.$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                            <div style=\"font-size:12px;\"><b>" . $acctcreditsaccount['credits_account_period'] . ' ' . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2763,7 +2764,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>".$day.' '.$monthname[$month].' '.$year." s/d ".$day_due.' '.$monthname[$month_due].' '.$year_due."</b></div>
+                            <div style=\"font-size:12px;\"><b>" . $day . ' ' . $monthname[$month] . ' ' . $year . " s/d " . $day_due . ' ' . $monthname[$month_due] . ' ' . $year_due . "</b></div>
                         </td>
                     </tr>
                     <tr>
@@ -2776,11 +2777,11 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\"><b>: </b></div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"68%\">
-                            <div style=\"font-size:12px;\"><b>Tanggal ".$day." setiap ".$akad_payment_period[$acctcreditsaccount['credits_payment_period']]."nya</b></div>
+                            <div style=\"font-size:12px;\"><b>Tanggal " . $day . " setiap " . $akad_payment_period[$acctcreditsaccount['credits_payment_period']] . "nya</b></div>
                         </td>
                     </tr>";
-                }
-                $tblheader .="
+            }
+            $tblheader .= "
                 </table>
                 <br><br>
 
@@ -2822,8 +2823,8 @@ class AcctCreditsAccountController extends Controller
                 </table>
                 <table>";
 
-    foreach ($acctcreditsagunan as $key => $val) {
-        $tblheader .= "<tr>
+            foreach ($acctcreditsagunan as $key => $val) {
+                $tblheader .= "<tr>
                         <td style=\"text-align:left;\" width=\"25%\">
                             <div style=\"font-size:12px;\">No. BPKB</div>
                         </td>
@@ -2831,7 +2832,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nomor']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_nomor'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2842,7 +2843,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nopol']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_nopol'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2853,7 +2854,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_mesin']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_no_mesin'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2864,7 +2865,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_no_rangka']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_no_rangka'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2875,7 +2876,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_keterangan']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_keterangan'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2886,7 +2887,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_nama']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_nama'] . "</div>
                         </td>
                     </tr>
                     <tr>
@@ -2897,12 +2898,12 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"68%\">
-                            <div style=\"font-size:12px;\">".$val['credits_agunan_bpkb_address']."</div>
+                            <div style=\"font-size:12px;\">" . $val['credits_agunan_bpkb_address'] . "</div>
                         </td>
                     </tr>
                     <br>";
-    }
-        $tblheader	.=	"<tr>
+            }
+            $tblheader .= "<tr>
                         <td style=\"text-align:left;\" width=\"100%\">
                             <div style=\"font-size:12px;\">Pihak Kedua menjamin bahwa surat dan fisik barang yang dijaminkan ini tidak dijaminkan kepada pihak lain, tidak dalam keadaan sengketa, bebas dari sitaan, tidak dalam keadaan disewakan serta tidak terikat dengan perjanjian apapun. Pihak Kedua menjamin tidak akan merubah fisik barang yang dijaminkan, merawat dengan baik serta menjaga fisik barang tetap dalam keadaan sama pada saat perjanjian ini disepakati. </div>
                         </td>
@@ -3108,7 +3109,7 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:justify;\" width=\"100%\">
                             <div style=\"font-size:12px;\">Mengenai surat perjanjian hutang-piutang ini dan segala akibat hukumnya, keduabelah pihak sepakat memilih domisili yang tetap dan umum di Kantor Panitera Pengadilan Negeri Kabupaten Karanganyar.
-                            Demikian Surat Perjanjian Hutang Piutang ini ditandatangani di Kantor KSU “MANDIRI SEJAHTERA” di Kabupaten Karanganyar, Kecamatan Kebakkrmat, Desa Kemiri pada hari ini, <b>".$day.' '.$monthname[$month].' '.$year."</b>
+                            Demikian Surat Perjanjian Hutang Piutang ini ditandatangani di Kantor KSU “MANDIRI SEJAHTERA” di Kabupaten Karanganyar, Kecamatan Kebakkrmat, Desa Kemiri pada hari ini, <b>" . $day . ' ' . $monthname[$month] . ' ' . $year . "</b>
                             </div>
                         </td>
                     </tr>
@@ -3142,7 +3143,7 @@ class AcctCreditsAccountController extends Controller
                         </td>
                         <td style=\"text-align:center;\" width=\"50%\">
                             <div style=\"font-size:12px;font-weight:bold\">
-                                ".$acctcreditsaccount['member_name']."</div>
+                                " . $acctcreditsaccount['member_name'] . "</div>
                         </td>
                     </tr>
                 </table>
@@ -3153,37 +3154,37 @@ class AcctCreditsAccountController extends Controller
 
         }
 
-        $filename = 'Akad_'.$credits_name.'_'.$acctcreditsaccount['member_name'].'.pdf';
+        $filename = 'Akad_' . $credits_name . '_' . $acctcreditsaccount['member_name'] . '.pdf';
         $pdf::Output($filename, 'I');
     }
 
     public function printAkad($credits_account_id)
     {
-        $memberidentity				= Configuration::MemberIdentity();
-        $dayname 					= Configuration::DayName();
-        $monthname 					= Configuration::Month();
+        $memberidentity = Configuration::MemberIdentity();
+        $dayname = Configuration::DayName();
+        $monthname = Configuration::Month();
 
-        $acctcreditsaccount			= AcctCreditsAccount::withoutGlobalScopes()
-            ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'acct_credits.credits_fine', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-            ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-            ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-            ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-            ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-            ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-            ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-            ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
+        $acctcreditsaccount = AcctCreditsAccount::withoutGlobalScopes()
+            ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name', 'core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'acct_credits.credits_fine', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id', '=', 'core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id', '=', 'core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id', '=', 'core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id', '=', 'core_province.province_id')
+            ->join('core_city', 'core_member.city_id', '=', 'core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id', '=', 'core_kecamatan.kecamatan_id')
             ->where('acct_credits_account.data_state', 0)
             ->where('acct_credits_account.credits_account_id', $credits_account_id)
             ->first();
         // dd($acctcreditsaccount);
 
-        $acctcreditsagunan			= AcctCreditsAgunan::where('credits_account_id',$credits_account_id)
-        ->get();
+        $acctcreditsagunan = AcctCreditsAgunan::where('credits_account_id', $credits_account_id)
+            ->get();
 
-        $date 	= date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $day 	= date('D', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $month 	= date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
-        $year 	= date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $date = date('d', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $day = date('D', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $month = date('m', (strtotime($acctcreditsaccount['credits_account_date'])));
+        $year = date('Y', (strtotime($acctcreditsaccount['credits_account_date'])));
 
         $dayPayment = date('D', (strtotime($acctcreditsaccount['credits_account_payment_date'])));
         $payment = $acctcreditsaccount['credits_account_payment_date'];
@@ -3198,15 +3199,15 @@ class AcctCreditsAccountController extends Controller
         $htmlAgunanSertifikat = '';
 
         foreach ($acctcreditsagunan as $key => $val) {
-            if($val['credits_agunan_type'] == 1){
-                $agunanbpkb[] = array (
-                    'credits_agunan_bpkb_nama'				=> $val['credits_agunan_bpkb_nama'],
-                    'credits_agunan_bpkb_nomor'				=> $val['credits_agunan_bpkb_nomor'],
-                    'credits_agunan_bpkb_no_mesin'			=> $val['credits_agunan_bpkb_no_mesin'],
-                    'credits_agunan_bpkb_no_rangka'			=> $val['credits_agunan_bpkb_no_rangka'],
+            if ($val['credits_agunan_type'] == 1) {
+                $agunanbpkb[] = array(
+                    'credits_agunan_bpkb_nama' => $val['credits_agunan_bpkb_nama'],
+                    'credits_agunan_bpkb_nomor' => $val['credits_agunan_bpkb_nomor'],
+                    'credits_agunan_bpkb_no_mesin' => $val['credits_agunan_bpkb_no_mesin'],
+                    'credits_agunan_bpkb_no_rangka' => $val['credits_agunan_bpkb_no_rangka'],
                 );
 
-                 // Membuat HTML untuk data BPKB
+                // Membuat HTML untuk data BPKB
                 if (!empty($agunanbpkb)) {
                     foreach ($agunanbpkb as $key => $bpkb) {
                         $htmlAgunanBPKB .= '
@@ -3223,11 +3224,11 @@ class AcctCreditsAccountController extends Controller
                         </tr>';
                     }
                 }
-            } else if($val['credits_agunan_type'] == 2){
-                $agunansertifikat[] = array (
-                    'credits_agunan_shm_no_sertifikat'		=> $val['credits_agunan_shm_no_sertifikat'],
-                    'credits_agunan_shm_luas'				=> $val['credits_agunan_shm_luas'],
-                    'credits_agunan_shm_atas_nama'			=> $val['credits_agunan_shm_atas_nama'],
+            } else if ($val['credits_agunan_type'] == 2) {
+                $agunansertifikat[] = array(
+                    'credits_agunan_shm_no_sertifikat' => $val['credits_agunan_shm_no_sertifikat'],
+                    'credits_agunan_shm_luas' => $val['credits_agunan_shm_luas'],
+                    'credits_agunan_shm_atas_nama' => $val['credits_agunan_shm_atas_nama'],
 
                 );
                 // Membuat HTML untuk data Sertifikat
@@ -3264,8 +3265,8 @@ class AcctCreditsAccountController extends Controller
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
         // set some language-dependent strings (optional)
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -3299,14 +3300,14 @@ class AcctCreditsAccountController extends Controller
         // Menggunakan collection untuk mendapatkan nilai atau default '-'
         $creditsPeriod = $creditsPaymentPeriodMapping->get($acctcreditsaccount['credits_payment_period'], '-');
 
-    // start suku bunga || denda || pelunasan --------------------------------------------------
-        $paymentType   = $acctcreditsaccount['payment_type_id'];
-        $interestRate  = " ";
-        $fine          = " ";
-        $repayment     = " ";
-        $installment   = " ";
-            //menurun
-            if($paymentType == 4){
+        // start suku bunga || denda || pelunasan --------------------------------------------------
+        $paymentType = $acctcreditsaccount['payment_type_id'];
+        $interestRate = " ";
+        $fine = " ";
+        $repayment = " ";
+        $installment = " ";
+        //menurun
+        if ($paymentType == 4) {
             $interestRate = "<tr style=\"line-height: 60%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
                                 <td style=\"text-align:justify;\" width=\"30%\">
@@ -3316,17 +3317,17 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"25%\">
-                                    <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_interest'],2)." % Menurun per 30 hari</div>
+                                    <div style=\"font-size:12px;text-align: left\">" . number_format($acctcreditsaccount['credits_account_interest'], 2) . " % Menurun per 30 hari</div>
                                 </td>
                             </tr>";
-            $fine          = "".$acctcreditsaccount['credits_fine']." X Sisa Pokok Pinjaman" ;
-            $repayment     = " ";
-            $installment   = " ";
+            $fine = "" . $acctcreditsaccount['credits_fine'] . " X Sisa Pokok Pinjaman";
+            $repayment = " ";
+            $installment = " ";
             //mingguan
-            }elseif($acctcreditsaccount['credits_payment_period'] == 2){
+        } elseif ($acctcreditsaccount['credits_payment_period'] == 2) {
             $interestRate = " ";
-            $fine      = "".$acctcreditsaccount['credits_fine']." / Hari dari Angsuran";
-            $repayment     = "
+            $fine = "" . $acctcreditsaccount['credits_fine'] . " / Hari dari Angsuran";
+            $repayment = "
                             <tr style=\"line-height: 60%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
                                 <td style=\"text-align:justify;\" width=\"30%\">
@@ -3344,8 +3345,8 @@ class AcctCreditsAccountController extends Controller
                                 <td style=\"text-align:justify;\" width=\"25%\">
                                     <div style=\"font-size:12px;text-align: left\">Seluruh sisa kewajiban</div>
                                 </td>
-                            </tr>" ;
-            $installment   = "<tr style=\"line-height: 90%;\">
+                            </tr>";
+            $installment = "<tr style=\"line-height: 90%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
                                 <td style=\"text-align:justify;\" width=\"30%\">
                                     <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jumlah Angsuran</div>
@@ -3354,10 +3355,10 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"100%\">
-                                    <div style=\"font-size:12px;text-align: left\">Rp. ".number_format($acctcreditsaccount['credits_account_payment_amount'],2)." (".$this->numtotxt($acctcreditsaccount['credits_account_payment_amount']).") / <br>minggu dengan pembayaran setiap Hari ".$dayname[$dayPayment]." <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
+                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>minggu dengan pembayaran setiap Hari " . $dayname[$dayPayment] . " <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
                                 </td>
                             </tr>";
-            }else{
+        } else {
             //bulanan
             $interestRate = "<tr style=\"line-height: 60%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
@@ -3368,11 +3369,11 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"25%\">
-                                    <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_interest'],2)." % per Bulan</div>
+                                    <div style=\"font-size:12px;text-align: left\">" . number_format($acctcreditsaccount['credits_account_interest'], 2) . " % per Bulan</div>
                                 </td>
                             </tr>";
-            $fine      = "".$acctcreditsaccount['credits_fine']." X Angsuran";
-            $repayment     = "
+            $fine = "" . $acctcreditsaccount['credits_fine'] . " X Angsuran";
+            $repayment = "
                             <tr style=\"line-height: 60%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
                                 <td style=\"text-align:justify;\" width=\"30%\">
@@ -3390,8 +3391,8 @@ class AcctCreditsAccountController extends Controller
                                 <td style=\"text-align:justify;\" width=\"25%\">
                                     <div style=\"font-size:12px;text-align: left\">Sisa pokok + 2X bunga</div>
                                 </td>
-                            </tr>" ;
-            $installment   = "<tr style=\"line-height: 90%;\">
+                            </tr>";
+            $installment = "<tr style=\"line-height: 90%;\">
                                 <td style=\"text-align:left;\" width=\"5%\"></td>
                                 <td style=\"text-align:justify;\" width=\"30%\">
                                     <div style=\"font-size:12px;\">	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Jumlah Angsuran</div>
@@ -3400,12 +3401,12 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"100%\">
-                                    <div style=\"font-size:12px;text-align: left\">Rp. ".number_format($acctcreditsaccount['credits_account_payment_amount'],2)." (".$this->numtotxt($acctcreditsaccount['credits_account_payment_amount']).") / <br>bulan dengan pembayaran setiap Hari ".$dayname[$dayPayment]." <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
+                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>bulan dengan pembayaran setiap Hari " . $dayname[$dayPayment] . " <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
                                 </td>
                             </tr>";
 
-            }
-    // end suku bunga || denda || pelunasan -----------------------------------------------------
+        }
+        // end suku bunga || denda || pelunasan -----------------------------------------------------
 
 
         // facility kredit
@@ -3419,7 +3420,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"25%\">
-                        <div style=\"font-size:12px;text-align: left\">".$acctcreditsaccount['credits_name']."</div>
+                        <div style=\"font-size:12px;text-align: left\">" . $acctcreditsaccount['credits_name'] . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3434,10 +3435,10 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">Rp.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"100%\">
-                        <div style=\"font-size:12px;text-align: left\">".number_format($acctcreditsaccount['credits_account_amount'], 2)."(".$this->numtotxt($acctcreditsaccount['credits_account_amount']).")</div>
+                        <div style=\"font-size:12px;text-align: left\">" . number_format($acctcreditsaccount['credits_account_amount'], 2) . "(" . $this->numtotxt($acctcreditsaccount['credits_account_amount']) . ")</div>
                     </td>
                  </tr>
-                 ".$interestRate."
+                 " . $interestRate . "
                  <tr style=\"line-height: 60%;\">
                      <td style=\"text-align:left;\" width=\"5%\"></td>
                     <td style=\"text-align:justify; \" width=\"30%\">
@@ -3447,10 +3448,10 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:justify; \" width=\"100%\">
-                        <div style=\"font-size:12px;text-align: left\">".$acctcreditsaccount['credits_account_period']."  ".$creditsPeriod." , dimulai pada tanggal ".$paymentDate." sampai dengan ".$dueDate."</div>
+                        <div style=\"font-size:12px;text-align: left\">" . $acctcreditsaccount['credits_account_period'] . "  " . $creditsPeriod . " , dimulai pada tanggal " . $paymentDate . " sampai dengan " . $dueDate . "</div>
                     </td>
                  </tr>
-                 ".$installment."
+                 " . $installment . "
                  <tr style=\"line-height: 50%;\">
                      <td style=\"text-align:left;\" width=\"5%\"></td>
                     <td style=\"text-align:justify;\" width=\"30%\">
@@ -3463,7 +3464,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">Rp.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_adm_cost'], 2)."</div>
+                        <div style=\"font-size:12px;text-align: right\">" . number_format($acctcreditsaccount['credits_account_adm_cost'], 2) . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 50%;\">
@@ -3478,7 +3479,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">Rp.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_provisi'], 2)."</div>
+                        <div style=\"font-size:12px;text-align: right\">" . number_format($acctcreditsaccount['credits_account_provisi'], 2) . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 50%;\">
@@ -3493,7 +3494,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">Rp.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_notaris'], 2)."</div>
+                        <div style=\"font-size:12px;text-align: right\">" . number_format($acctcreditsaccount['credits_account_notaris'], 2) . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 50%;\">
@@ -3508,7 +3509,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">Rp.</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"18%\">
-                        <div style=\"font-size:12px;text-align: right\">".number_format($acctcreditsaccount['credits_account_insurance'], 2)."</div>
+                        <div style=\"font-size:12px;text-align: right\">" . number_format($acctcreditsaccount['credits_account_insurance'], 2) . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 50%;\">
@@ -3520,10 +3521,10 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:justify;\" width=\"30%\">
-                        <div style=\"font-size:12px;text-align: left\">".$fine."</div>
+                        <div style=\"font-size:12px;text-align: left\">" . $fine . "</div>
                     </td>
                  </tr>
-                  ".$repayment."
+                  " . $repayment . "
                   <tr style=\"line-height: 50%;\">
                      <td style=\"text-align:left;\" width=\"5%\"></td>
                     <td style=\"text-align:justify;\" width=\"40%\">
@@ -3551,7 +3552,7 @@ class AcctCreditsAccountController extends Controller
                     </tr>
                     <tr  style=\"line-height: 50%;\">
                         <td style=\"text-align:center;\" width=\"100%\">
-                            <div style=\"font-size:14px\">Nomor : $creditsNo.".$acctcreditsaccount['credits_account_serial']."</div>
+                            <div style=\"font-size:14px\">Nomor : $creditsNo." . $acctcreditsaccount['credits_account_serial'] . "</div>
                         </td>
                     </tr>
 
@@ -3566,7 +3567,7 @@ class AcctCreditsAccountController extends Controller
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:left;\" width=\"100%\">
-                        <div style=\"font-size:12px;\">Pada hari ini Perjanjian Pinjaman ini (selanjutnya disebut <b>“Perjanjian Pinjaman”</b>). dibuat dan di tandatangani pada hari ".$dayname[$day].", tanggal ".$date." - ".$monthname[$month]." - ".$year." (Dua Puluh Satu Agustus Dua Ribu Dua Puluh Empat), oleh dan antara :</div>
+                        <div style=\"font-size:12px;\">Pada hari ini Perjanjian Pinjaman ini (selanjutnya disebut <b>“Perjanjian Pinjaman”</b>). dibuat dan di tandatangani pada hari " . $dayname[$day] . ", tanggal " . $date . " - " . $monthname[$month] . " - " . $year . " , oleh dan antara :</div>
                     </td>
                  </tr>
                  <br>
@@ -3592,7 +3593,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3606,7 +3607,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3618,7 +3619,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                     </td>
                  </tr>
                  <tr style=\"line-height: 60%;\">
@@ -3630,7 +3631,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px;\">:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"80%\">
-                        <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."  (Selanjutnya disebut <b>“Peminjam“</b>)</div>
+                        <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "  (Selanjutnya disebut <b>“Peminjam“</b>)</div>
                     </td>
                  </tr>
                  <tr>
@@ -3661,7 +3662,7 @@ class AcctCreditsAccountController extends Controller
                     </td>
                  </tr>
              </table>
-             ".$facility."
+             " . $facility . "
              <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr style=\"line-height: 60%;\">
                     <td style=\"text-align:center;\" width=\"100%\">
@@ -3749,9 +3750,9 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::writeHTML($tblheader, true, false, false, false, '');
 
-    //pasal
+        //pasal
         //menurun
-        if($acctcreditsaccount['payment_type_id'] == 4){
+        if ($acctcreditsaccount['payment_type_id'] == 4) {
 
             $tblket = "
               <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -3814,7 +3815,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">1.</div>
                         </td>
                         <td style=\"text-align:justify;\" width=\"95%\">
-                            <div style=\"font-size:12px;\">PEMINJAM wajib membayar angsuran bunga yang untuk pertama kalinya ditetapkan pada maksimal tanggal ".$paymentDate." pembayaran angsuran bunga dapat dipercepat oleh PEMINJAM dari tanggal pembayaran angsuran bunga yang seharusnya, sehingga tanggal pembayaran angsuran bunga berikutnya adalah 30 (tiga puluh ) hari dari tanggal  angsuran bunga yang dipercepat tersebut. </div>
+                            <div style=\"font-size:12px;\">PEMINJAM wajib membayar angsuran bunga yang untuk pertama kalinya ditetapkan pada maksimal tanggal " . $paymentDate . " pembayaran angsuran bunga dapat dipercepat oleh PEMINJAM dari tanggal pembayaran angsuran bunga yang seharusnya, sehingga tanggal pembayaran angsuran bunga berikutnya adalah 30 (tiga puluh ) hari dari tanggal  angsuran bunga yang dipercepat tersebut. </div>
                         </td>
                     </tr>
                     <tr>
@@ -3960,7 +3961,7 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:left;\" width=\"100%\">
                             <div style=\"font-size:12px;\">
-                                ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
+                                " . $this->getBranchCity($acctcreditsaccount['branch_id']) . ", " . date('d-m-Y') . "</div>
                         </td>
                     </tr>
                 </table>
@@ -3985,13 +3986,13 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:center;\" width=\"30%\">
                             <div style=\"font-size:12px;font-weight:bold\">
-                                <u>".$this->getBranchManager($acctcreditsaccount['branch_id'])."</u>
+                                <u>" . $this->getBranchManager($acctcreditsaccount['branch_id']) . "</u>
                                 <br>
                                 Manajer</div>
                         </td>
                         <td style=\"text-align:center;\" width=\"30%\" >
                             <div style=\"font-size:12px;font-weight:bold\">
-                                <u>".$acctcreditsaccount['member_name']."</u></div>
+                                <u>" . $acctcreditsaccount['member_name'] . "</u></div>
                         </td>
                         <td style=\"text-align:center;\" width=\"30%\" >
                             <div style=\"font-size:12px;font-weight:bold\">
@@ -4040,7 +4041,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                         </td>
                     </tr>
                     <tr style=\"line-height: 60%;\">
@@ -4051,7 +4052,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                         </td>
                     </tr>
                     <tr style=\"line-height: 60%;\">
@@ -4062,7 +4063,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                         </td>
                     </tr>
                     <tr style=\"line-height: 60%;\">
@@ -4073,17 +4074,17 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px;\">:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"80%\">
-                            <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."  <br><br>(Selanjutnya disebut “Peminjam“)</div>
+                            <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "  <br><br>(Selanjutnya disebut “Peminjam“)</div>
                         </td>
                     </tr>
                     <tr>
                         <td style=\"text-align:justify;\" colspan=\"3\">
-                            <div style=\"font-size:12px;\">Menyatakan dengan ini menerima dari KOPERASI KONSUMEN CIPTA BERKAH SINERGI (Pemberi Pinjaman) sejumlah  Rp. ".number_format($acctcreditsaccount['credits_account_amount'], 2)." ( ".$this->numtotxt($acctcreditsaccount['credits_account_amount'])." )</div>
+                            <div style=\"font-size:12px;\">Menyatakan dengan ini menerima dari KOPERASI KONSUMEN CIPTA BERKAH SINERGI (Pemberi Pinjaman) sejumlah  Rp. " . number_format($acctcreditsaccount['credits_account_amount'], 2) . " ( " . $this->numtotxt($acctcreditsaccount['credits_account_amount']) . " )</div>
                         </td>
                     </tr>
                     <tr>
                         <td style=\"text-align:justify;\" colspan=\"3\">
-                            <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : $creditsNo.".$acctcreditsaccount['credits_account_serial']." tertanggal ".$date." - ".$month." - ".$year." (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
+                            <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : $creditsNo." . $acctcreditsaccount['credits_account_serial'] . " tertanggal " . $date . " - " . $month . " - " . $year . " (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
                         </td>
                     </tr>
                 </table>
@@ -4091,7 +4092,7 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:left;\" width=\"100%\">
                             <div style=\"font-size:12px;\">
-                                ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
+                                " . $this->getBranchCity($acctcreditsaccount['branch_id']) . ", " . date('d-m-Y') . "</div>
                         </td>
                     </tr>
                 </table>
@@ -4107,7 +4108,7 @@ class AcctCreditsAccountController extends Controller
                     <tr>
                         <td style=\"text-align:left;\" width=\"30%\" >
                             <div style=\"font-size:12px;font-weight:bold\">
-                                <u>".$acctcreditsaccount['member_name']."</u></div>
+                                <u>" . $acctcreditsaccount['member_name'] . "</u></div>
                         </td>
                     </tr>
                 </table>
@@ -4119,8 +4120,8 @@ class AcctCreditsAccountController extends Controller
 
         }
         //mingguan dan bulanan
-        else{
-                $tblket = "
+        else {
+            $tblket = "
                 <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr>
                             <td style=\"text-align:left;\" width=\"5%\">
@@ -4276,13 +4277,13 @@ class AcctCreditsAccountController extends Controller
                     </table>
                 ";
 
-                $pdf::writeHTML($tblket, true, false, false, false, '');
+            $pdf::writeHTML($tblket, true, false, false, false, '');
 
-                //--------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------
 
-                // add a page
-                $pdf::AddPage();
-                $tblheader = "
+            // add a page
+            $pdf::AddPage();
+            $tblheader = "
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr>
                             <td style=\"text-align:left;\" width=\"5%\">
@@ -4325,16 +4326,16 @@ class AcctCreditsAccountController extends Controller
                     <br><br>
                 ";
 
-                $pdf::writeHTML($tblheader, true, false, false, false, '');
+            $pdf::writeHTML($tblheader, true, false, false, false, '');
 
-                $tblket = "
+            $tblket = "
                     <br><br>
 
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr>
                             <td style=\"text-align:left;\" width=\"100%\">
                                 <div style=\"font-size:12px;\">
-                                    ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
+                                    " . $this->getBranchCity($acctcreditsaccount['branch_id']) . ", " . date('d-m-Y') . "</div>
                             </td>
                         </tr>
                     </table>
@@ -4359,13 +4360,13 @@ class AcctCreditsAccountController extends Controller
                         <tr>
                             <td style=\"text-align:center;\" width=\"30%\">
                                 <div style=\"font-size:12px;font-weight:bold\">
-                                    <u>".$this->getBranchManager($acctcreditsaccount['branch_id'])."</u>
+                                    <u>" . $this->getBranchManager($acctcreditsaccount['branch_id']) . "</u>
                                     <br>
                                     Manajer</div>
                             </td>
                             <td style=\"text-align:center;\" width=\"30%\" >
                                 <div style=\"font-size:12px;font-weight:bold\">
-                                    <u>".$acctcreditsaccount['member_name']."</u></div>
+                                    <u>" . $acctcreditsaccount['member_name'] . "</u></div>
                             </td>
                             <td style=\"text-align:center;\" width=\"30%\" >
                                 <div style=\"font-size:12px;font-weight:bold\">
@@ -4376,12 +4377,12 @@ class AcctCreditsAccountController extends Controller
 
                 ";
 
-                $pdf::writeHTML($tblket, true, false, false, false, '');
+            $pdf::writeHTML($tblket, true, false, false, false, '');
 
-                //--------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------
 
-                $pdf::AddPage();
-                $tblheader = "
+            $pdf::AddPage();
+            $tblheader = "
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                         <tr style=\"line-height: 60%;\">
                             <td style=\"text-align:center;\" width=\"100%\">
@@ -4391,9 +4392,9 @@ class AcctCreditsAccountController extends Controller
                     </table>
                 ";
 
-                $pdf::writeHTML($tblheader, true, false, false, false, '');
+            $pdf::writeHTML($tblheader, true, false, false, false, '');
 
-                $tblket = "
+            $tblket = "
                     <br><br>
 
                     <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -4414,7 +4415,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px;\">:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"80%\">
-                                <div style=\"font-size:12px;\">".$acctcreditsaccount['member_name']."</div>
+                                <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_name'] . "</div>
                             </td>
                         </tr>
                         <tr style=\"line-height: 60%;\">
@@ -4425,7 +4426,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px;\">:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"80%\">
-                                <div style=\"font-size:12px;\">".$acctcreditsaccount['member_company_job_title']."</div>
+                                <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_company_job_title'] . "</div>
                             </td>
                         </tr>
                         <tr style=\"line-height: 60%;\">
@@ -4436,7 +4437,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px;\">:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"80%\">
-                                <div style=\"font-size:12px;\">".$acctcreditsaccount['member_address']."</div>
+                                <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_address'] . "</div>
                             </td>
                         </tr>
                         <tr style=\"line-height: 60%;\">
@@ -4447,17 +4448,17 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px;\">:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"80%\">
-                                <div style=\"font-size:12px;\">".$acctcreditsaccount['member_identity_no']."  <br><br>(Selanjutnya disebut “Peminjam“)</div>
+                                <div style=\"font-size:12px;\">" . $acctcreditsaccount['member_identity_no'] . "  <br><br>(Selanjutnya disebut “Peminjam“)</div>
                             </td>
                         </tr>
                         <tr>
                             <td style=\"text-align:justify;\" colspan=\"3\">
-                                <div style=\"font-size:12px;\">Menyatakan dengan ini menerima dari KOPERASI KONSUMEN CIPTA BERKAH SINERGI (Pemberi Pinjaman) sejumlah  Rp. ".number_format($acctcreditsaccount['credits_account_amount'], 2)." ( ".$this->numtotxt($acctcreditsaccount['credits_account_amount'])." )</div>
+                                <div style=\"font-size:12px;\">Menyatakan dengan ini menerima dari KOPERASI KONSUMEN CIPTA BERKAH SINERGI (Pemberi Pinjaman) sejumlah  Rp. " . number_format($acctcreditsaccount['credits_account_amount'], 2) . " ( " . $this->numtotxt($acctcreditsaccount['credits_account_amount']) . " )</div>
                             </td>
                         </tr>
                         <tr>
                             <td style=\"text-align:justify;\" colspan=\"3\">
-                                <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : $creditsNo.".$acctcreditsaccount['credits_account_serial']." tertanggal ".$date." - ".$month." - ".$year." (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
+                                <div style=\"font-size:12px;\">Sebagai bukti atas fasilitas pembiayaan yang tercantum dalam Perjanjian Pinjaman No : $creditsNo." . $acctcreditsaccount['credits_account_serial'] . " tertanggal " . $date . " - " . $month . " - " . $year . " (Dua September Dua Ribu Tujuh Belas) antara PEMINJAM dan PEMBERI PINJAMAN.<br></div>
                             </td>
                         </tr>
                     </table>
@@ -4465,7 +4466,7 @@ class AcctCreditsAccountController extends Controller
                         <tr>
                             <td style=\"text-align:left;\" width=\"100%\">
                                 <div style=\"font-size:12px;\">
-                                    ".$this->getBranchCity($acctcreditsaccount['branch_id']).", ".date('d-m-Y')."</div>
+                                    " . $this->getBranchCity($acctcreditsaccount['branch_id']) . ", " . date('d-m-Y') . "</div>
                             </td>
                         </tr>
                     </table>
@@ -4481,7 +4482,7 @@ class AcctCreditsAccountController extends Controller
                         <tr>
                             <td style=\"text-align:left;\" width=\"30%\" >
                                 <div style=\"font-size:12px;font-weight:bold\">
-                                    <u>".$acctcreditsaccount['member_name']."</u></div>
+                                    <u>" . $acctcreditsaccount['member_name'] . "</u></div>
                             </td>
                         </tr>
                     </table>
@@ -4489,7 +4490,7 @@ class AcctCreditsAccountController extends Controller
 
             $pdf::writeHTML($tblket, true, false, false, false, '');
         }
-    //end pasal
+        //end pasal
 
 
 
@@ -4497,7 +4498,7 @@ class AcctCreditsAccountController extends Controller
 
         ob_clean();
 
-        $filename = 'Akad_'. $acctcreditsaccount['credits_name'].'_'.$acctcreditsaccount['member_name'].'.pdf';
+        $filename = 'Akad_' . $acctcreditsaccount['credits_name'] . '_' . $acctcreditsaccount['member_name'] . '.pdf';
         $pdf::Output($filename, 'I');
 
         // exit;
@@ -4506,108 +4507,124 @@ class AcctCreditsAccountController extends Controller
         //============================================================+
     }
 
-	function numtotxt($num) {
-		$tdiv 	= array("","","ratus ","ribu ", "ratus ", "juta ", "ratus ","miliar ");
-		$divs 	= array( 0,0,0,0,0,0,0);
-		$pos 	= 0; // index into tdiv;
-		// make num a string, and reverse it, because we run through it backwards
-		// bikin num ke string dan dibalik, karena kita baca dari arah balik
-		$num 	= strval(strrev(number_format($num, 2, '.','')));
-		$answer = ""; // mulai dari sini
-		while (strlen($num)) {
-			if ( strlen($num) == 1 || ($pos >2 && $pos % 2 == 1))  {
-				$answer = $this->doone(substr($num, 0, 1)) . $answer;
-				$num 	= substr($num,1);
-			} else {
-				$answer = $this->dotwo(substr($num, 0, 2)) . $answer;
-				$num 	= substr($num,2);
-				if ($pos < 2)
-					$pos++;
-			}
+    function numtotxt($num)
+    {
+        $tdiv = array("", "", "ratus ", "ribu ", "ratus ", "juta ", "ratus ", "miliar ");
+        $divs = array(0, 0, 0, 0, 0, 0, 0);
+        $pos = 0; // index into tdiv;
+        // make num a string, and reverse it, because we run through it backwards
+        // bikin num ke string dan dibalik, karena kita baca dari arah balik
+        $num = strval(strrev(number_format($num, 2, '.', '')));
+        $answer = ""; // mulai dari sini
+        while (strlen($num)) {
+            if (strlen($num) == 1 || ($pos > 2 && $pos % 2 == 1)) {
+                $answer = $this->doone(substr($num, 0, 1)) . $answer;
+                $num = substr($num, 1);
+            } else {
+                $answer = $this->dotwo(substr($num, 0, 2)) . $answer;
+                $num = substr($num, 2);
+                if ($pos < 2)
+                    $pos++;
+            }
 
-			if (substr($num, 0, 1) == '.') {
-				if (! strlen($answer)){
-					$answer = "";
-				}
+            if (substr($num, 0, 1) == '.') {
+                if (!strlen($answer)) {
+                    $answer = "";
+                }
 
-				$answer = "" . $answer . "";
-				$num 	= substr($num,1);
-				// kasih tanda "nol" jika tidak ada
-				if (strlen($num) == 1 && $num == '0') {
-					$answer = "" . $answer;
-					$num 	= substr($num,1);
-				}
-			}
-		    // add separator
-		    if ($pos >= 2 && strlen($num)) {
-				if (substr($num, 0, 1) != 0  || (strlen($num) >1 && substr($num,1,1) != 0
-					&& $pos %2 == 1)  ) {
-					// check for missed millions and thousands when doing hundreds
-					// cek kalau ada yg lepas pada juta, ribu dan ratus
-					if ( $pos == 4 || $pos == 6 ) {
-						if ($divs[$pos -1] == 0)
-							$answer = $tdiv[$pos -1 ] . $answer;
-					}
-					// standard
-					$divs[$pos] = 1;
-					$answer 	= $tdiv[$pos++] . $answer;
-				} else {
-					$pos++;
-				}
-			}
-	    }
-	    return strtoupper($answer.'rupiah');
-	}
+                $answer = "" . $answer . "";
+                $num = substr($num, 1);
+                // kasih tanda "nol" jika tidak ada
+                if (strlen($num) == 1 && $num == '0') {
+                    $answer = "" . $answer;
+                    $num = substr($num, 1);
+                }
+            }
+            // add separator
+            if ($pos >= 2 && strlen($num)) {
+                if (
+                    substr($num, 0, 1) != 0 || (strlen($num) > 1 && substr($num, 1, 1) != 0
+                        && $pos % 2 == 1)
+                ) {
+                    // check for missed millions and thousands when doing hundreds
+                    // cek kalau ada yg lepas pada juta, ribu dan ratus
+                    if ($pos == 4 || $pos == 6) {
+                        if ($divs[$pos - 1] == 0)
+                            $answer = $tdiv[$pos - 1] . $answer;
+                    }
+                    // standard
+                    $divs[$pos] = 1;
+                    $answer = $tdiv[$pos++] . $answer;
+                } else {
+                    $pos++;
+                }
+            }
+        }
+        return strtoupper($answer . 'rupiah');
+    }
 
-    function doone2($onestr) {
-	    $tsingle = array("","satu ","dua ","tiga ","empat ","lima ",
-		"enam ","tujuh ","delapan ","sembilan ");
-	      return strtoupper($tsingle[$onestr]);
-	}
+    function doone2($onestr)
+    {
+        $tsingle = array(
+            "",
+            "satu ",
+            "dua ",
+            "tiga ",
+            "empat ",
+            "lima ",
+            "enam ",
+            "tujuh ",
+            "delapan ",
+            "sembilan "
+        );
+        return strtoupper($tsingle[$onestr]);
+    }
 
-    function doone($onestr) {
-	    $tsingle = array("","se","dua ","tiga ","empat ","lima ", "enam ","tujuh ","delapan ","sembilan ");
-	      return strtoupper($tsingle[$onestr]);
-	}
+    function doone($onestr)
+    {
+        $tsingle = array("", "se", "dua ", "tiga ", "empat ", "lima ", "enam ", "tujuh ", "delapan ", "sembilan ");
+        return strtoupper($tsingle[$onestr]);
+    }
 
-	function dotwo($twostr) {
-	    $tdouble = array("","puluh ","dua puluh ","tiga puluh ","empat puluh ","lima puluh ", "enam puluh ","tujuh puluh ","delapan puluh ","sembilan puluh ");
-	    $teen = array("sepuluh ","sebelas ","dua belas ","tiga belas ","empat belas ","lima belas ", "enam belas ","tujuh belas ","delapan belas ","sembilan belas ");
-	    if ( substr($twostr,1,1) == '0') {
-			$ret = $this->doone2(substr($twostr,0,1));
-	    } else if (substr($twostr,1,1) == '1') {
-			$ret = $teen[substr($twostr,0,1)];
-	    } else {
-			$ret = $tdouble[substr($twostr,1,1)] . $this->doone2(substr($twostr,0,1));
-	    }
-	    return strtoupper($ret);
-	}
+    function dotwo($twostr)
+    {
+        $tdouble = array("", "puluh ", "dua puluh ", "tiga puluh ", "empat puluh ", "lima puluh ", "enam puluh ", "tujuh puluh ", "delapan puluh ", "sembilan puluh ");
+        $teen = array("sepuluh ", "sebelas ", "dua belas ", "tiga belas ", "empat belas ", "lima belas ", "enam belas ", "tujuh belas ", "delapan belas ", "sembilan belas ");
+        if (substr($twostr, 1, 1) == '0') {
+            $ret = $this->doone2(substr($twostr, 0, 1));
+        } else if (substr($twostr, 1, 1) == '1') {
+            $ret = $teen[substr($twostr, 0, 1)];
+        } else {
+            $ret = $tdouble[substr($twostr, 1, 1)] . $this->doone2(substr($twostr, 0, 1));
+        }
+        return strtoupper($ret);
+    }
 
     public function editDate($credits_account_id)
     {
-        $acctcreditsaccount		= AcctCreditsAccount::withoutGlobalScopes()
-        ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-        ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-        ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-        ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-        ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-        ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-        ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-        ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
-        ->where('acct_credits_account.data_state', 0)
-        ->where('acct_credits_account.credits_account_id', $credits_account_id)
-        ->first();
+        $acctcreditsaccount = AcctCreditsAccount::withoutGlobalScopes()
+            ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name', 'core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id', '=', 'core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id', '=', 'core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id', '=', 'core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id', '=', 'core_province.province_id')
+            ->join('core_city', 'core_member.city_id', '=', 'core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id', '=', 'core_kecamatan.kecamatan_id')
+            ->where('acct_credits_account.data_state', 0)
+            ->where('acct_credits_account.credits_account_id', $credits_account_id)
+            ->first();
 
         return view('content.AcctCreditsAccount.EditDate.index', compact('acctcreditsaccount'));
     }
 
     public function processEditDate(Request $request)
     {
-        $table                                  = AcctCreditsAccount::findOrFail($request->credits_account_id);
-        $table->credits_account_date            = date('Y-m-d', strtotime($request->credits_account_date));
-        $table->credits_account_due_date        = date('Y-m-d', strtotime($request->credits_account_due_date));
-        $table->credits_account_payment_date    = date('Y-m-d', strtotime($request->credits_account_payment_date));
-        $table->updated_id                      = auth()->user()->user_id;
+        $table = AcctCreditsAccount::findOrFail($request->credits_account_id);
+        $table->credits_account_date = date('Y-m-d', strtotime($request->credits_account_date));
+        $table->credits_account_due_date = date('Y-m-d', strtotime($request->credits_account_due_date));
+        $table->credits_account_payment_date = date('Y-m-d', strtotime($request->credits_account_payment_date));
+        $table->updated_id = auth()->user()->user_id;
 
         if ($table->save()) {
             $message = array(
@@ -4626,19 +4643,19 @@ class AcctCreditsAccountController extends Controller
 
     public function printSchedule($credits_account_id)
     {
-        $acctcreditsaccount		= AcctCreditsAccount::with('member')->find($credits_account_id);
-        $paymenttype 			= Configuration::PaymentType();
-        $paymentperiod 			= Configuration::CreditsPaymentPeriod();
-        $preferencecompany 		= PreferenceCompany::first();
+        $acctcreditsaccount = AcctCreditsAccount::with('member')->find($credits_account_id);
+        $paymenttype = Configuration::PaymentType();
+        $paymentperiod = Configuration::CreditsPaymentPeriod();
+        $preferencecompany = PreferenceCompany::first();
 
-        if($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1){
-            $datapola=$this->flat($credits_account_id);
-        }else if ($acctcreditsaccount['payment_type_id'] == 2){
-            $datapola=$this->anuitas($credits_account_id);
-        }else if($acctcreditsaccount['payment_type_id'] == 3){
-            $datapola=$this->slidingrate($credits_account_id);
-        }else if($acctcreditsaccount['payment_type_id'] == 4){
-            $datapola=$this->menurunharian($credits_account_id);
+        if ($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1) {
+            $datapola = $this->flat($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 2) {
+            $datapola = $this->anuitas($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 3) {
+            $datapola = $this->slidingrate($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 4) {
+            $datapola = $this->menurunharian($credits_account_id);
         }
 
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
@@ -4650,8 +4667,8 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -4675,7 +4692,7 @@ class AcctCreditsAccountController extends Controller
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px\";>".$preferencecompany['company_name']."<BR><b>Jadwal Angsuran</b></div>
+                        <div style=\"font-size:14px\";>" . $preferencecompany['company_name'] . "<BR><b>Jadwal Angsuran</b></div>
                     </td>
                 </tr>
                 <tr style=\"line-height: 60%;\">
@@ -4683,14 +4700,14 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>No. Pinjaman</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_serial']."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_serial'] . "</b></div>
                     </td>
 
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Jenis Pinjaman</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: ".$this->getAcctCreditsName($acctcreditsaccount['credits_id'])."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $this->getAcctCreditsName($acctcreditsaccount['credits_id']) . "</b></div>
                     </td>
                 </tr>
                 <tr style=\"line-height: 60%;\">
@@ -4698,13 +4715,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Nama</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount->member->member_name."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount->member->member_name . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Jangka Waktu</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_period']." ".$paymentperiod[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_period'] . " " . $paymentperiod[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                     </td>
                 </tr>
                 <tr  style=\"line-height: 60%;\">
@@ -4712,19 +4729,19 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Tipe Angsuran</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$paymenttype[$acctcreditsaccount['payment_type_id']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $paymenttype[$acctcreditsaccount['payment_type_id']] . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Plafon</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: Rp.".number_format($acctcreditsaccount['credits_account_amount'])."</b></div>
+                        <div style=\"font-size:12px\";><b>: Rp." . number_format($acctcreditsaccount['credits_account_amount']) . "</b></div>
                     </td>
                 </tr>
             </table>
             <br><br>
         ";
-		$pdf::setCellHeightRatio(0.9);
+        $pdf::setCellHeightRatio(0.9);
         $pdf::writeHTML($tblheader, true, false, false, false, '');
         $pdf::setCellHeightRatio(1);
 
@@ -4749,7 +4766,7 @@ class AcctCreditsAccountController extends Controller
 
         $tbl2 = "";
 
-        $tbl3 ="";
+        $tbl3 = "";
         $totalpokok = 0;
         $totalmargin = 0;
         $total = 0;
@@ -4757,20 +4774,20 @@ class AcctCreditsAccountController extends Controller
         Carbon::setLocale('id');
         foreach ($datapola as $key => $val) {
 
-            $roundAngsuran=round($val['angsuran'],-3);
+            $roundAngsuran = round($val['angsuran'], -3);
             $sisaRoundAngsuran = $val['angsuran'] - $roundAngsuran;
             $sumAngsuranBunga = $val['angsuran_bunga'] + $sisaRoundAngsuran;
 
             $tbl3 .= "
                 <tr>
-                    <td ><div style=\"text-align: left;\">&nbsp; ".$val['ke']."</div></td>
-                    <td ><div style=\"text-align: center;\">".date('d-m-Y',strtotime($val['tanggal_angsuran']))." &nbsp; </div></td>
-                    <td ><div style=\"text-align: left;\">".Carbon::parse($val['tanggal_angsuran'])->translatedFormat('l')." &nbsp; </div></td>
-                    <td ><div style=\"text-align: right;\">".number_format($val['opening_balance'], 2)." &nbsp; </div></td>
-                    <td ><div style=\"text-align: right;\">".number_format($val['angsuran_pokok'], 2)." &nbsp; </div></td>
-                    <td ><div style=\"text-align: right;\">".number_format($sumAngsuranBunga,2)." &nbsp; </div></td>
-                    <td ><div style=\"text-align: right;\">".number_format($roundAngsuran,2)." &nbsp; </div></td>
-                    <td ><div style=\"text-align: right;\">".number_format($val['last_balance'], 2)." &nbsp; </div></td>
+                    <td ><div style=\"text-align: left;\">&nbsp; " . $val['ke'] . "</div></td>
+                    <td ><div style=\"text-align: center;\">" . date('d-m-Y', strtotime($val['tanggal_angsuran'])) . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: left;\">" . Carbon::parse($val['tanggal_angsuran'])->translatedFormat('l') . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: right;\">" . number_format($val['opening_balance'], 2) . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: right;\">" . number_format($val['angsuran_pokok'], 2) . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: right;\">" . number_format($sumAngsuranBunga, 2) . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: right;\">" . number_format($roundAngsuran, 2) . " &nbsp; </div></td>
+                    <td ><div style=\"text-align: right;\">" . number_format($val['last_balance'], 2) . " &nbsp; </div></td>
 
                 </tr>
             ";
@@ -4785,9 +4802,9 @@ class AcctCreditsAccountController extends Controller
         $tbl4 = "
             <tr>
                 <td colspan=\"4\"><div style=\"text-align: right;font-weight:bold\">Total</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalpokok, 2)."</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalmargin, 2)."</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($total, 2)."</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($totalpokok, 2) . "</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($totalmargin, 2) . "</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($total, 2) . "</div></td>
                 <td><div style=\"text-align: right;font-weight:bold\"></div></td>
             </tr>
         </table>";
@@ -4796,91 +4813,93 @@ class AcctCreditsAccountController extends Controller
 
 
 
-        $pdf::writeHTML($tbl1.$tbl2.$tbl3.$tbl4, true, false, false, false, '');
+        $pdf::writeHTML($tbl1 . $tbl2 . $tbl3 . $tbl4, true, false, false, false, '');
 
-        $filename = 'Jadwal_Angsuran_'.$acctcreditsaccount['credits_account_serial'].'.pdf';
+        $filename = 'Jadwal_Angsuran_' . $acctcreditsaccount['credits_account_serial'] . '.pdf';
         $pdf::Output($filename, 'I');
     }
 
-    public function flat($id){
-        $credistaccount					= AcctCreditsAccount::find($id);
-        $total_credits_account 			= $credistaccount['credits_account_amount'];
-        $credits_account_interest 		= $credistaccount['credits_account_interest'];
-        $credits_account_period 		= $credistaccount['credits_account_period'];
+    public function flat($id)
+    {
+        $credistaccount = AcctCreditsAccount::find($id);
+        $total_credits_account = $credistaccount['credits_account_amount'];
+        $credits_account_interest = $credistaccount['credits_account_interest'];
+        $credits_account_period = $credistaccount['credits_account_period'];
 
-        $installment_pattern			= array();
-        $opening_balance				= $total_credits_account;
+        $installment_pattern = array();
+        $opening_balance = $total_credits_account;
 
-        for($i=1; $i<=$credits_account_period; $i++){
-            if($credistaccount['credits_payment_period'] == 2){
+        for ($i = 1; $i <= $credits_account_period; $i++) {
+            if ($credistaccount['credits_payment_period'] == 2) {
                 $a = $i * 7;
 
-                $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$a." days", strtotime($credistaccount['credits_account_date'])));
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $a . " days", strtotime($credistaccount['credits_account_date'])));
 
             } else {
 
-                $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$i." months", strtotime($credistaccount['credits_account_date'])));
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $i . " months", strtotime($credistaccount['credits_account_date'])));
             }
 
-            $angsuran_pokok									= $credistaccount['credits_account_principal_amount'];
+            $angsuran_pokok = $credistaccount['credits_account_principal_amount'];
 
-            $angsuran_margin								= $credistaccount['credits_account_interest_amount'];
+            $angsuran_margin = $credistaccount['credits_account_interest_amount'];
 
-            $angsuran 										= $angsuran_pokok + $angsuran_margin;
+            $angsuran = $angsuran_pokok + $angsuran_margin;
 
-            $last_balance 									= $opening_balance - $angsuran_pokok;
+            $last_balance = $opening_balance - $angsuran_pokok;
 
-            $installment_pattern[$i]['opening_balance']		= $opening_balance;
-            $installment_pattern[$i]['ke'] 					= $i;
-            $installment_pattern[$i]['tanggal_angsuran'] 	= $tanggal_angsuran;
-            $installment_pattern[$i]['angsuran'] 			= $angsuran;
-            $installment_pattern[$i]['angsuran_pokok']		= $angsuran_pokok;
-            $installment_pattern[$i]['angsuran_bunga'] 		= $angsuran_margin;
-            $installment_pattern[$i]['last_balance'] 		= $last_balance;
+            $installment_pattern[$i]['opening_balance'] = $opening_balance;
+            $installment_pattern[$i]['ke'] = $i;
+            $installment_pattern[$i]['tanggal_angsuran'] = $tanggal_angsuran;
+            $installment_pattern[$i]['angsuran'] = $angsuran;
+            $installment_pattern[$i]['angsuran_pokok'] = $angsuran_pokok;
+            $installment_pattern[$i]['angsuran_bunga'] = $angsuran_margin;
+            $installment_pattern[$i]['last_balance'] = $last_balance;
 
-            $opening_balance 								= $last_balance;
+            $opening_balance = $last_balance;
         }
 
         return $installment_pattern;
 
     }
 
-    public function anuitas($id){
-        $creditsaccount 	= AcctCreditsAccount::find($id);
+    public function anuitas($id)
+    {
+        $creditsaccount = AcctCreditsAccount::find($id);
 
-        $pinjaman 	= $creditsaccount['credits_account_amount'];
-        $bunga 		= $creditsaccount['credits_account_interest'] / 100;
-        $period 	= $creditsaccount['credits_account_period'];
+        $pinjaman = $creditsaccount['credits_account_amount'];
+        $bunga = $creditsaccount['credits_account_interest'] / 100;
+        $period = $creditsaccount['credits_account_period'];
 
-        $bungaA 		= pow((1 + $bunga), $period);
-        $bungaB 		= pow((1 + $bunga), $period) - 1;
-        $bAnuitas 		= ($bungaA / $bungaB);
-        $totangsuran 	= round(($pinjaman*($bunga))+$pinjaman/$period);
-        $rate			= $this->rate3($period, $totangsuran, $pinjaman);
+        $bungaA = pow((1 + $bunga), $period);
+        $bungaB = pow((1 + $bunga), $period) - 1;
+        $bAnuitas = ($bungaA / $bungaB);
+        $totangsuran = round(($pinjaman * ($bunga)) + $pinjaman / $period);
+        $rate = $this->rate3($period, $totangsuran, $pinjaman);
 
 
         $sisapinjaman = $pinjaman;
-        for ($i=1; $i <= $period ; $i++) {
+        for ($i = 1; $i <= $period; $i++) {
 
-            if($creditsaccount['credits_payment_period'] == 1){
-                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$i." months", strtotime($creditsaccount['credits_account_date'])));
+            if ($creditsaccount['credits_payment_period'] == 1) {
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $i . " months", strtotime($creditsaccount['credits_account_date'])));
             } else {
                 $a = $i * 7;
 
-                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$a." days", strtotime($creditsaccount['credits_account_date'])));
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $a . " days", strtotime($creditsaccount['credits_account_date'])));
             }
 
-            $angsuranbunga 		= $sisapinjaman * $rate;
-            $angsuranpokok 		= $totangsuran - $angsuranbunga;
-            $sisapokok 			= $sisapinjaman - $angsuranpokok;
+            $angsuranbunga = $sisapinjaman * $rate;
+            $angsuranpokok = $totangsuran - $angsuranbunga;
+            $sisapokok = $sisapinjaman - $angsuranpokok;
 
-            $pola[$i]['ke']					= $i;
-            $pola[$i]['tanggal_angsuran']	= $tanggal_angsuran;
-            $pola[$i]['opening_balance']	= $sisapinjaman;
-            $pola[$i]['angsuran']			= $totangsuran;
-            $pola[$i]['angsuran_pokok']		= $angsuranpokok;
-            $pola[$i]['angsuran_bunga']		= $angsuranbunga;
-            $pola[$i]['last_balance']		= $sisapokok;
+            $pola[$i]['ke'] = $i;
+            $pola[$i]['tanggal_angsuran'] = $tanggal_angsuran;
+            $pola[$i]['opening_balance'] = $sisapinjaman;
+            $pola[$i]['angsuran'] = $totangsuran;
+            $pola[$i]['angsuran_pokok'] = $angsuranpokok;
+            $pola[$i]['angsuran_bunga'] = $angsuranbunga;
+            $pola[$i]['last_balance'] = $sisapokok;
 
             $sisapinjaman = $sisapinjaman - $angsuranpokok;
         }
@@ -4889,14 +4908,15 @@ class AcctCreditsAccountController extends Controller
 
     }
 
-    protected function rate3($nprest, $vlrparc, $vp, $guess = 0.25) {
-        $maxit      = 100;
-        $precision  = 14;
-        $guess      = round($guess,$precision);
-        for ($i=0 ; $i<$maxit ; $i++) {
-            $divdnd = $vlrparc - ( $vlrparc * (pow(1 + $guess , -$nprest)) ) - ($vp * $guess);
-            $divisor = $nprest * $vlrparc * pow(1 + $guess , (-$nprest - 1)) - $vp;
-            $newguess = $guess - ( $divdnd / $divisor );
+    protected function rate3($nprest, $vlrparc, $vp, $guess = 0.25)
+    {
+        $maxit = 100;
+        $precision = 14;
+        $guess = round($guess, $precision);
+        for ($i = 0; $i < $maxit; $i++) {
+            $divdnd = $vlrparc - ($vlrparc * (pow(1 + $guess, -$nprest))) - ($vp * $guess);
+            $divisor = $nprest * $vlrparc * pow(1 + $guess, (-$nprest - 1)) - $vp;
+            $newguess = $guess - ($divdnd / $divisor);
             $newguess = round($newguess, $precision);
             if ($newguess == $guess) {
                 return $newguess;
@@ -4907,66 +4927,69 @@ class AcctCreditsAccountController extends Controller
         return null;
     }
 
-    public function slidingrate($id){
-        $credistaccount					= AcctCreditsAccount::find($id);
+    public function slidingrate($id)
+    {
+        $credistaccount = AcctCreditsAccount::find($id);
 
-        $total_credits_account 			= ($credistaccount['credits_account_amount']??0);
-        $credits_account_interest 		= ($credistaccount['credits_account_interest']??0);
-        $credits_account_period 		= ($credistaccount['credits_account_period']??0);
+        $total_credits_account = ($credistaccount['credits_account_amount'] ?? 0);
+        $credits_account_interest = ($credistaccount['credits_account_interest'] ?? 0);
+        $credits_account_period = ($credistaccount['credits_account_period'] ?? 0);
 
-        $installment_pattern			= array();
-        $opening_balance				= $total_credits_account;
+        $installment_pattern = array();
+        $opening_balance = $total_credits_account;
 
-        for($i=1; $i<=$credits_account_period; $i++){
+        for ($i = 1; $i <= $credits_account_period; $i++) {
 
-            if($credistaccount['credits_payment_period'] == 2){
+            if ($credistaccount['credits_payment_period'] == 2) {
                 $a = $i * 7;
 
-                $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$a." days", strtotime($credistaccount['credits_account_date'])));
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $a . " days", strtotime($credistaccount['credits_account_date'])));
 
             } else {
 
-                $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$i." months", strtotime($credistaccount['credits_account_date'])));
+                $tanggal_angsuran = date('d-m-Y', strtotime("+" . $i . " months", strtotime($credistaccount['credits_account_date'])));
             }
 
-            $angsuran_pokok									= ($credistaccount['credits_account_amount']??0)/$credits_account_period;
+            $angsuran_pokok = ($credistaccount['credits_account_amount'] ?? 0) / $credits_account_period;
 
-            $angsuran_margin								= $opening_balance*$credits_account_interest/100;
+            $angsuran_margin = $opening_balance * $credits_account_interest / 100;
 
-            $angsuran 										= $angsuran_pokok + $angsuran_margin;
+            $angsuran = $angsuran_pokok + $angsuran_margin;
 
-            $last_balance 									= $opening_balance - $angsuran_pokok;
+            $last_balance = $opening_balance - $angsuran_pokok;
 
-            $installment_pattern[$i]['opening_balance']		= $opening_balance;
-            $installment_pattern[$i]['ke'] 					= $i;
-            $installment_pattern[$i]['tanggal_angsuran'] 	= $tanggal_angsuran;
-            $installment_pattern[$i]['angsuran'] 			= $angsuran;
-            $installment_pattern[$i]['angsuran_pokok']		= $angsuran_pokok;
-            $installment_pattern[$i]['angsuran_bunga'] 		= $angsuran_margin;
-            $installment_pattern[$i]['last_balance'] 		= $last_balance;
+            $installment_pattern[$i]['opening_balance'] = $opening_balance;
+            $installment_pattern[$i]['ke'] = $i;
+            $installment_pattern[$i]['tanggal_angsuran'] = $tanggal_angsuran;
+            $installment_pattern[$i]['angsuran'] = $angsuran;
+            $installment_pattern[$i]['angsuran_pokok'] = $angsuran_pokok;
+            $installment_pattern[$i]['angsuran_bunga'] = $angsuran_margin;
+            $installment_pattern[$i]['last_balance'] = $last_balance;
 
-            $opening_balance 								= $last_balance;
+            $opening_balance = $last_balance;
         }
 
         return $installment_pattern;
 
     }
 
-    public function menurunharian($id){
-        $credistaccount					= AcctCreditsAccount::find($id);
+    public function menurunharian($id)
+    {
+        $credistaccount = AcctCreditsAccount::find($id);
 
-        $total_credits_account 			= $credistaccount['credits_account_amount'];
-        $credits_account_interest 		= $credistaccount['credits_account_interest'];
-        $credits_account_period 		= $credistaccount['credits_account_period'];
+        $total_credits_account = $credistaccount['credits_account_amount'];
+        $credits_account_interest = $credistaccount['credits_account_interest'];
+        $credits_account_period = $credistaccount['credits_account_period'];
 
-        $installment_pattern			= array();
-        $opening_balance				= $total_credits_account;
+        $installment_pattern = array();
+        $opening_balance = $total_credits_account;
 
         return $installment_pattern;
 
     }
 
-    public function rate1($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1) {
+    public function rate1($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1)
+    {
         $rate = $guess;
         if (abs($rate) < FINANCIAL_PRECISION) {
             $y = $pv * (1 + $nper * $rate) + $pmt * (1 + $rate * $type) * $nper + $fv;
@@ -4997,27 +5020,27 @@ class AcctCreditsAccountController extends Controller
 
     public function getAcctCreditsName($credits_id)
     {
-        $data = AcctCredits::where('credits_id',$credits_id)
-        ->first();
+        $data = AcctCredits::where('credits_id', $credits_id)
+            ->first();
 
         return $data['credits_name'];
     }
 
     public function printScheduleMember($credits_account_id)
     {
-        $acctcreditsaccount		= AcctCreditsAccount::find($credits_account_id);
-        $paymenttype 			= Configuration::PaymentType();
-        $paymentperiod 			= Configuration::CreditsPaymentPeriod();
-        $preferencecompany 		= PreferenceCompany::first();
+        $acctcreditsaccount = AcctCreditsAccount::find($credits_account_id);
+        $paymenttype = Configuration::PaymentType();
+        $paymentperiod = Configuration::CreditsPaymentPeriod();
+        $preferencecompany = PreferenceCompany::first();
 
-        if($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1){
-            $datapola=$this->flat($credits_account_id);
-        }else if ($acctcreditsaccount['payment_type_id'] == 2){
-            $datapola=$this->anuitas($credits_account_id);
-        }else if($acctcreditsaccount['payment_type_id'] == 3){
-            $datapola=$this->slidingrate($credits_account_id);
-        }else if($acctcreditsaccount['payment_type_id'] == 4){
-            $datapola=$this->menurunharian($credits_account_id);
+        if ($acctcreditsaccount['payment_type_id'] == '' || $acctcreditsaccount['payment_type_id'] == 1) {
+            $datapola = $this->flat($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 2) {
+            $datapola = $this->anuitas($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 3) {
+            $datapola = $this->slidingrate($credits_account_id);
+        } else if ($acctcreditsaccount['payment_type_id'] == 4) {
+            $datapola = $this->menurunharian($credits_account_id);
         }
 
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
@@ -5029,8 +5052,8 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -5053,7 +5076,7 @@ class AcctCreditsAccountController extends Controller
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
                 <tr>
                     <td style=\"text-align:center;\" width=\"100%\">
-                        <div style=\"font-size:14px\";>".$preferencecompany['company_name']."<BR><b>Jadwal Angsuran</b></div>
+                        <div style=\"font-size:14px\";>" . $preferencecompany['company_name'] . "<BR><b>Jadwal Angsuran</b></div>
                     </td>
                 </tr>
                 <tr style=\"line-height: 60%;\">
@@ -5061,14 +5084,14 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>No. Pinjaman</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_serial']."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_serial'] . "</b></div>
                     </td>
 
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Jenis Pinjaman</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: ".$this->getAcctCreditsName($acctcreditsaccount['credits_id'])."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $this->getAcctCreditsName($acctcreditsaccount['credits_id']) . "</b></div>
                     </td>
                 </tr>
                 <tr style=\"line-height: 60%;\">
@@ -5076,13 +5099,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Nama</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount->member->member_name."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount->member->member_name . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Jangka Waktu</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_period']." ".$paymentperiod[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_period'] . " " . $paymentperiod[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                     </td>
                 </tr>
                 <tr style=\"line-height: 60%;\">
@@ -5090,13 +5113,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Tipe Angsuran</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"45%\">
-                        <div style=\"font-size:12px\";><b>: ".$paymenttype[$acctcreditsaccount['payment_type_id']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $paymenttype[$acctcreditsaccount['payment_type_id']] . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Plafon</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"50%\">
-                        <div style=\"font-size:12px\";><b>: Rp.".number_format($acctcreditsaccount['credits_account_amount'])."</b></div>
+                        <div style=\"font-size:12px\";><b>: Rp." . number_format($acctcreditsaccount['credits_account_amount']) . "</b></div>
                     </td>
                 </tr>
             </table>
@@ -5128,9 +5151,9 @@ class AcctCreditsAccountController extends Controller
         foreach ($datapola as $key => $val) {
             $tbl3 .= "
                 <tr>
-                    <td width=\"5%\"><div style=\"text-align: left;\">&nbsp; ".$val['ke']."</div></td>
-                    <td width=\"12%\"><div style=\"text-align: right;\">".date('d-m-Y',strtotime($val['tanggal_angsuran']))." &nbsp; </div></td>
-                    <td width=\"18%\"><div style=\"text-align: right;\">".number_format($val['opening_balance'], 2)." &nbsp; </div></td>
+                    <td width=\"5%\"><div style=\"text-align: left;\">&nbsp; " . $val['ke'] . "</div></td>
+                    <td width=\"12%\"><div style=\"text-align: right;\">" . date('d-m-Y', strtotime($val['tanggal_angsuran'])) . " &nbsp; </div></td>
+                    <td width=\"18%\"><div style=\"text-align: right;\">" . number_format($val['opening_balance'], 2) . " &nbsp; </div></td>
                 </tr>
             ";
 
@@ -5143,27 +5166,27 @@ class AcctCreditsAccountController extends Controller
         $tbl4 = "
         </table>";
 
-        $pdf::writeHTML($tbl1.$tbl2.$tbl3.$tbl4, true, false, false, false, '');
+        $pdf::writeHTML($tbl1 . $tbl2 . $tbl3 . $tbl4, true, false, false, false, '');
 
-        $filename = 'Jadwal_Angsuran_'.$acctcreditsaccount['credits_account_serial'].'.pdf';
+        $filename = 'Jadwal_Angsuran_' . $acctcreditsaccount['credits_account_serial'] . '.pdf';
         $pdf::Output($filename, 'I');
     }
 
     public function printAgunan($credits_account_id)
     {
-        $acctcreditsaccount		= AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-        ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-        ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-        ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-        ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-        ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-        ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-        ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
-        ->where('acct_credits_account.data_state', 0)
-        ->where('acct_credits_account.credits_account_id', $credits_account_id)
-        ->first();
-        $acctcreditsagunan 			= AcctCreditsAgunan::where('credits_account_id',$credits_account_id)
-        ->get();
+        $acctcreditsaccount = AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name', 'core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id', '=', 'core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id', '=', 'core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id', '=', 'core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id', '=', 'core_province.province_id')
+            ->join('core_city', 'core_member.city_id', '=', 'core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id', '=', 'core_kecamatan.kecamatan_id')
+            ->where('acct_credits_account.data_state', 0)
+            ->where('acct_credits_account.credits_account_id', $credits_account_id)
+            ->first();
+        $acctcreditsagunan = AcctCreditsAgunan::where('credits_account_id', $credits_account_id)
+            ->get();
 
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
 
@@ -5176,8 +5199,8 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -5187,9 +5210,9 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::SetFont('helvetica', '', 9);
 
-        $preferencecompany 			= PreferenceCompany::first();
-        $img1 = "<img src=\"".public_path('storage/logo/logomandirisejahteranoname.png')."\" alt=\"\" width=\"900%\" height=\"900%\"/>";
-        $img2 = "<img src=\"".public_path('storage/logo/logokoperasiindonesia.png')."\" alt=\"\" width=\"900%\" height=\"900%\"/>";
+        $preferencecompany = PreferenceCompany::first();
+        $img1 = "<img src=\"" . public_path('storage/logo/logomandirisejahteranoname.png') . "\" alt=\"\" width=\"900%\" height=\"900%\"/>";
+        $img2 = "<img src=\"" . public_path('storage/logo/logokoperasiindonesia.png') . "\" alt=\"\" width=\"900%\" height=\"900%\"/>";
 
         $tblkop = "
             <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
@@ -5199,11 +5222,11 @@ class AcctCreditsAccountController extends Controller
                     </td>
                 </tr>
                 <tr>
-                    <td rowspan=\"4\" width=\"10%\">" .$img1."</td>
+                    <td rowspan=\"4\" width=\"10%\">" . $img1 . "</td>
                     <td style=\"text-align:center;\" width=\"80%\">
                         <a style=\"font-size:20px; color:#141a70; text-decoration: none;\";><b>mandiri</b></a> <a style=\"font-size:18px; color:black;text-decoration: none;\";>Sejahtera</a>
                     </td>
-                    <td rowspan=\"4\" width=\"10%\">" .$img2."</td>
+                    <td rowspan=\"4\" width=\"10%\">" . $img2 . "</td>
                 </tr>
                 <tr>
                     <td style=\"text-align:center;\" width=\"80%\">
@@ -5250,7 +5273,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";>:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"65%\">
-                        <div style=\"font-size:12px\";>".$acctcreditsaccount['member_name']."</div>
+                        <div style=\"font-size:12px\";>" . $acctcreditsaccount['member_name'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -5263,7 +5286,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";>:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"65%\">
-                        <div style=\"font-size:12px\";>".$acctcreditsaccount['member_identity_no']."</div>
+                        <div style=\"font-size:12px\";>" . $acctcreditsaccount['member_identity_no'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -5276,7 +5299,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";>:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"65%\">
-                        <div style=\"font-size:12px\";>".$acctcreditsaccount['member_company_job_title']."</div>
+                        <div style=\"font-size:12px\";>" . $acctcreditsaccount['member_company_job_title'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -5289,7 +5312,7 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";>:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"65%\">
-                        <div style=\"font-size:12px\";>".$acctcreditsaccount['member_address']."</div>
+                        <div style=\"font-size:12px\";>" . $acctcreditsaccount['member_address'] . "</div>
                     </td>
                 </tr>
                 <tr>
@@ -5302,12 +5325,12 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";>:</div>
                     </td>
                     <td style=\"text-align:left;\" width=\"65%\">
-                        <div style=\"font-size:12px\";>".$acctcreditsaccount['member_phone']."</div>
+                        <div style=\"font-size:12px\";>" . $acctcreditsaccount['member_phone'] . "</div>
                     </td>
                 </tr>";
-                foreach($acctcreditsagunan as $key => $val){
-                    if($val['credits_agunan_type'] == 1){
-                    $tbl .= "
+        foreach ($acctcreditsagunan as $key => $val) {
+            if ($val['credits_agunan_type'] == 1) {
+                $tbl .= "
                     <tr>
                         <td style=\"text-align:left;\" width=\"100%\">
                             <div style=\"font-size:12px\";>Jaminan BPKB dengan data sebagai berikut :</div>
@@ -5324,7 +5347,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_nomor']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_nomor'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5338,7 +5361,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_nopol']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_nopol'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5352,7 +5375,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_no_rangka']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_no_rangka'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5366,7 +5389,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_no_mesin']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_no_mesin'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5380,7 +5403,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_keterangan']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_keterangan'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5394,7 +5417,7 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_nama']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_nama'] . "</div>
                         </td>
                     </tr>
                     <br>
@@ -5408,23 +5431,23 @@ class AcctCreditsAccountController extends Controller
                             <div style=\"font-size:12px\";>:</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"65%\">
-                            <div style=\"font-size:12px\";>".$val['credits_agunan_bpkb_address']."</div>
+                            <div style=\"font-size:12px\";>" . $val['credits_agunan_bpkb_address'] . "</div>
                         </td>
                     </tr>
                     <br>";
-                        if($acctcreditsaccount['credits_id'] == 13){
-                            $tbl .=
-                            "<tr>
+                if ($acctcreditsaccount['credits_id'] == 13) {
+                    $tbl .=
+                        "<tr>
                                 <td style=\"text-align:left;\" width=\"5%\">-
                                 </td>
                                 <td style=\"text-align:left;\" width=\"95%\">
-                                    <div style=\"font-size:12px\";><b>BPKB Baru dalam Proses Pembuatan Dealer ".$val['credits_agunan_bpkb_dealer_name'].", dan setelah selesai akan diberikan ke pihak KSU “Mandiri Sejahtera”</b></div>
+                                    <div style=\"font-size:12px\";><b>BPKB Baru dalam Proses Pembuatan Dealer " . $val['credits_agunan_bpkb_dealer_name'] . ", dan setelah selesai akan diberikan ke pihak KSU “Mandiri Sejahtera”</b></div>
                                 </td>
                             </tr>
                             ";
-                        }
-                    }else if($val['credits_agunan_type'] == 2){
-                        $tbl .= "
+                }
+            } else if ($val['credits_agunan_type'] == 2) {
+                $tbl .= "
                         <tr>
                             <td style=\"text-align:left;\" width=\"100%\">
                                 <div style=\"font-size:12px\";>Jaminan Sertifikat dengan data sebagai berikut :</div>
@@ -5441,7 +5464,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_shm_no_sertifikat']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_shm_no_sertifikat'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5455,7 +5478,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_shm_luas']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_shm_luas'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5469,7 +5492,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_shm_atas_nama']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_shm_atas_nama'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5483,7 +5506,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_shm_kedudukan']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_shm_kedudukan'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5497,12 +5520,12 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_shm_keterangan']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_shm_keterangan'] . "</div>
                             </td>
                         </tr>
                         ";
-                    }else if($val['credits_agunan_type'] == 7){
-                        $tbl .= "
+            } else if ($val['credits_agunan_type'] == 7) {
+                $tbl .= "
                         <tr>
                             <td style=\"text-align:left;\" width=\"100%\">
                                 <div style=\"font-size:12px\";>Jaminan ATM/Jamsostek dengan data sebagai berikut :</div>
@@ -5519,7 +5542,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_atmjamsostek_nomor']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_atmjamsostek_nomor'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5533,7 +5556,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_atmjamsostek_bank']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_atmjamsostek_bank'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5547,7 +5570,7 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_atmjamsostek_nama']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_atmjamsostek_nama'] . "</div>
                             </td>
                         </tr>
                         <br>
@@ -5561,20 +5584,20 @@ class AcctCreditsAccountController extends Controller
                                 <div style=\"font-size:12px\";>:</div>
                             </td>
                             <td style=\"text-align:left;\" width=\"65%\">
-                                <div style=\"font-size:12px\";>".$val['credits_agunan_atmjamsostek_keterangan']."</div>
+                                <div style=\"font-size:12px\";>" . $val['credits_agunan_atmjamsostek_keterangan'] . "</div>
                             </td>
                         </tr>
                         ";
-                    }
-                    setlocale(LC_ALL, 'IND');
-                    $tbl .= "
+            }
+            setlocale(LC_ALL, 'IND');
+            $tbl .= "
                     <br>
                     <tr>
                         <td style=\"text-align:left;font-size:12px;\" width=\"100%\"><b>Dan akan diterimakan kembali saat pinjaman lunas.</b></td>
                     </tr>
                     <br>
                     <tr>
-                        <td style=\"text-align:left;font-size:12px;\" width=\"100%\">Karanganyar, ".strftime("%d %B %Y", strtotime($acctcreditsaccount['credits_account_date']))."</td>
+                        <td style=\"text-align:left;font-size:12px;\" width=\"100%\">Karanganyar, " . strftime("%d %B %Y", strtotime($acctcreditsaccount['credits_account_date'])) . "</td>
                     </tr>
                     <br>
                     <tr>
@@ -5599,7 +5622,7 @@ class AcctCreditsAccountController extends Controller
                         <td style=\"text-align:left;\" width=\"5%\">
                         </td>
                         <td style=\"text-align:center;\" width=\"20%\">
-                            <div style=\"font-size:12px\";>(".$acctcreditsaccount['member_name'].")</div>
+                            <div style=\"font-size:12px\";>(" . $acctcreditsaccount['member_name'] . ")</div>
                         </td>
                         <td style=\"text-align:left;\" width=\"50%\">
                             <div style=\"font-size:12px\";></div>
@@ -5655,22 +5678,22 @@ class AcctCreditsAccountController extends Controller
                         </td>
                     </tr>
                     ";
-                }
-            $tbl .= "</table>
+        }
+        $tbl .= "</table>
             <br><br>
         ";
 
-        $pdf::writeHTML($tblkop.$tbl, true, false, false, false, '');
+        $pdf::writeHTML($tblkop . $tbl, true, false, false, false, '');
 
-        $filename = 'Tanda_Terima_Agunan_'.$acctcreditsaccount['credits_account_serial'].'.pdf';
+        $filename = 'Tanda_Terima_Agunan_' . $acctcreditsaccount['credits_account_serial'] . '.pdf';
         $pdf::Output($filename, 'I');
     }
 
     public function delete($credits_account_id)
     {
-        $table              = AcctCreditsAccount::findOrFail($credits_account_id);
-        $table->data_state  = 1;
-        $table->updated_id  = auth()->user()->user_id;
+        $table = AcctCreditsAccount::findOrFail($credits_account_id);
+        $table->data_state = 1;
+        $table->updated_id = auth()->user()->user_id;
 
         if ($table->save()) {
             $message = array(
@@ -5690,31 +5713,31 @@ class AcctCreditsAccountController extends Controller
     public function printPolaAngsuran()
     {
         $datasession = session()->get('data_creditsaccount');
-        $credits_account_id = AcctCreditsAccount::where('data_state',0)
-        ->orderBy('credits_account_id', 'DESC')
-        ->first()
-        ->credits_account_id;
-        if($datasession['payment_type_id']== '' && $datasession['payment_type_id']==1){
-            $datapola 			= $this->flat($credits_account_id);
-        } else if($datasession['payment_type_id'] == 2){
-            $datapola 			= $this->anuitas($credits_account_id);
-        } else{
-            $datapola 			= $this->slidingrate($credits_account_id);
+        $credits_account_id = AcctCreditsAccount::where('data_state', 0)
+            ->orderBy('credits_account_id', 'DESC')
+            ->first()
+            ->credits_account_id;
+        if ($datasession['payment_type_id'] == '' && $datasession['payment_type_id'] == 1) {
+            $datapola = $this->flat($credits_account_id);
+        } else if ($datasession['payment_type_id'] == 2) {
+            $datapola = $this->anuitas($credits_account_id);
+        } else {
+            $datapola = $this->slidingrate($credits_account_id);
         }
 
-        $acctcreditsaccount		= AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name','core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id','core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
-        ->join('core_branch', 'acct_credits_account.branch_id','=','core_branch.branch_id')
-        ->join('acct_credits', 'acct_credits_account.credits_id','=','acct_credits.credits_id')
-        ->join('core_member', 'acct_credits_account.member_id','=','core_member.member_id')
-        ->join('core_member_working', 'acct_credits_account.member_id','=','core_member_working.member_id')
-        ->join('core_province', 'core_member.province_id','=','core_province.province_id')
-        ->join('core_city', 'core_member.city_id','=','core_city.city_id')
-        ->join('core_kecamatan', 'core_member.kecamatan_id','=','core_kecamatan.kecamatan_id')
-        ->where('acct_credits_account.data_state', 0)
-        ->where('acct_credits_account.credits_account_id', $credits_account_id)
-        ->first();
-        $paymenttype 			= Configuration::PaymentType();
-        $paymentperiod 			= Configuration::CreditsPaymentPeriod();
+        $acctcreditsaccount = AcctCreditsAccount::select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'core_member.province_id', 'core_province.province_name', 'core_member.member_mother', 'core_member.city_id', 'core_city.city_name', 'core_member.kecamatan_id', 'core_kecamatan.kecamatan_name', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_branch.branch_name', 'core_member.member_phone', 'core_member_working.member_company_name', 'core_member_working.member_company_job_title', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
+            ->join('core_branch', 'acct_credits_account.branch_id', '=', 'core_branch.branch_id')
+            ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
+            ->join('core_member', 'acct_credits_account.member_id', '=', 'core_member.member_id')
+            ->join('core_member_working', 'acct_credits_account.member_id', '=', 'core_member_working.member_id')
+            ->join('core_province', 'core_member.province_id', '=', 'core_province.province_id')
+            ->join('core_city', 'core_member.city_id', '=', 'core_city.city_id')
+            ->join('core_kecamatan', 'core_member.kecamatan_id', '=', 'core_kecamatan.kecamatan_id')
+            ->where('acct_credits_account.data_state', 0)
+            ->where('acct_credits_account.credits_account_id', $credits_account_id)
+            ->first();
+        $paymenttype = Configuration::PaymentType();
+        $paymentperiod = Configuration::CreditsPaymentPeriod();
 
 
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
@@ -5726,8 +5749,8 @@ class AcctCreditsAccountController extends Controller
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
+        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+            require_once(dirname(__FILE__) . '/lang/eng.php');
             $pdf::setLanguageArray($l);
         }
 
@@ -5750,13 +5773,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>No. Pinjaman</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_serial']."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_serial'] . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Alamat</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['member_address']."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['member_address'] . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -5764,13 +5787,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Nama</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['member_name']."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['member_name'] . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Plafon</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".number_format($acctcreditsaccount['credits_account_amount'],2)."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . number_format($acctcreditsaccount['credits_account_amount'], 2) . "</b></div>
                     </td>
                 </tr>
                 <tr>
@@ -5778,13 +5801,13 @@ class AcctCreditsAccountController extends Controller
                         <div style=\"font-size:12px\";><b>Tipe Angsuran</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".$paymenttype[$acctcreditsaccount['payment_type_id']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $paymenttype[$acctcreditsaccount['payment_type_id']] . "</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"20%\">
                         <div style=\"font-size:12px\";><b>Jangka Waktu</b></div>
                     </td>
                     <td style=\"text-align:left;\" width=\"30%\">
-                        <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_period']." ".$paymentperiod[$acctcreditsaccount['credits_payment_period']]."</b></div>
+                        <div style=\"font-size:12px\";><b>: " . $acctcreditsaccount['credits_account_period'] . " " . $paymentperiod[$acctcreditsaccount['credits_payment_period']] . "</b></div>
                     </td>
                 </tr>
             </table>
@@ -5821,13 +5844,13 @@ class AcctCreditsAccountController extends Controller
 
             $tbl3 .= "
                 <tr>
-                    <td width=\"5%\"><div style=\"text-align: left;\">&nbsp; ".$val['ke']."</div></td>
-                    <td width=\"12%\"><div style=\"text-align: right;\">".date('d-m-Y', strtotime($val['tanggal_angsuran']))." &nbsp; </div></td>
-                    <td width=\"18%\"><div style=\"text-align: right;\">".number_format($val['opening_balance'], 2)." &nbsp; </div></td>
-                    <td width=\"15%\"><div style=\"text-align: right;\">".number_format($val['angsuran_pokok'], 2)." &nbsp; </div></td>
-                    <td width=\"15%\"><div style=\"text-align: right;\">".number_format($val['angsuran_bunga'], 2)." &nbsp; </div></td>
-                    <td width=\"18%\"><div style=\"text-align: right;\">".number_format($val['angsuran'], 2)." &nbsp; </div></td>
-                    <td width=\"18%\"><div style=\"text-align: right;\">".number_format($val['last_balance'], 2)." &nbsp; </div></td>
+                    <td width=\"5%\"><div style=\"text-align: left;\">&nbsp; " . $val['ke'] . "</div></td>
+                    <td width=\"12%\"><div style=\"text-align: right;\">" . date('d-m-Y', strtotime($val['tanggal_angsuran'])) . " &nbsp; </div></td>
+                    <td width=\"18%\"><div style=\"text-align: right;\">" . number_format($val['opening_balance'], 2) . " &nbsp; </div></td>
+                    <td width=\"15%\"><div style=\"text-align: right;\">" . number_format($val['angsuran_pokok'], 2) . " &nbsp; </div></td>
+                    <td width=\"15%\"><div style=\"text-align: right;\">" . number_format($val['angsuran_bunga'], 2) . " &nbsp; </div></td>
+                    <td width=\"18%\"><div style=\"text-align: right;\">" . number_format($val['angsuran'], 2) . " &nbsp; </div></td>
+                    <td width=\"18%\"><div style=\"text-align: right;\">" . number_format($val['last_balance'], 2) . " &nbsp; </div></td>
 
                 </tr>
             ";
@@ -5841,23 +5864,24 @@ class AcctCreditsAccountController extends Controller
         $tbl4 = "
             <tr>
                 <td colspan=\"3\"><div style=\"text-align: right;font-weight:bold\">Total</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalpokok, 2)."</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalmargin, 2)."</div></td>
-                <td><div style=\"text-align: right;font-weight:bold\">".number_format($total, 2)."</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($totalpokok, 2) . "</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($totalmargin, 2) . "</div></td>
+                <td><div style=\"text-align: right;font-weight:bold\">" . number_format($total, 2) . "</div></td>
             </tr>
         </table>";
 
-        $pdf::writeHTML($tbl1.$tbl2.$tbl3.$tbl4, true, false, false, false, '');
+        $pdf::writeHTML($tbl1 . $tbl2 . $tbl3 . $tbl4, true, false, false, false, '');
 
-        $filename = 'Pola_Angsuran_'.$acctcreditsaccount['credits_account_serial'].'.pdf';
+        $filename = 'Pola_Angsuran_' . $acctcreditsaccount['credits_account_serial'] . '.pdf';
         $pdf::Output($filename, 'I');
     }
 
-    public function getMemberName($member_id){
+    public function getMemberName($member_id)
+    {
         $coremember = CoreMember::select('*')
-        ->where('member_id',$member_id)
-        ->where('data_state',0)
-        ->first();
+            ->where('member_id', $member_id)
+            ->where('data_state', 0)
+            ->first();
 
         return $coremember['member_name'];
     }

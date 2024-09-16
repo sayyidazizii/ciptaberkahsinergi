@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\RequestLog;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\PagesController;
@@ -103,9 +104,9 @@ use App\Http\Controllers\AcctCreditsAccountPaidOffReportController;
 use App\Http\Controllers\AcctDepositoAccountClosedReportController;
 use App\Http\Controllers\SavingsDailyCashDepositMutationController;
 use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
+
+
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
-
-
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
 use App\Http\Controllers\SavingsDailyCashWithdrawalMutationController;
 use App\Http\Controllers\DepositoDailyCashWithdrawalMutationController;
@@ -215,7 +216,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('/process-add', [AcctCreditsAcquittanceController::class, 'processAdd'])->name('process-add');
         Route::get('/print-note/{savings_cash_mutation_id}', [AcctCreditsAcquittanceController::class, 'printNote'])->name('print-note');
     });
-    
+
 
     // AcctCreditsAgunan pages
     Route::prefix('credits-agunan')->name('credits-agunan.')->group(function () {
@@ -1030,7 +1031,7 @@ Route::middleware(['auth','loged'])->group(function () {
     //     Route::post('/add', [WhatsappController::class, 'add'])->name('add');
     //     Route::post('/process-add', [WhatsappController::class, 'process-add'])->name('process-add');
     // });
-    
+
     //CreditsIntensive pages
      Route::prefix('credits-payment-insentif')->controller(AcctCreditsPaymentInsentiveController::class)->name('crd-payment-insentif.')->group(function () {
         Route::get('/',  'report')->name('report');
@@ -1048,7 +1049,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('/report/viewport',  'reportViewport')->name('p-viewport');
         Route::post('/account/viewport',  'accountViewport')->name('a-viewport');
     });
-    
+
 
     Route::prefix('documentation')->controller(ApiController::class)->name('dc.')->group(function () {
         Route::get('/',  'index')->name('index');
