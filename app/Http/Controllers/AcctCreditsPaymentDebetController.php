@@ -534,7 +534,7 @@ class AcctCreditsPaymentDebetController extends Controller
         ->first()
         ->branch_name;
 
-        $acctcreditspayment	= AcctCreditsPayment::select('acct_credits_payment.credits_payment_id', 'acct_credits_payment.member_id', 'core_member.member_name', 'core_member.member_address', 'acct_credits_payment.credits_account_id', 'acct_credits_account.credits_account_serial', 'acct_credits_account.credits_id', 'acct_credits.credits_name', 'acct_credits_payment.credits_payment_to', 'acct_credits_payment.credits_payment_amount', 'acct_credits_payment.savings_account_id', 'acct_savings_account.savings_account_no')
+        $acctcreditspayment	= AcctCreditsPayment::select('acct_credits_payment.credits_payment_id', 'acct_credits_payment.member_id', 'core_member.member_name', 'core_member.member_address', 'acct_credits_payment.credits_account_id', 'acct_credits_account.credits_account_serial', 'acct_credits_account.credits_id', 'acct_credits.credits_name', 'acct_credits_payment.credits_payment_to', 'acct_credits_payment.credits_payment_amount', 'acct_credits_payment.savings_account_id', 'acct_savings_account.savings_account_no','acct_credits_payment.credits_principal_last_balance')
         ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
         ->join('acct_savings_account','acct_credits_payment.savings_account_id', '=', 'acct_savings_account.savings_account_id')
@@ -623,6 +623,10 @@ class AcctCreditsPaymentDebetController extends Controller
              <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_payment_amount'], 2)."</div></td>
+            </tr>	
+              <tr>
+                <td width=\"20%\"><div style=\"text-align: left;\">Sisa Pokok</div></td>
+                <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_principal_last_balance'], 2)."</div></td>
             </tr>				
         </table>";
 

@@ -200,8 +200,6 @@ class ApiController extends Controller
         // return json_encode($data);
     }
 
-
-
     public function logout(Request $request){
         $user = auth()->user();
         $user_state = User::findOrFail($user['user_id']);
@@ -256,9 +254,8 @@ class ApiController extends Controller
         return response($e,500);
         }
     }
-  
 
-    //print History Deposit
+    //print History Simp Biasa
     public function PrintGetDeposit(Request $request){
 
         $fields = $request->validate([
@@ -291,7 +288,7 @@ class ApiController extends Controller
     }
 
     //data mutasi setor simpanan tunai 
-    public function GetDeposit(){
+    public function GetSavings(){
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 0){
             $data = AcctSavingsCashMutation::with('member','mutation')
@@ -299,6 +296,7 @@ class ApiController extends Controller
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('mutation_id',1)
             ->where('data_state',0)
+            ->orderby('created_at','DESC')
             ->get();
         }else{
             $data = AcctSavingsCashMutation::with('member','mutation')
@@ -307,6 +305,7 @@ class ApiController extends Controller
             ->where('branch_id',auth()->user()->branch_id)
             ->where('mutation_id',1)
             ->where('data_state',0)
+            ->orderby('created_at','DESC')
             ->get();
         }
 
@@ -416,7 +415,6 @@ class ApiController extends Controller
         }
     }
 
-
     //data akhir mutasi setor simpanan tunai by member 
     public function PrintmutationByMember($member_id){
         $data = AcctSavingsCashMutation::with('member','mutation')
@@ -433,7 +431,6 @@ class ApiController extends Controller
         ]);
         // return json_encode($data);
     }
-
 
     //save simpanan wajib
     public function processAddMemberSavings(Request $request,$member_id)
@@ -542,7 +539,6 @@ class ApiController extends Controller
         ]);
     }
 
-
     //print simp wajib
     public function PrintGetMemberSavings(Request $request){
 
@@ -598,7 +594,6 @@ class ApiController extends Controller
         ]);
     }
 
-
     //data setor angsuran tunai by branch 
     public function getCreditstPaymentList(){
 
@@ -621,7 +616,7 @@ class ApiController extends Controller
     }
     
     //History Angsuran
-        public function GetAngsuran(){
+    public function GetAngsuran(){
             $branch_id          = auth()->user()->branch_id;
             if($branch_id == 0){
                 $data = AcctCreditsPayment::withoutGlobalScopes()
@@ -640,10 +635,10 @@ class ApiController extends Controller
                 return response([
                     'data'           => $data,
                 ],201);
-        }
+    }
 
-     //print History Angsuran
-     public function PrintGetAngsuran(Request $request){
+    //print History Angsuran
+    public function PrintGetAngsuran(Request $request){
 
         $fields = $request->validate([
             'user_id'           => 'required',

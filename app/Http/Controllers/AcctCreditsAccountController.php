@@ -88,7 +88,8 @@ class AcctCreditsAccountController extends Controller
                 ->get();
         }
         $daftaragunan = session()->get('array_creditsaccountangunan');
-        return view('content.AcctCreditsAccount.Add.index', compact('coremember', 'creditid', 'datasession', 'coreoffice', 'sumberdana', 'acctsavingsaccount', 'daftaragunan'));
+
+        return view('content.AcctCreditsAccount.Add.index', compact('coremember','creditid','datasession','coreoffice','sumberdana','acctsavingsaccount','daftaragunan'));
     }
 
     public function filter(Request $request)
@@ -201,20 +202,22 @@ class AcctCreditsAccountController extends Controller
 
             if (!empty($daftaragunan)) {
                 foreach ($daftaragunan as $key => $val) {
-                    if ($val['credits_agunan_type'] == 'BPKB') {
-                        $credits_agunan_type = 1;
-                    } else if ($val['credits_agunan_type'] == 'Sertifikat') {
-                        $credits_agunan_type = 2;
-                    } else if ($val['credits_agunan_type'] == 'Bilyet Simpanan Berjangka') {
-                        $credits_agunan_type = 3;
-                    } else if ($val['credits_agunan_type'] == 'Elektro') {
-                        $credits_agunan_type = 4;
-                    } else if ($val['credits_agunan_type'] == 'Dana Keanggotaan') {
-                        $credits_agunan_type = 5;
-                    } else if ($val['credits_agunan_type'] == 'Tabungan') {
-                        $credits_agunan_type = 6;
-                    } else if ($val['credits_agunan_type'] == 'ATM / Jamsostek') {
-                        $credits_agunan_type = 7;
+                    if($val['credits_agunan_type'] == 'BPKB'){
+                        $credits_agunan_type	= 1;
+                    }else if($val['credits_agunan_type'] == 'Sertifikat') {
+                        $credits_agunan_type 	= 2;
+                    }else if($val['credits_agunan_type'] == 'Bilyet Simpanan Berjangka'){
+                        $credits_agunan_type 	= 3;
+                    }else if($val['credits_agunan_type'] == 'Elektro'){
+                        $credits_agunan_type 	= 4;
+                    }else if($val['credits_agunan_type'] == 'Dana Keanggotaan'){
+                        $credits_agunan_type 	= 5;
+                    }else if($val['credits_agunan_type'] == 'Tabungan'){
+                        $credits_agunan_type 	= 6;
+                    }else if($val['credits_agunan_type'] == 'ATM / Jamsostek'){
+                        $credits_agunan_type 	= 7;
+                    }else if($val['credits_agunan_type'] == 'Lain-lain'){
+                        $credits_agunan_type 	= 8;
                     }
                     $dataagunan = array(
                         'credits_account_id' => $acctcreditsaccount_last['credits_account_id'],
@@ -549,15 +552,15 @@ class AcctCreditsAccountController extends Controller
                     ->first()
                     ->account_default_status;
 
-                $data_debet = array(
-                    'journal_voucher_id' => $journal_voucher_id,
-                    'account_id' => $preferencecompany['account_cash_id'],
-                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_adm_cost'],
-                    'journal_voucher_debit_amount' => $acctcreditsaccount['credits_account_adm_cost'],
-                    'account_id_default_status' => $account_id_default_status,
-                    'account_id_status' => 0,
-                    'created_id' => auth()->user()->user_id,
+                $data_debet = array (
+                    'journal_voucher_id'			=> $journal_voucher_id,
+                    'account_id'					=> $preferencecompany['account_cash_id'],
+                    'journal_voucher_description'	=> 'Pendapatan Administrasi '.$data_journal['journal_voucher_title'],
+                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
+                    'journal_voucher_debit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
+                    'account_id_default_status'		=> $account_id_default_status,
+                    'account_id_status'				=> 0,
+                    'created_id' 					=> auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_debet);
@@ -567,15 +570,15 @@ class AcctCreditsAccountController extends Controller
                     ->first()
                     ->account_default_status;
 
-                $data_credit = array(
-                    'journal_voucher_id' => $journal_voucher_id,
-                    'account_id' => $preferencecompany['account_mutation_adm_id'],
-                    'journal_voucher_description' => $data_journal['journal_voucher_title'],
-                    'journal_voucher_amount' => $acctcreditsaccount['credits_account_adm_cost'],
-                    'journal_voucher_credit_amount' => $acctcreditsaccount['credits_account_adm_cost'],
-                    'account_id_default_status' => $account_id_default_status,
-                    'account_id_status' => 1,
-                    'created_id' => auth()->user()->user_id,
+                $data_credit = array (
+                    'journal_voucher_id'			=> $journal_voucher_id,
+                    'account_id'					=> $preferencecompany['account_mutation_adm_id'],
+                    'journal_voucher_description'	=> 'Pendapatan Administrasi '.$data_journal['journal_voucher_title'],
+                    'journal_voucher_amount'		=> $acctcreditsaccount['credits_account_adm_cost'],
+                    'journal_voucher_credit_amount'	=> $acctcreditsaccount['credits_account_adm_cost'],
+                    'account_id_default_status'		=> $account_id_default_status,
+                    'account_id_status'				=> 1,
+                    'created_id' 					=> auth()->user()->user_id,
                 );
 
                 AcctJournalVoucherItem::create($data_credit);

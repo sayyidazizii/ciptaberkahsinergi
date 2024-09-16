@@ -244,7 +244,7 @@
             <div class="row mb-6">
                 <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tanggal Gambar Situasi') }}</label>
                 <div class="col-lg-8 fv-row">
-                    <input name="shm_tanggal_gs" id="shm_tanggal_gs" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="Tanggal Gambar Situasi" autocomplete="off" value="{{ old('shm_tanggal_gs', '' ?? '') }}">
+                    <input name="shm_tanggal_gs" id="shm_tanggal_gs" type="datetime-local" class="form-anggunan form-control-lg form-control-solid" placeholder="Tanggal Gambar Situasi" autocomplete="off" value="{{ old('shm_tanggal_gs', '' ?? '') }}">
                 </div>
             </div>
             <div class="row mb-6">
