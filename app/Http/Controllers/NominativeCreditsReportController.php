@@ -686,7 +686,7 @@ class NominativeCreditsReportController extends Controller
             }
             $spreadsheet->getActiveSheet()->setCellValue('B2', "Periode : " . $sesi['start_date'] . " S.D " . $sesi['end_date']);
 
-            $row                      = 4;
+            $row                    = 4;
             $no                     = 0;
             $totalplafon	        = 0;
             $totalsisapokok         = 0;
