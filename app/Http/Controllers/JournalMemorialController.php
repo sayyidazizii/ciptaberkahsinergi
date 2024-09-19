@@ -40,10 +40,11 @@ class JournalMemorialController extends Controller
         ->where('acct_journal_voucher.posted', 0)
         ->where('acct_journal_voucher_item.journal_voucher_amount','<>', 0)
         ->where('acct_journal_voucher.transaction_module_id','!=', 10)
+        ->where('acct_journal_voucher.branch_id',auth()->user()->branch_id)
         ->orderBy('acct_journal_voucher_item.journal_voucher_item_id', 'ASC');
-        if(!empty($session['branch_id'])) {
-            $acctmemorialjournal = $acctmemorialjournal->where('acct_journal_voucher.branch_id', $session['branch_id']);
-        }
+        // if(!empty($session['branch_id'])) {
+        //     $acctmemorialjournal = $acctmemorialjournal->where('acct_journal_voucher.branch_id', $session['branch_id']);
+        // }
         $acctmemorialjournal = $acctmemorialjournal->get();
 
         return view('content.JournalMemorial.List.index',compact('corebranch','session','acctmemorialjournal'));
