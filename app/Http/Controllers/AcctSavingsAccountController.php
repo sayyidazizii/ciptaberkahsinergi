@@ -107,6 +107,7 @@ class AcctSavingsAccountController extends Controller
 
         $coreoffice             = CoreOffice::select('office_id', 'office_name')
         ->where('data_state', 0)
+        ->where('branch_id',Auth::user()->branch_id)
         ->get();
 
         $coremember             = array();

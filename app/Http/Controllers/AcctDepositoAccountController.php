@@ -3,28 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctDeposito;
-use App\Models\AcctDepositoAccount;
-use App\Models\AcctDepositoProfitSharing;
-use App\Models\AcctSavingsAccount;
-use App\Models\CoreBranch;
 use App\Models\CoreCity;
-use App\Models\CoreKecamatan;
+use App\Models\CoreBranch;
 use App\Models\CoreMember;
 use App\Models\CoreOffice;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceInventory;
-use App\Models\PreferenceTransactionModule;
-use App\DataTables\AcctDepositoAccount\AcctDepositoAccountDataTable;
-use App\DataTables\AcctDepositoAccount\AcctSavingsAccountDataTable;
-use App\DataTables\AcctDepositoAccount\CoreMemberDataTable;
+use App\Models\AcctAccount;
+use App\Models\AcctDeposito;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\CoreKecamatan;
 use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use App\Models\AcctDepositoAccount;
+use App\Models\PreferenceInventory;
+use Illuminate\Support\Facades\Auth;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctDepositoProfitSharing;
+use App\Models\PreferenceTransactionModule;
+use App\DataTables\AcctDepositoAccount\CoreMemberDataTable;
+use App\DataTables\AcctDepositoAccount\AcctSavingsAccountDataTable;
+use App\DataTables\AcctDepositoAccount\AcctDepositoAccountDataTable;
 
 class AcctDepositoAccountController extends Controller
 {
@@ -115,6 +116,7 @@ class AcctDepositoAccountController extends Controller
         
         $coreoffice             = CoreOffice::select('office_id', 'office_name')
         ->where('data_state', 0)
+        ->where('branch_id',Auth::user()->branch_id)
         ->get();
 
         $coremember             = array();

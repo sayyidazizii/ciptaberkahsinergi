@@ -75,6 +75,7 @@ class AcctCreditsAccountController extends Controller
         $datasession = session()->get('data_creditsaccount');
         $coreoffice = CoreOffice::select('office_id', 'office_name')
             ->where('data_state', 0)
+            ->where('branch_id',Auth::user()->branch_id)
             ->get();
         $sumberdana = AcctSourceFund::select('source_fund_id', 'source_fund_name')
             ->where('data_state', 0)
@@ -259,7 +260,7 @@ class AcctCreditsAccountController extends Controller
 
             DB::commit();
             $message = array(
-                'pesan' => 'Data Credit Berjangka berhasil ditambah',
+                'pesan' => 'Data Pinjaman berhasil ditambah',
                 'alert' => 'success',
             );
             return redirect('credits-account')->with($message);
@@ -268,7 +269,7 @@ class AcctCreditsAccountController extends Controller
             dd($e);
             report($e);
             $message = array(
-                'pesan' => 'Data Credit Berjangka gagal ditambah',
+                'pesan' => 'Data Pinjaman gagal ditambah',
                 'alert' => 'error'
             );
             return redirect('credits-account/add')->with($message);
