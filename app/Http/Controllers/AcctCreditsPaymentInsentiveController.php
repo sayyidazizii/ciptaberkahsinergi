@@ -100,8 +100,8 @@ class AcctCreditsPaymentInsentiveController extends Controller
           ->join('acct_credits_account', 'acct_credits_account.credits_account_id', 'acct_credits_payment.credits_account_id')
           ->join('core_office', 'acct_credits_account.office_id', 'core_office.office_id')
           ->where('acct_credits_account.credits_approve_status', 1)
-          ->where('acct_credits_account.credits_account_date', '>=', $startDate)
-          ->where('acct_credits_account.credits_account_date', '<=', $endDate);
+          ->where('acct_credits_payment.credits_payment_date', '>=', $startDate)
+          ->where('acct_credits_payment.credits_payment_date', '<=', $endDate);
   
       if (!empty($branch_id)) {
           $acctcreditspayment->where('acct_credits_account.branch_id', $branch_id);
