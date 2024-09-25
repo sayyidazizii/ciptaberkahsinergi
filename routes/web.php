@@ -81,6 +81,7 @@ use App\Http\Controllers\AcctDepositoAccountMasterController;
 use App\Http\Controllers\AcctDepositoProfitSharingController;
 use App\Http\Controllers\AcctSavingsAccountBlockirController;
 use App\Http\Controllers\AcctSavingsAccountMonitorController;
+use App\Http\Controllers\BalanceSheetConsolidationController;
 use App\Http\Controllers\CreditsPaymentDailyReportController;
 use App\Http\Controllers\AcctDepositoAccountBlockirController;
 use App\Http\Controllers\AcctDepositoAccountClosingController;
@@ -103,9 +104,9 @@ use App\Http\Controllers\MemberSavingsTransferMutationController;
 use App\Http\Controllers\AcctCreditsAccountPaidOffReportController;
 use App\Http\Controllers\AcctDepositoAccountClosedReportController;
 use App\Http\Controllers\SavingsDailyCashDepositMutationController;
+
+
 use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
-
-
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
 use App\Http\Controllers\SavingsDailyCashWithdrawalMutationController;
@@ -531,12 +532,12 @@ Route::middleware(['auth','loged'])->group(function () {
     });
 
     // BalanceSheet consolidation pages
-    Route::prefix('balance-sheet')->name('balance-sheet.')->group(function () {
-        Route::get('/', [BalanceSheetController::class, 'index'])->name('index');
-        Route::post('/filter', [BalanceSheetController::class, 'filter'])->name('filter');
-        Route::get('/reset-filter', [BalanceSheetController::class, 'resetFilter'])->name('reset-filter');
-        Route::get('/preview', [BalanceSheetController::class, 'preview'])->name('preview');
-        Route::get('/export', [BalanceSheetController::class, 'export'])->name('export');
+    Route::prefix('balance-sheet-consolidation')->name('balance-sheet-consolidation.')->group(function () {
+        Route::get('/', [BalanceSheetConsolidationController::class, 'index'])->name('index');
+        Route::post('/filter', [BalanceSheetConsolidationController::class, 'filter'])->name('filter');
+        Route::get('/reset-filter', [BalanceSheetConsolidationController::class, 'resetFilter'])->name('reset-filter');
+        Route::get('/preview', [BalanceSheetConsolidationController::class, 'preview'])->name('preview');
+        Route::get('/export', [BalanceSheetConsolidationController::class, 'export'])->name('export');
     });
 
     //CoreBranch pages
