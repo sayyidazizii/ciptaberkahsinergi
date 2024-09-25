@@ -72,8 +72,8 @@ class CreditsPaymentReportController extends Controller
         ->where('credits_approve_status', 1)
         ->where('credits_account_status', 0)
         ->where('credits_account_last_balance','>', 0)
-        ->where('credits_account_date','>=', Carbon::parse($sesi['start_date'])->format('Y-m-d'))
-        ->where('credits_account_date','<=', Carbon::parse($sesi['end_date'])->format('Y-m-d'))
+        ->where('credits_account_payment_date','>=', Carbon::parse($sesi['start_date'])->format('Y-m-d'))
+        ->where('credits_account_payment_date','<=', Carbon::parse($sesi['end_date'])->format('Y-m-d'))
         ->orderBy('credits_account_serial');
         if(!empty($sesi['office_id'])){
             $creditacc = $creditacc->where('office_id', $sesi['office_id']);
@@ -145,6 +145,13 @@ class CreditsPaymentReportController extends Controller
         $totaltotal = 0;
         $totalsisa = 0;
         foreach ($creditacc as $key => $val) {
+
+            $last_payment_date = $val['credits_account_last_payment_date'];
+            if(empty($last_payment_date) || $last_payment_date == null){
+                $last_payment_date = '-';
+            }else{
+                $last_payment_date = date('d-m-Y',strtotime($last_payment_date));
+            }
                 $export .= "
                 <tr>
                 <td width=\"3%\"><div style=\"text-align: left;\">".$no."</div></td>
@@ -160,7 +167,7 @@ class CreditsPaymentReportController extends Controller
                 <td width=\"6%\"><div style=\"text-align: right;\">".date('d-m-Y',strtotime($val['credits_account_payment_date']))."</div></td>
                 <td width=\"6%\"><div style=\"text-align: right;\">".number_format($val['credits_account_accumulated_fines'], 2)."</div></td>
                 <td width=\"5%\"><div style=\"text-align: right;\">".$val['credits_account_payment_to']." / ".$val['credits_account_period']."</div></td>
-                <td width=\"7%\"><div style=\"text-align: right;\">".date('d-m-Y',strtotime($val['credits_account_last_payment_date']))."</div></td>
+                <td width=\"7%\"><div style=\"text-align: right;\">".$last_payment_date."</div></td>
                 </tr>";
                 
                 $totalplafon += $val['credits_account_amount'];
