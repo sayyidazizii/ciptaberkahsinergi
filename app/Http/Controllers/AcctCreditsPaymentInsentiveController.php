@@ -186,6 +186,7 @@ class AcctCreditsPaymentInsentiveController extends Controller
         $no = 1;
         $totalpokok = 0;
         $totalbunga = 0;
+        $totalincentive = 0 ;
 
         foreach ($groupedPayments as $officeName => $payments) {
             $export .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
@@ -196,6 +197,7 @@ class AcctCreditsPaymentInsentiveController extends Controller
             foreach ($payments as $val) {
                 $totalpokok += $val['credits_payment_principal'];
                 $totalbunga += $val['credits_payment_interest'];
+                $totalincentive = $val->incentive ;
                 $incentive = $val->incentive / 100 * $totalbunga;
 
                 $export .= "<tr>
@@ -207,22 +209,22 @@ class AcctCreditsPaymentInsentiveController extends Controller
                         <td width=\"20%\"><div style=\"text-align: right; padding: 6px;\">" . number_format($val['credits_payment_interest'], 2) . "</div></td>
                     </tr>";
 
-                $export .= "<tr>
-                        <td colspan=\"3\" style=\"border-top: 1px solid black; padding-top: 6px;\"></td>
-                        <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; font-weight:bold; text-align:center; padding-top: 6px;\">Jumlah</div></td>
-                        <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; text-align:right; padding-top: 6px;\">" . number_format($totalpokok, 2) . "</div></td>
-                        <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; text-align:right; padding-top: 6px;\">" . number_format($totalbunga, 2) . "</div></td>
-                    </tr>";
-
-                $export .= "<tr>
-                        <td colspan=\"3\"><div style=\"font-size:10px; text-align:left; font-style:italic; padding-top: 6px;\">Insentif: " . $val->incentive . " % x " . number_format($totalbunga, 2) . " = Rp." . number_format($incentive) . "</div></td>
-                        <td colspan=\"3\"></td>
-                    </tr>";
-
                 $no++;
             }
             $export .= "</table>";
         }
+
+        $export .= "<table><tr>
+            <td colspan=\"3\" style=\"border-top: 1px solid black; padding-top: 6px;\"></td>
+            <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; font-weight:bold; text-align:center; padding-top: 6px;\">Jumlah</div></td>
+            <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; text-align:right; padding-top: 6px;\">" . number_format($totalpokok, 2) . "</div></td>
+            <td style=\"border-top: 1px solid black;\"><div style=\"font-size:10px; text-align:right; padding-top: 6px;\">" . number_format($totalbunga, 2) . "</div></td>
+        </tr>";
+
+        $export .= "<tr>
+                <td colspan=\"3\"><div style=\"font-size:10px; text-align:left; font-style:italic; padding-top: 6px;\">Insentif: " . $totalincentive . " % x " . number_format($totalbunga, 2) . " = Rp." . number_format($incentive ?? 0) . "</div></td>
+                <td colspan=\"3\"></td>
+            </tr></table>";
 
         $pdf::writeHTML($export, true, false, false, false, '');
 
