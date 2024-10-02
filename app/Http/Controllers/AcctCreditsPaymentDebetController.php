@@ -264,6 +264,7 @@ class AcctCreditsPaymentDebetController extends Controller
 				'credits_payment_type'				        => 1,
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
+				'pickup_state'								=> 1,
 				'pickup_date'								=> date('Y-m-d'),
             );
             AcctCreditsPayment::create($data);
