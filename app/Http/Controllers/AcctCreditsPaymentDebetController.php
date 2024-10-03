@@ -109,6 +109,7 @@ class AcctCreditsPaymentDebetController extends Controller
         $acctsavingsaccount     = array();
         $acctcreditsaccount     = array();
         $acctcreditspayment     = array();
+        $angsuran_bunga_menurunharian = 0;
         
         if(isset($sessiondata['savings_account_id'])){
             $acctsavingsaccount = AcctSavingsAccount::select('savings_account_id', 'savings_account_no', 'savings_account_last_balance')
