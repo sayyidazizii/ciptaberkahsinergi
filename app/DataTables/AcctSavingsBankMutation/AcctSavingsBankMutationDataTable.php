@@ -29,7 +29,9 @@ class AcctSavingsBankMutationDataTable extends DataTable
             })
             ->editColumn('savings_bank_mutation_amount', function (AcctSavingsBankMutation $model) {
                 return number_format($model->savings_bank_mutation_amount, 2);
-            });
+            })
+            ->addColumn('action', 'content.AcctSavingsBankMutation.List._action-menu');
+
     }
 
     /**
@@ -96,6 +98,12 @@ class AcctSavingsBankMutationDataTable extends DataTable
             Column::make('acct_savings_bank_mutation.savings_bank_mutation_date')->title(__('Tanggal Transfer'))->data('savings_bank_mutation_date'),
             Column::make('acct_mutation.full_account')->title(__('Transfer Bank'))->data('full_account'),
             Column::make('acct_savings_bank_mutation.savings_bank_mutation_amount')->title(__('Jumlah'))->data('savings_bank_mutation_amount'),
+            Column::computed('action')
+                    ->title(__('Aksi'))
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(150)
+                    ->addClass('text-center'),
         ];
     }
 

@@ -480,6 +480,8 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/select-savings-account/{savings_account_id}', [AcctSavingsBankMutationController::class, 'selectAcctSavingsAccount'])->name('select-savings-account');
         Route::post('/elements-add', [AcctSavingsBankMutationController::class, 'elementsAdd'])->name('elements-add');
         Route::post('/process-add', [AcctSavingsBankMutationController::class, 'processAdd'])->name('process-add');
+        Route::get('/print-note/{savings_bank_mutation_id}', [AcctSavingsBankMutationController::class, 'printNote'])->name('print-note');
+
     });
 
     // AcctSavingsCashMutation pages
