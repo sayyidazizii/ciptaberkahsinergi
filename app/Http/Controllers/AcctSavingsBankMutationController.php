@@ -463,6 +463,7 @@ class AcctSavingsBankMutationController extends Controller
             'acct_savings_bank_mutation.savings_bank_mutation_id',
             'acct_savings_bank_mutation.savings_account_id',
             'acct_savings_account.savings_account_no',
+            'acct_savings_account.savings_account_last_balance',
             'acct_savings_bank_mutation.savings_id',
             'acct_savings.savings_name',
             'acct_savings_bank_mutation.mutation_id',
@@ -600,6 +601,12 @@ class AcctSavingsBankMutationController extends Controller
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;" .
             number_format($acctsavingsbankmutation['savings_bank_mutation_amount'], 2) .
+            "</div></td>
+            </tr>
+            <tr>
+                <td width=\"20%\"><div style=\"text-align: left;\">Sisa Saldo</div></td>
+                <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;" .
+            number_format($acctsavingsbankmutation['savings_account_last_balance'], 2) .
             "</div></td>
             </tr>
                 <tr>
