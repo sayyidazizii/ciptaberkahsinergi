@@ -4,7 +4,7 @@
         'Sertifikat' => 'Sertifikat',
         'Lain-lain' => 'Lain-lain',
         // 'Bilyet Simpanan Berjangka' => 'Bilyet Simpanan Berjangka',
-        // 'Elektro' => 'Elektro',
+        'Elektro' => 'Elektro',
         // 'Dana Keanggotaan' => 'Dana Keanggotaan',
         // 'Tabungan' => 'Tabungan',
         // 'ATM / Jamsostek' => 'ATM / Jamsostek',
@@ -28,6 +28,12 @@
             $('#Sertifikat').addClass('d-none');
             $('#BPKB').addClass('d-none');
             $('#other').addClass('d-none');
+        }else if (value == 'Elektro') {
+            $('#other').addClass('d-none');
+            $('#atmjamsostek').addClass('d-none');
+            $('#Sertifikat').addClass('d-none');
+            $('#BPKB').addClass('d-none');
+            $('#Elektro').removeClass('d-none');
         } else if (value == '') {
             $('#other').addClass('d-none');
             $('#atmjamsostek').addClass('d-none');
@@ -306,6 +312,38 @@
                 </div>
             </div>
         </div>
+        <div class="d-none" id="Elektro">
+            <div class="row mb-6">
+                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Merk') }}</label>
+                <div class="col-lg-8 fv-row">
+                    <input name="merk_electronic" id="merk_electronic" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="Merk" autocomplete="off" value="{{ old('merk_electronic', '' ?? '') }}">
+                </div>
+            </div>
+            <div class="row mb-6">
+                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tipe') }}</label>
+                <div class="col-lg-8 fv-row">
+                    <input name="type_electronic" id="type_electronic" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="Type" autocomplete="off" value="{{ old('type_electronic', '' ?? '') }}">
+                </div>
+            </div>
+            <div class="row mb-6">
+                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Model') }}</label>
+                <div class="col-lg-8 fv-row">
+                    <input name="model_electronic" id="model_electronic" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="Model" autocomplete="off" value="{{ old('model_electronic', '' ?? '') }}">
+                </div>
+            </div>
+            <div class="row mb-6">
+                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Warna') }}</label>
+                <div class="col-lg-8 fv-row">
+                    <input name="color_electronic" id="color_electronic" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="Warna" autocomplete="off" value="{{ old('color_electronic', '' ?? '') }}">
+                </div>
+            </div>
+            <div class="row mb-6">
+                <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('No. Seri') }}</label>
+                <div class="col-lg-8 fv-row">
+                    <input name="serial_electronic" id="serial_electronic" class="form-control form-anggunan form-control-lg form-control-solid" placeholder="No Seri" autocomplete="off" value="{{ old('serial_electronic', '' ?? '') }}">
+                </div>
+            </div>
+        </div>
         <div class="d-none" id="other">
             <div class="row mb-6">
                 <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Keterangan') }}</label>
@@ -350,6 +388,13 @@
                                 <td><button onclick="processDeleteArrayAgunan('{{$val['record_id']}}')" class="btn btn-danger btn-sm">Hapus</button></td>
                             </tr>
                         @elseif($val['credits_agunan_type'] == "ATM / Jamsostek")
+                            <tr>
+                                <td>{{ $no }}</td>
+                                <td>{{ $val['credits_agunan_type'] }}</td>
+                                <td>{{ "Nomor : ".$val['credits_agunan_atmjamsostek_nomor'].", Atas Nama : ".$val['credits_agunan_atmjamsostek_nama'].", Nama Bank : ".$val['credits_agunan_atmjamsostek_bank'].", Taksiran : Rp. ".number_format($val['credits_agunan_atmjamsostek_taksiran'],2).", Ket : ".$val['credits_agunan_atmjamsostek_keterangan'] }}</td>
+                                <td><button onclick="processDeleteArrayAgunan('{{$val['record_id']}}')" class="btn btn-danger btn-sm">Hapus</button></td>
+                            </tr>
+                        @elseif($val['credits_agunan_type'] == "Elektro")
                             <tr>
                                 <td>{{ $no }}</td>
                                 <td>{{ $val['credits_agunan_type'] }}</td>
