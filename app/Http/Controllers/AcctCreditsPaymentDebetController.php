@@ -109,7 +109,8 @@ class AcctCreditsPaymentDebetController extends Controller
         $acctsavingsaccount     = array();
         $acctcreditsaccount     = array();
         $acctcreditspayment     = array();
-        
+        $creditspaymentlast     = 0;
+
         if(isset($sessiondata['savings_account_id'])){
             $acctsavingsaccount = AcctSavingsAccount::select('savings_account_id', 'savings_account_no', 'savings_account_last_balance')
             ->where('savings_account_id', $sessiondata['savings_account_id'])
@@ -123,6 +124,12 @@ class AcctCreditsPaymentDebetController extends Controller
             ->where('credits_account_id', $sessiondata['credits_account_id'])
             ->get();
 
+            $creditspaymentlast = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+            ->where('credits_account_id', $sessiondata['credits_account_id'])
+            ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
+            ->first();
+
+
             $credits_payment_date   = date('Y-m-d');
             $date1                  = date_create($credits_payment_date);
             $date2                  = date_create($acctcreditsaccount['credits_account_payment_date']);
@@ -133,7 +140,7 @@ class AcctCreditsPaymentDebetController extends Controller
             } else {
                 $credits_payment_day_of_delay 	= 0;
             }
-            
+
             if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                 $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
             }else{
@@ -154,7 +161,7 @@ class AcctCreditsPaymentDebetController extends Controller
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
                 $angsuranpokok		= 0;
-                $angsuranbunga		= $angsuran_bunga_menurunharian;
+                $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
             }
         }else{
             $credits_payment_day_of_delay       = 0;
@@ -217,7 +224,7 @@ class AcctCreditsPaymentDebetController extends Controller
             'credits_account_id' => ['required'],
             'savings_account_id' => ['required'],
         ]);
-        
+
         $credits_account_payment_date = date('Y-m-d');
         if($request->credits_payment_to < $request->credits_account_period){
             if($request->credits_payment_period == 1){
@@ -230,7 +237,7 @@ class AcctCreditsPaymentDebetController extends Controller
         }
 
         $acctsavingsaccount = AcctSavingsAccount::findOrFail($fields['savings_account_id']);
-        
+
         if($acctsavingsaccount['savings_account_last_balance'] < $request->angsuran_total){
             $message = array(
                 'pesan' => 'Saldo Tabungan Tidak Cukup!',
@@ -256,7 +263,7 @@ class AcctCreditsPaymentDebetController extends Controller
 				'credits_principal_opening_balance'			=> $request->sisa_pokok,
 				'credits_principal_last_balance'			=> $request->sisa_pokok - $request->angsuran_pokok,
 				'credits_interest_opening_balance'			=> $request->sisa_bunga,
-				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,				
+				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->credits_payment_fine,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
 				'credits_payment_to'						=> $request->credits_payment_to,
@@ -264,6 +271,7 @@ class AcctCreditsPaymentDebetController extends Controller
 				'credits_payment_type'				        => 1,
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
+				'pickup_state'								=> 1,
 				'pickup_date'								=> date('Y-m-d'),
             );
             AcctCreditsPayment::create($data);
@@ -354,9 +362,9 @@ class AcctCreditsPaymentDebetController extends Controller
 			->where('acct_credits_payment.created_id', $data['created_id'])
 			->orderBy('acct_credits_payment.credits_payment_id','DESC')
             ->first();
-                
+
             $journal_voucher_period = date("Ym", strtotime($data['credits_payment_date']));
-            
+
             $data_journal = array(
                 'branch_id'						=> $data['branch_id'],
                 'journal_voucher_period' 		=> $journal_voucher_period,
@@ -477,7 +485,7 @@ class AcctCreditsPaymentDebetController extends Controller
                 );
                 AcctJournalVoucherItem::create($data_credit);
             }
-            
+
             if($request->member_mandatory_savings > 0 && $request->member_mandatory_savings != ''){
                 $savings_id = $preferencecompany['mandatory_savings_id'];
 
@@ -486,7 +494,7 @@ class AcctCreditsPaymentDebetController extends Controller
                 ->where('data_state', 0)
                 ->first()
                 ->account_id;
-                
+
                 $account_id_default_status 	= AcctAccount::select('account_default_status')
                 ->where('account_id', $account_id)
                 ->first()
@@ -521,7 +529,7 @@ class AcctCreditsPaymentDebetController extends Controller
                 'alert' => 'error'
             );
         }
-        
+
         return redirect('credits-payment-debet')->with($message);
     }
 
@@ -623,11 +631,11 @@ class AcctCreditsPaymentDebetController extends Controller
              <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_payment_amount'], 2)."</div></td>
-            </tr>	
+            </tr>
               <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Sisa Pokok</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_principal_last_balance'], 2)."</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         $export .= "
@@ -640,8 +648,8 @@ class AcctCreditsPaymentDebetController extends Controller
             <tr>
                 <td width=\"30%\"><div style=\"text-align: center;\">Penyetor</div></td>
                 <td width=\"10%\"><div style=\"text-align: center;\"></div></td>
-                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>               
-            </tr>				
+                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>
+            </tr>
         </table>";
 
         //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
