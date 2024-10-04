@@ -35,7 +35,7 @@ class AcctSavingsProfitSharingController extends Controller
     {
         $month          = Configuration::month();
         $year_period 	= date('Y');
-        
+
         for($i = ($year_period - 2); $i < ($year_period + 2); $i++){
             $year[$i] 	= $i;
         }
@@ -89,8 +89,8 @@ class AcctSavingsProfitSharingController extends Controller
             'month_period'              => ['required'],
             'year_period'               => ['required'],
             'savings_account_minimum'   => ['required'],
-        ]); 
-        
+        ]);
+
         $data = array (
             'month_period' 	=> $fields['month_period'],
             'year_period'	=> $fields['year_period'],
@@ -160,13 +160,13 @@ class AcctSavingsProfitSharingController extends Controller
                     'operated_name'						=> 'SYSTEM',
                 );
                 AcctSavingsAccountDetailTemp::create($data_savings_account_detail_temp);
-                
+
                 $daily_average_balance_total = AcctSavingsAccountDetail::where('savings_account_id', $val['savings_account_id'])
                 ->whereMonth('today_transaction_date', $data['month_period'])
                 ->whereYear('today_transaction_date', $data['year_period'])
                 ->orderBy('today_transaction_date', 'ASC')
                 ->sum('daily_average_balance');
-                
+
                 $data_savings_account_temp = array (
                     'savings_account_id'					=> $val['savings_account_id'],
                     'branch_id'								=> $val['branch_id'],
@@ -225,7 +225,7 @@ class AcctSavingsProfitSharingController extends Controller
             }
 
             DB::commit();
-            
+
             return redirect('savings-profit-sharing/list-data');
         } catch (\Exception $e) {
             DB::rollback();
@@ -247,7 +247,7 @@ class AcctSavingsProfitSharingController extends Controller
         ->where('periode', $periode)
         ->first();
 
-        if(empty($profit_sharing_log)){	
+        if(empty($profit_sharing_log)){
             DB::beginTransaction();
 
             try{
@@ -298,7 +298,7 @@ class AcctSavingsProfitSharingController extends Controller
                 foreach ($corebranch as $key => $vCB) {
                     $savings_profit_sharing_amount = AcctSavingsProfitSharingTemp::where('branch_id', $vCB['branch_id'])
                     ->sum('savings_profit_sharing_temp_amount');
-                    
+
                     $savings_tax_amount 	= AcctSavingsProfitSharingTemp::where('branch_id', $vCB['branch_id'])
                     ->sum('savings_tax_temp_amount');
 
@@ -335,8 +335,9 @@ class AcctSavingsProfitSharingController extends Controller
                         );
                         AcctSavingsTransferMutationTo::create($data_transfer_to);
                     }
+                }
 
-                    $acctsavings 			= AcctSavings::select('savings_id', 'savings_name')
+                $acctsavings 			= AcctSavings::select('savings_id', 'savings_name')
                     ->where('data_state', 0)
                     ->where('savings_status', 0)
                     ->get();
@@ -350,7 +351,7 @@ class AcctSavingsProfitSharingController extends Controller
                         $totalsavingstax 	        = AcctSavingsProfitSharing::where('savings_id', $val['savings_id'])
                         ->where('branch_id', $vCB['branch_id'])
                         ->sum('savings_tax_amount');
-                
+
                         $transaction_module_code 	= "BS";
                         $transaction_module_id 		= PreferenceTransactionModule::select('transaction_module_id')
                         ->where('transaction_module_code', $transaction_module_code)
@@ -358,7 +359,7 @@ class AcctSavingsProfitSharingController extends Controller
                         ->transaction_module_id;
 
                         $journal_voucher_period 	= $periode;
-                        
+
                         $data_journal 				= array(
                             'branch_id'						=> $vCB['branch_id'],
                             'journal_voucher_period' 		=> $journal_voucher_period,
@@ -425,7 +426,7 @@ class AcctSavingsProfitSharingController extends Controller
                     //     $totalsavingstax 	= AcctSavingsProfitSharingTemp::where('savings_id', $val['savings_id'])
                     //     ->where('branch_id', $vCB['branch_id'])
                     //     ->sum('savings_tax_temp_amount');
-                
+
                     //     $transaction_module_code 	= "PS";
                     //     $transaction_module_id 		= PreferenceTransactionModule::select('transaction_module_id')
                     //     ->where('transaction_module_code', $transaction_module_code)
@@ -433,7 +434,7 @@ class AcctSavingsProfitSharingController extends Controller
                     //     ->transaction_module_id;
 
                     //     $journal_voucher_period 	= $periode;
-                        
+
                     //     $data_journal 				= array(
                     //         'branch_id'						=> $vCB['branch_id'],
                     //         'journal_voucher_period' 		=> $journal_voucher_period,
@@ -492,7 +493,6 @@ class AcctSavingsProfitSharingController extends Controller
                     //     );
                     //     // AcctJournalVoucherItem::create($data_credit);
                     // }
-                }
                 DB::commit();
 
                 $message = array(
@@ -515,5 +515,5 @@ class AcctSavingsProfitSharingController extends Controller
             return redirect('savings-profit-sharing')->with($message);
         }
     }
-    
+
 }

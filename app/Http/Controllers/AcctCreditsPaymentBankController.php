@@ -109,6 +109,9 @@ class AcctCreditsPaymentBankController extends Controller
 
         $acctcreditsaccount     = array();
         $acctcreditspayment     = array();
+        $creditspaymentlast     = 0;
+
+
         if(isset($sessiondata['credits_account_id'])){
             $acctcreditsaccount = AcctCreditsAccount::with('member','credit')
             ->find($sessiondata['credits_account_id']);
@@ -116,6 +119,11 @@ class AcctCreditsPaymentBankController extends Controller
             $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
             ->where('credits_account_id', $sessiondata['credits_account_id'])
             ->get();
+
+            $creditspaymentlast = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+            ->where('credits_account_id', $sessiondata['credits_account_id'])
+            ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
+            ->first();
 
             $credits_payment_date   = date('Y-m-d');
             $date1                  = date_create($credits_payment_date);
@@ -127,7 +135,7 @@ class AcctCreditsPaymentBankController extends Controller
             } else {
                 $credits_payment_day_of_delay 	= 0;
             }
-            
+
             if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                 $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
             }else{
@@ -148,7 +156,7 @@ class AcctCreditsPaymentBankController extends Controller
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
                 $angsuranpokok		= 0;
-                $angsuranbunga		= $angsuran_bunga_menurunharian;
+                $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
             }
         }else{
             $credits_payment_day_of_delay       = 0;
@@ -192,7 +200,7 @@ class AcctCreditsPaymentBankController extends Controller
             'credits_account_id'    => ['required'],
             'bank_account_id'       => ['required'],
         ]);
-        
+
         $credits_account_payment_date = date('Y-m-d');
         if($request->credits_payment_to < $request->credits_account_period){
             if($request->credits_payment_period == 1){
@@ -220,7 +228,7 @@ class AcctCreditsPaymentBankController extends Controller
 				'credits_principal_opening_balance'			=> $request->sisa_pokok,
 				'credits_principal_last_balance'			=> $request->sisa_pokok - $request->angsuran_pokok,
 				'credits_interest_opening_balance'			=> $request->sisa_bunga,
-				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,				
+				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->credits_payment_fine,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
 				'credits_payment_to'						=> $request->credits_payment_to,
@@ -250,7 +258,7 @@ class AcctCreditsPaymentBankController extends Controller
             ->where('transaction_module_code', $transaction_module_code)
             ->first()
             ->transaction_module_id;
-            
+
 			$account_bank_id 					= AcctbankAccount::select('account_id')
             ->where('bank_account_id', $data['bank_account_id'])
             ->first()
@@ -445,7 +453,7 @@ class AcctCreditsPaymentBankController extends Controller
                 'alert' => 'error'
             );
         }
-        
+
         return redirect('credits-payment-bank')->with($message);
     }
 
@@ -547,7 +555,7 @@ class AcctCreditsPaymentBankController extends Controller
              <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_payment_amount'], 2)."</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         $export .= "
@@ -560,8 +568,8 @@ class AcctCreditsPaymentBankController extends Controller
             <tr>
                 <td width=\"30%\"><div style=\"text-align: center;\">Penyetor</div></td>
                 <td width=\"10%\"><div style=\"text-align: center;\"></div></td>
-                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>               
-            </tr>				
+                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>
+            </tr>
         </table>";
 
         //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
