@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\AcctCreditsAccountReschedule\AcctCreditsAccountRescheduleDataTable;
-use App\DataTables\AcctCreditsPaymentSuspend\AcctCreditsAccountDataTable;
+use App\DataTables\AcctCreditsAccountReschedule\AcctCreditsAccountDataTable;
 use App\DataTables\AcctCreditsPaymentSuspend\AcctCreditsPaymentSuspendDataTable;
 use App\Helpers\Configuration;
 use App\Helpers\CreditHelper;
@@ -77,22 +77,44 @@ class AcctCreditsAccountRescheduleController extends Controller
         $sessiondata[$request->name] = $request->value;
         session()->put('data_creditsaccountreschedulladd', $sessiondata);
     }
+
+    public function modalAcctCreditsAccount(AcctCreditsAccountDataTable $dataTable)
+    {
+        return $dataTable->render('content.AcctCreditsAccountReschedule.Add.AcctCreditsAccountModal.index');
+    }
+
+    public function selectAcctCreditsAccount($credits_account_id)
+    {
+        session()->forget('data_creditsaccountreschedulladd');
+        $sessiondata = session()->get('data_creditsaccountreschedulladd');
+        if(!$sessiondata || $sessiondata == ""){
+            $sessiondata['credits_payment_fine']        = 0;
+            $sessiondata['others_income']               = 0;
+            $sessiondata['member_mandatory_savings']    = 0;
+            $sessiondata['angsuran_total']              = 0;
+        }
+        $sessiondata['credits_account_id'] = $credits_account_id;
+        session()->put('data_creditsaccountreschedulladd', $sessiondata);
+
+        return redirect('credits-account-reschedule/add');
+    }
+
     public function add()
     {
         $sessiondata            = session()->get('data_creditsaccountreschedulladd');
         $period=Configuration::CreditsPaymentPeriod();
         $acctcreditsaccount     = array();
         // $acctcreditspayment     = array();
-        // $credits_account_interest_last_balance = 0;
-        // if(isset($sessiondata['credits_account_id'])){
-        //     $acctcreditsaccount = AcctCreditsAccount::with('member','credit')->find($sessiondata['credits_account_id']);
+        $credits_account_interest_last_balance = 0;
+        if(isset($sessiondata['credits_account_id'])){
+            $acctcreditsaccount = AcctCreditsAccount::with('member','credit')->find($sessiondata['credits_account_id']);
 
-        //     $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
-        //     ->where('credits_account_id', $sessiondata['credits_account_id'])
-        //     ->get();
+            // $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+            // ->where('credits_account_id', $sessiondata['credits_account_id'])
+            // ->get();
 
-        //     $credits_account_interest_last_balance = ($acctcreditsaccount['credits_account_interest_amount'] * $acctcreditsaccount['credits_account_period']) - ($acctcreditsaccount['credits_account_payment_to'] * $acctcreditsaccount['credits_account_interest_amount']);
-        // }
+            $credits_account_interest_last_balance = ($acctcreditsaccount['credits_account_interest_amount'] * $acctcreditsaccount['credits_account_period']) - ($acctcreditsaccount['credits_account_payment_to'] * $acctcreditsaccount['credits_account_interest_amount']);
+        }
 
         // dd($credits_account_interest_last_balance);
         return view('content.AcctCreditsAccountReschedule.Add.index', compact('sessiondata', 'period', 'acctcreditsaccount'));
