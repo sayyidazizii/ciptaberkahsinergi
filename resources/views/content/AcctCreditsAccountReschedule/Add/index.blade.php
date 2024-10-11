@@ -59,7 +59,7 @@ $(document).ready(function(){
     $('#open_modal_button').click(function(){
         $.ajax({
             type: "GET",
-            url : "{{route('cps.modal-credits-account')}}",
+            url : "{{route('credits-account-reschedule.modal-credits-account')}}",
             success: function(msg){
                 $('#kt_modal_credits_account').modal('show');
                 $('#modal-body').html(msg);
@@ -224,13 +224,13 @@ function function_elements_add(name, value){
                         <div class="row mb-4">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Jangka Waktu Baru') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_period" class="form-control form-control-lg form-control-solid" placeholder="Jangka Waktu" value="{{ old('credits_account_period', $acctcreditsaccount['credits_account_period'] ?? '') }}" autocomplete="off" readonly/>
+                                <input type="text" name="credits_account_period" class="form-control form-control-lg form-control-solid" placeholder="Jangka Waktu" value="{{ old('credits_account_period', $acctcreditsaccount['credits_account_period'] ?? '') }}" autocomplete="off" />
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tanggal Angsuran Baru') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_payment_date_old" id="credits_payment_date_old" class="form-control form-control-lg form-control-solid" placeholder="Tanggal" value="{{ old('credits_payment_date_old', $acctcreditsaccount->credits_account_payment_date??'') }}" autocomplete="off" readonly/>
+                                <input type="text" name="credits_payment_date_new" id="credits_payment_date_new" class="form-control form-control-lg form-control-solid" placeholder="Tanggal" value="{{ old('credits_payment_date_new', $acctcreditsaccount->credits_account_payment_date??'') }}" autocomplete="off" readonly/>
                             </div>
                         </div>
                     </div>
