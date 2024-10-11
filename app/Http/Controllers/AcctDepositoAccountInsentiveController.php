@@ -95,7 +95,7 @@ class AcctDepositoAccountInsentiveController extends Controller
     
         $acctdepositoaccount = AcctDepositoAccount::with('member', 'deposito')
             ->join('core_office', 'acct_deposito_account.office_id', 'core_office.office_id')
-            ->where('acct_deposito_account.validation', 1)
+            // ->where('acct_deposito_account.validation', 1)
             ->where('acct_deposito_account.deposito_account_date', '>=', $startDate)
             ->where('acct_deposito_account.deposito_account_date', '<=', $endDate);
     
