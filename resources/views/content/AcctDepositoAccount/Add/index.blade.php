@@ -278,7 +278,7 @@ function changeOffice(){
         function_elements_add('deposito_account_incentive_view', incentive);
 
         // Hitung nominal
-        var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
+        var deposito_account_incentive_amount = deposito_amount * incentive_decimal / 12;
 
         $('#deposito_account_incentive_amount').val(deposito_account_incentive_amount);
         function_elements_add('deposito_account_incentive_amount', deposito_account_incentive_amount);
