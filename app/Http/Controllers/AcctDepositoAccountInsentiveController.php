@@ -95,9 +95,9 @@ class AcctDepositoAccountInsentiveController extends Controller
     
         $acctdepositoaccount = AcctDepositoAccount::with('member', 'deposito')
             ->join('core_office', 'acct_deposito_account.office_id', 'core_office.office_id')
-            // ->where('acct_deposito_account.validation', 1)
-            ->where('acct_deposito_account.deposito_account_date', '>=', $startDate)
-            ->where('acct_deposito_account.deposito_account_date', '<=', $endDate);
+            ->join('acct_deposito_profit_sharing', 'acct_deposito_profit_sharing.deposito_account_id', 'acct_deposito_account.deposito_account_id')
+            ->where('acct_deposito_account.validation', 1)
+            ->whereBetween('acct_deposito_profit_sharing.deposito_profit_sharing_date', [$startDate, $endDate]);
     
         if (!empty($branch_id)) {
             $acctdepositoaccount->where('acct_deposito_account.branch_id', $branch_id);
@@ -108,15 +108,15 @@ class AcctDepositoAccountInsentiveController extends Controller
         }
     
         $acctdepositoaccount = $acctdepositoaccount->orderBy('acct_deposito_account.deposito_account_no', 'ASC')->get();
-    
+        // dd($acctdepositoaccount);
         // Group payments by office name
         $groupedDepositoAccounts = $acctdepositoaccount->groupBy(function ($item, $key) {
             return $item->office_name ?? 'Tanpa Nama Kantor';
         });
-  
+    
         // dd($groupedDepositoAccounts);
     
-        $pdf = new TCPDF(['L', PDF_UNIT, 'F4', true, 'UTF-8', false]);
+        $pdf = new TCPDF('L', PDF_UNIT, 'F4', true, 'UTF-8', false);
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
         $pdf::SetMargins(6, 6, 6, 6);
@@ -129,79 +129,104 @@ class AcctDepositoAccountInsentiveController extends Controller
             $pdf::setLanguageArray($l);
         }
     
-        $header = "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
-                        <tr>
-                            <td>
-                                <div style=\"text-align: center; font-size:14px\">INSENTIF DEPOSITO TGL : &nbsp; " . date('d-m-Y', strtotime($sesi['start_date'])) . " - " . date('d-m-Y', strtotime($sesi['end_date'])) . "</div>
-                            </td>
-                        </tr>
-                    </table>";
+        // Header
+        $header = "
+            <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
+                <tr>
+                    <td>
+                        <div style=\"text-align: center; font-size:14px\">
+                            INSENTIF DEPOSITO TGL : " . date('d-m-Y', strtotime($sesi['start_date'])) . " - " . date('d-m-Y', strtotime($sesi['end_date'])) . "
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        ";
         $pdf::writeHTML($header, true, false, false, false, '');
     
-        $pdf::SetFont('helvetica', '', 8);
-        $export = "<br><table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
-                        <tr>
-                            <td width=\"5%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: left;font-size:10;\">NO.</div></td>
-                            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NO. DEPOSITO</div></td>
-                            <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NAMA</div></td>
-                            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">JENIS</div></td>
-                            <td width=\"15%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">NOMINAL DEPOSITO</div></td>
-                            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">% KOMISI</div></td>
-                            <td width=\"13%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: right;font-size:10;\">KOMISI</div></td>
-                        </tr>
-                    </table>";
+        // Table Header
+        $export = "
+            <br>
+            <table cellspacing=\"0\" cellpadding=\"1\" border=\"1\" width=\"100%\">
+                <thead>
+                    <tr>
+                        <th width=\"5%\" style=\"background-color:#f2f2f2; text-align: left; font-size:10px;\">NO.</th>
+                        <th width=\"13%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">NO. DEPOSITO</th>
+                        <th width=\"15%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">NAMA</th>
+                        <th width=\"15%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">JENIS</th>
+                        <th width=\"15%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">NOMINAL DEPOSITO</th>
+                        <th width=\"13%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">% KOMISI</th>
+                        <th width=\"15%\" style=\"background-color:#f2f2f2; text-align: center; font-size:10px;\">KOMISI</th>
+                    </tr>
+                </thead>
+                <tbody>
+        ";
     
         $no = 1;
-        $total = 0;
     
         foreach ($groupedDepositoAccounts as $officeName => $profitsharing) {
-            $export .= "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
-                            <tr>
-                                <td colspan=\"6\" style=\"font-weight: bold; font-size: 10; text-align: left;\">$officeName</td>
-                            </tr>";
+            $export .= "
+                <tr>
+                    <td colspan=\"7\" style=\"font-weight: bold; font-size: 10px; text-align: left; background-color:#d9d9d9;\">$officeName</td>
+                </tr>
+            ";
+    
+            // Inisialisasi total per kantor
+            $total = 0;
     
             foreach ($profitsharing as $val) {
-                $export .= "<tr>
-                                <td width=\"5%\"><div style=\"text-align: left;\">".$no."</div></td>
-                                <td width=\"13%\"><div style=\"text-align: left;\">".$val->deposito_account_no."</div></td>
-                                <td width=\"15%\"><div style=\"text-align: left;\">".$val->member->member_name."</div></td>
-                                <td width=\"15%\"><div style=\"text-align: left;\">".$val->deposito->deposito_name."</div></td>
-                                <td width=\"15%\"><div style=\"text-align: right;\">".number_format($val->deposito_account_amount)."</div></td>
-                                <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['deposito_account_incentive'])."</div></td>
-                                <td width=\"13%\"><div style=\"text-align: right;\">".number_format($val['deposito_account_incentive_amount'], 2)."</div></td>
-                            </tr>
-                            <tr>
-                              <td colspan=\"3\" style=\"border-top: 1px solid black;\"><div style=\"font-size:10;text-align:left;font-style:italic\"></div></td>
-                              <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;font-weight:bold;text-align:center\">Jumlah </div></td>
-                              <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\"></div></td>
-                              <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\"></div></td>
-                              <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\"></div></td>
-                              <td style=\"border-top: 1px solid black\"><div style=\"font-size:10;text-align:right\">".number_format($total, 2)."</div></td>
-                            </tr>
-                          </table>
-                            ";
+                $export .= "
+                    <tr>
+                        <td width=\"5%\">$no</td>
+                        <td width=\"13%\">" . htmlspecialchars($val->deposito_account_no) . "</td>
+                        <td width=\"15%\">" . htmlspecialchars($val->member->member_name) . "</td>
+                        <td width=\"15%\">" . htmlspecialchars($val->deposito->deposito_name) . "</td>
+                        <td width=\"15%\" style=\"text-align: right;\">" . number_format($val->deposito_account_amount, 2) . "</td>
+                        <td width=\"13%\" style=\"text-align: right;\">" . number_format($val->deposito_account_incentive, 2) . "</td>
+                        <td width=\"15%\" style=\"text-align: right;\">" . number_format($val->deposito_account_incentive_amount, 2) . "</td>
+                    </tr>
+                ";
     
-                $total += $val['deposito_account_incentive_amount'];
+                // Tambahkan ke total per kantor
+                $total += $val->deposito_account_incentive_amount;
                 $no++;
             }
+    
+            // Baris Jumlah per kantor
+            $export .= "
+                <tr>
+                    <td colspan=\"5\" style=\"text-align: right; font-weight: bold;\">Jumlah</td>
+                    <td></td>
+                    <td style=\"text-align: right; font-weight: bold;\">" . number_format($total, 2) . "</td>
+                </tr>
+            ";
         }
+    
+        $export .= "</tbody></table>";
+    
+        $pdf::SetFont('helvetica', '', 8);
         $pdf::writeHTML($export, true, false, false, false, '');
     
+        // Footer
         $bottom = "
-                  <table>
-                    <tr>
-                        <td colspan=\"3\"><div style=\"font-size:10;text-align:left;font-style:italic\">Printed : ".date('d-m-Y H:i:s')." ".Auth::user()->username."</div></td>
-                        <td><div style=\"font-size:10;font-weight:bold;text-align:center\"></div></td>
-                        <td><div style=\"font-size:10;text-align:right\"></div></td>
-                        <td><div style=\"font-size:10;text-align:right\"></div></td>
-                    </tr>
-                </table>";
+            <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+                <tr>
+                    <td colspan=\"3\">
+                        <div style=\"font-size:10px; text-align:left; font-style:italic\">
+                            Printed : " . date('d-m-Y H:i:s') . " " . htmlspecialchars(Auth::user()->username) . "
+                        </div>
+                    </td>
+                    <td colspan=\"4\">
+                        <div style=\"font-size:10px; text-align:right;\"></div>
+                    </td>
+                </tr>
+            </table>
+        ";
     
-  
         $pdf::writeHTML($bottom, true, false, false, false, '');
-        $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_'.date('dmYHisu').'.pdf';
+        $filename = 'Laporan_Mutasi_Angsuran_Pembiayaan_' . date('dmYHis') . '.pdf';
         $pdf::Output($filename, 'I');
-      }
+    }
+    
   
       protected function exportDepositoProfitSharing($sesi) {
         $spreadsheet        = new Spreadsheet();
