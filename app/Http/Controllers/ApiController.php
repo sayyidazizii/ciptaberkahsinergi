@@ -848,7 +848,7 @@ class ApiController extends Controller
         // $preferencecompany = CoreBranch::findOrFail($company_id['branch_id']);
         $company_id->printer_address = $fields['printer_address'];
 
-        if($preferencecompany->save()){
+        if($company_id->save()){
             return response([
                 'message' => 'Ganti Alamat Printer Berhasil'
             ],201);
