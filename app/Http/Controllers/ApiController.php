@@ -817,8 +817,8 @@ class ApiController extends Controller
         ]);
 
         // Check username
-        $preferencecompany = User::select('core_branch.printer_address')
-        ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
+        $preferencecompany = User::select('user_id','printer_address')
+        // ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
         ->where('system_user.user_id', $fields['user_id'])
         ->first();
 
@@ -840,13 +840,13 @@ class ApiController extends Controller
         ]);
 
         // Check username
-        $company_id = User::select('core_branch.branch_id')
-        ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
+        $company_id = User::select('user_id','printer_address')
+        // ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
         ->where('system_user.user_id', $fields['user_id'])
         ->first();
 
-        $preferencecompany = CoreBranch::findOrFail($company_id['branch_id']);
-        $preferencecompany->printer_address = $fields['printer_address'];
+        // $preferencecompany = CoreBranch::findOrFail($company_id['branch_id']);
+        $company_id->printer_address = $fields['printer_address'];
 
         if($preferencecompany->save()){
             return response([
