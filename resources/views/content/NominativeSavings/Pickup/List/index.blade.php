@@ -1,9 +1,7 @@
 <x-base-layout>
     <script>
-        var message    = <?php echo json_encode(empty(session('message')) ? '' : session('message')) ?>;
-
-        if (message.alert == 'success') {
-            window.open("{{ url('member-savings-transfer-mutation/print-validation') }}"+"/"+message.data,'_blank');
+        function confirmProsesSemua() {
+            return confirm('Apakah Anda yakin ingin memproses semua?');
         }
     </script>
     <div class="card">
@@ -75,6 +73,13 @@
         </div>
         <div class="card-body pt-6">
             @include('content.NominativeSavings.Pickup.List._table')
+        </div>
+        <div class="card-footer pt-6 d-flex justify-content-end">
+            {{-- <a type="button" href="" class="btn btn-sm btn-success btn-active-light-success" onclick="return confirmProsesSemua()">
+                Proses semua 
+            </a> --}}
+
+            {{-- {{ $querydata }} --}}
         </div>
     </div>
 </x-base-layout>

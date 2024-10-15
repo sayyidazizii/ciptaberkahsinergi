@@ -28,7 +28,8 @@ class NominativeSavingsPickupDataTable extends DataTable
 
     public function query()
     {
-        $sessiondata = session()->get('filter_creditspaymentcash');
+        $sessiondata = session()->get('pickup-data');
+        // dd($sessiondata);
         if(!$sessiondata){
             $sessiondata = array(
                 'start_date'    => date('Y-m-d'),
@@ -38,8 +39,11 @@ class NominativeSavingsPickupDataTable extends DataTable
                 'office_id'     => null,
             );
         }
-        if(!$sessiondata['branch_id'] || !$sessiondata['branch_id']==0){
+        if(!$sessiondata['branch_id'] || !$sessiondata['branch_id']== 0){
             $sessiondata['branch_id'] = auth()->user()->branch_id;
+        }
+        if(!$sessiondata['office_id'] || !$sessiondata['office_id']== 0){
+            $sessiondata['office_id'] = auth()->user()->office_id;
         }
 
 //------Angsuran
@@ -62,9 +66,11 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->where('acct_credits_payment.credits_branch_status', 0)
         // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('acct_credits_payment.credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-        ->where('acct_credits_payment.branch_id',auth()->user()->branch_id)
-        ->where('acct_credits_account.office_id', $sessiondata['office_id'])
-        ->where('acct_credits_payment.pickup_state', 0);
+        ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
+        if(isset($sessiondata['office_id'])){
+            $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
+        }
+        $querydata1->where('acct_credits_payment.pickup_state', 0);
         ;
 
 
@@ -89,9 +95,11 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->where('acct_savings_cash_mutation.mutation_id', 1)
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-        ->where('core_member.branch_id', auth()->user()->branch_id)
-        ->where('acct_savings_account.office_id', $sessiondata['office_id'])
-        ->where('acct_savings_cash_mutation.pickup_state', 0);
+        ->where('core_member.branch_id', auth()->user()->branch_id);
+        if(isset($sessiondata['office_id'])){
+            $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+        }
+        $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
 
 
 //------Tarik Tunai Simpanan Biasa
@@ -114,9 +122,11 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->where('acct_savings_cash_mutation.mutation_id', 2)
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-        ->where('core_member.branch_id', auth()->user()->branch_id)
-        ->where('acct_savings_account.office_id', $sessiondata['office_id'])
-        ->where('acct_savings_cash_mutation.pickup_state', 0);
+        ->where('core_member.branch_id', auth()->user()->branch_id);
+        if(isset($sessiondata['office_id'])){
+            $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+        }
+        $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
 
 
 //------Setor Tunai Simpanan Wajib
@@ -136,8 +146,6 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id)
         ->where('core_member.pickup_state', 0);
-
-
 
 
 //------Combine the queries using UNION
@@ -197,6 +205,6 @@ class NominativeSavingsPickupDataTable extends DataTable
 
     protected function filename()
     {
-        return 'Mutation_' . date('YmdHis');
+        return 'pickup_' . date('YmdHis');
     }
 }
