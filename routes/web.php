@@ -13,6 +13,7 @@ use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\PPOBPriceController;
 use App\Http\Controllers\PPOBTopUpController;
 use App\Http\Controllers\TaxReportController;
+use App\Http\Controllers\BackupDataController;
 use App\Http\Controllers\CoreBranchController;
 use App\Http\Controllers\CoreMemberController;
 use App\Http\Controllers\CoreOfficeController;
@@ -103,9 +104,9 @@ use App\Http\Controllers\SavingsDailyTransferMutationController;
 use App\Http\Controllers\MemberSavingsTransferMutationController;
 use App\Http\Controllers\AcctCreditsAccountPaidOffReportController;
 use App\Http\Controllers\AcctDepositoAccountClosedReportController;
+
+
 use App\Http\Controllers\SavingsDailyCashDepositMutationController;
-
-
 use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
@@ -1075,6 +1076,12 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/balancesheet', [MigrationController::class, 'balancesheet'])->name('balancesheet');
         Route::post('add-excel-balancesheet', [MigrationController::class, 'addExcelBalanceSheet'])->name('addExcelBalanceSheet');
         Route::post('save-excel-balancesheet', [MigrationController::class, 'saveExcelBalanceSheet'])->name('saveExcelBalanceSheet');
+    });
+
+    // backup pages
+    Route::prefix('backup')->name('backup.')->group(function () {
+        Route::get('/', [BackupDataController::class, 'index'])->name('index');
+        Route::post('save', [BackupDataController::class, 'store'])->name('save');
     });
 
 });
