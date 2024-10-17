@@ -967,6 +967,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('/filter/reset', [AcctNominativeSavingsPickupController::class, 'filterReset'])->name('filter-reset');
         Route::get('/add/{type}/{id}', [AcctNominativeSavingsPickupController::class, 'add'])->name('add');
         Route::post('/process-add', [AcctNominativeSavingsPickupController::class, 'processAdd'])->name('process-add');
+        Route::post('/process-all', [AcctNominativeSavingsPickupController::class, 'processAll'])->name('process-all');
     });
     Route::prefix('nominative-savings-pickup-report')->name('nomv-sv-pickup-r.')->group(function () {
         Route::get('/', [AcctNominativeSavingsReportPickupController::class, 'index'])->name('index');
