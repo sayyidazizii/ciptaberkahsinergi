@@ -41,6 +41,7 @@ class AcctCreditsAccountDataTable extends DataTable
     {
         return $model->newQuery()->with('member')->where('acct_credits_account.credits_account_status', 0)
         ->where('acct_credits_account.credits_approve_status', 1)
+        ->where('acct_credits_account.credits_account_last_balance','>' ,0)
         ->where('acct_credits_account.branch_id', auth()->user()->branch_id);
     }
     /**
