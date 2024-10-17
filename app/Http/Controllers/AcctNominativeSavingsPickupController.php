@@ -16,6 +16,8 @@ use App\Models\AcctCreditsAccount;
 use App\Models\AcctCreditsPayment;
 use App\Models\AcctJournalVoucher;
 use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\AcctJournalVoucherItem;
 use App\Models\AcctSavingsCashMutation;
 use App\Models\AcctSavingsMemberDetail;
@@ -41,116 +43,7 @@ class AcctNominativeSavingsPickupController extends Controller
             $coreoffice = CoreOffice::where('branch_id', $branch_id)
             ->where('data_state', 0)->get();
         }
-
-        //------Angsuran
-        $querydata1 = AcctCreditsPayment::selectRaw(
-            '1 As type,
-            credits_payment_id As id,
-            acct_credits_payment.created_at As tanggal,
-            username As operator,
-            member_name As anggota,
-            credits_account_serial As no_transaksi,
-            credits_payment_amount As jumlah,
-            CONCAT("Angsuran ",credits_name) As keterangan,
-            acct_credits_payment.pickup_state AS pickup_state')
-    
-            ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')			
-            ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
-            ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
-            ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
-            ->where('acct_credits_payment.credits_payment_type', 0)
-            ->where('acct_credits_payment.credits_branch_status', 0)
-            // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-            // ->where('acct_credits_payment.credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-            ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
-            if(isset($sessiondata['office_id'])){
-                $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
-            }
-            $querydata1->where('acct_credits_payment.pickup_state', 0);
-            ;
-    
-    
-    //------Setor Tunai Simpanan Biasa
-            $querydata2 = AcctSavingsCashMutation::selectRaw(
-                '2 As type,
-                savings_cash_mutation_id As id,
-                acct_savings_cash_mutation.created_at As tanggal,
-                username As operator,
-                member_name As anggota,
-                savings_account_no As no_transaksi,
-                savings_cash_mutation_amount As jumlah,
-                CONCAT("Setoran Tunai ",savings_name) As keterangan,
-                acct_savings_cash_mutation.pickup_state AS pickup_state')
-    
-            ->withoutGlobalScopes()
-            ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
-            ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
-            ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
-            ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-            ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
-            ->where('acct_savings_cash_mutation.mutation_id', 1)
-            // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-            // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-            ->where('core_member.branch_id', auth()->user()->branch_id);
-            if(isset($sessiondata['office_id'])){
-                $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
-            }
-            $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
-    
-    
-    //------Tarik Tunai Simpanan Biasa
-            $querydata3 = AcctSavingsCashMutation::selectRaw(
-                '3 As type,
-                savings_cash_mutation_id As id,
-                acct_savings_cash_mutation.created_at As tanggal,
-                username As operator,
-                member_name As anggota,
-                savings_account_no As no_transaksi,
-                savings_cash_mutation_amount As jumlah,
-                CONCAT("Tarik Tunai ",savings_name) As keterangan,
-                acct_savings_cash_mutation.pickup_state AS pickup_state')
-            ->withoutGlobalScopes()
-            ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
-            ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
-            ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
-            ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-            ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
-            ->where('acct_savings_cash_mutation.mutation_id', 2)
-            // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-            // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-            ->where('core_member.branch_id', auth()->user()->branch_id);
-            if(isset($sessiondata['office_id'])){
-                $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
-            }
-            $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
-    
-    
-    //------Setor Tunai Simpanan Wajib
-            $querydata4 = CoreMember::selectRaw(
-                '4 As type,
-                member_id As id,
-                core_member.updated_at As tanggal,
-                username As operator,
-                member_name As anggota,
-                member_no As no_transaksi,
-                member_mandatory_savings As jumlah,
-                CONCAT("Setor Tunai Simpanan Wajib ") As keterangan,
-                core_member.pickup_state AS pickup_state')
-            ->withoutGlobalScopes()
-            ->join('system_user','system_user.user_id', '=', 'core_member.created_id')
-            // ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-            // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-            ->where('core_member.branch_id', auth()->user()->branch_id)
-            ->where('core_member.pickup_state', 0);
-    
-    
-    //------Combine the queries using UNION
-            $querydata = $querydata1->union($querydata2)->union($querydata3)->union($querydata4);
-            // Add ORDER BY clause to sort by the "keterangan" column
-            $querydata = $querydata->orderBy('tanggal','DESC')->get();
-            // dd($querydata);
-
-       return $datatable->render('content.NominativeSavings.Pickup.List.index',['sessiondata'=>$sessiondata,'corebranch'=>$corebranch,'coreoffice'=>$coreoffice,'querydata'=>$querydata]);
+       return $datatable->render('content.NominativeSavings.Pickup.List.index',['sessiondata'=>$sessiondata,'corebranch'=>$corebranch,'coreoffice'=>$coreoffice]);
     }
 
     public function filter(Request $request) {
@@ -261,9 +154,8 @@ class AcctNominativeSavingsPickupController extends Controller
     }
 
 
-    public function processAdd(Request $request) {
-
-        // dd($request->all());
+    public function processAdd(Request $request) 
+    {
         $preferencecompany = PreferenceCompany::first();
 
 //------Angsuran
@@ -286,6 +178,11 @@ class AcctNominativeSavingsPickupController extends Controller
             $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
             ->where('credits_account_id', $request->id)
             ->get();
+
+            $creditspaymentlast = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+                ->where('credits_account_id', $sessiondata['credits_account_id'])
+                ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
+                ->first();
 
             $credits_payment_date   = date('Y-m-d');
             $date1                  = date_create($credits_payment_date);
@@ -318,7 +215,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
                 $angsuranpokok		= 0;
-                $angsuranbunga		= $angsuran_bunga_menurunharian;
+                $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
             }
         
 
@@ -1010,14 +907,133 @@ class AcctNominativeSavingsPickupController extends Controller
     // process All
     public function processAll()
     {
-
         $preferencecompany = PreferenceCompany::first();
-    
-        DB::beginTransaction();
 
-        try {
     //------Angsuran
-            if($request->type == 1){
+            $querydata1 = AcctCreditsPayment::selectRaw(
+                '1 As type,
+                credits_payment_id As id,
+                credits_payment_date As tanggal,
+                username As operator,
+                member_name As anggota,
+                credits_account_serial As no_transaksi,
+                credits_payment_amount As jumlah,
+                credits_payment_principal As jumlah_2,
+                credits_payment_interest As jumlah_3,
+                credits_others_income As jumlah_4,
+                credits_payment_fine As jumlah_5,
+                CONCAT("Angsuran ",credits_name) As keterangan')
+
+                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')			
+                ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
+                ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
+                ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
+                ->where('acct_credits_payment.credits_payment_type', 0)
+                ->where('acct_credits_payment.credits_branch_status', 0)
+                // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                // ->where('acct_credits_payment.credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
+                }
+            $querydata1->where('acct_credits_payment.pickup_state', 0);
+
+    //------Setor Tunai Simpanan Biasa
+            $querydata2 = AcctSavingsCashMutation::selectRaw(
+                '2 As type,
+                savings_cash_mutation_id As id,
+                savings_cash_mutation_date As tanggal,
+                username As operator,
+                member_name As anggota,
+                savings_account_no As no_transaksi,
+                savings_cash_mutation_amount As jumlah,
+                savings_cash_mutation_amount_adm As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Setoran Tunai ",savings_name) As keterangan')
+
+                ->withoutGlobalScopes()
+                ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
+                ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
+                ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
+                ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
+                ->where('acct_savings_cash_mutation.mutation_id', 1)
+                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+                }
+            $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
+
+    //------Tarik Tunai Simpanan Biasa
+            $querydata3 = AcctSavingsCashMutation::selectRaw(
+                '3 As type,
+                savings_cash_mutation_id As id,
+                savings_cash_mutation_date As tanggal,
+                username As operator,
+                member_name As anggota,
+                savings_account_no As no_transaksi,
+                savings_cash_mutation_amount As jumlah,
+                savings_cash_mutation_amount_adm As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Tarik Tunai ",savings_name) As keterangan')
+                ->withoutGlobalScopes()
+                ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
+                ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
+                ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
+                ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
+                ->where('acct_savings_cash_mutation.mutation_id', 2)
+                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+                }
+            $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
+
+
+    //------Setor Tunai Simpanan Wajib
+            $querydata4 = CoreMember::selectRaw(
+                '4 As type,
+                member_id As id,
+                core_member.updated_at As tanggal,
+                username As operator,
+                member_name As anggota,
+                member_no As no_transaksi,
+                member_mandatory_savings As jumlah,
+                member_mandatory_savings_last_balance As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Setor Tunai Simpanan Wajib ") As keterangan')
+                ->withoutGlobalScopes()
+                ->join('system_user','system_user.user_id', '=', 'core_member.created_id')
+                // ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id)
+            ->where('core_member.pickup_state', 0);
+
+
+    //------Combine the queries using UNION
+            $querydata = $querydata1->union($querydata2)->union($querydata3)->union($querydata4);
+            // Add ORDER BY clause to sort by the "keterangan" column
+            $querydata = $querydata->orderBy('tanggal','DESC')->get();
+
+    // echo json_encode($querydata);
+    // exit;
+
+        DB::beginTransaction();
+        try {
+    //loop data
+        foreach ($querydata as $request) {
+    //------Angsuran
+            if($request['type'] == 1){
     
                 $creditspayment = AcctCreditsPayment::select('*')
                 ->where('credits_payment_id', $request->id)
@@ -1034,6 +1050,11 @@ class AcctNominativeSavingsPickupController extends Controller
                 $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
                 ->where('credits_account_id', $request->id)
                 ->get();
+
+                $creditspaymentlast = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+                ->where('credits_account_id', $request['credits_account_id'])
+                ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
+                ->first();
     
                 $credits_payment_date   = date('Y-m-d');
                 $date1                  = date_create($credits_payment_date);
@@ -1055,19 +1076,19 @@ class AcctNominativeSavingsPickupController extends Controller
                 $credits_payment_fine_amount 		= (($acctcreditsaccount['credits_account_payment_amount'] * $acctcreditsaccount['credit']['credits_fine']) / 100 ) * $credits_payment_day_of_delay;
                 $credits_account_accumulated_fines 	= $acctcreditsaccount['credits_account_accumulated_fines'] + $credits_payment_fine_amount;
     
-                if($acctcreditsaccount['payment_type_id'] == 1){
-                    $angsuranpokok 		= $acctcreditsaccount['credits_account_principal_amount'];
-                    $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
-                } else if($acctcreditsaccount['payment_type_id'] == 2){
-                    $angsuranpokok 		= $anuitas[$angsuranke]['angsuran_pokok'];
-                    $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
-                } else if($acctcreditsaccount['payment_type_id'] == 3){
-                    $angsuranpokok 		= $slidingrate[$angsuranke]['angsuran_pokok'];
-                    $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
-                } else if($acctcreditsaccount['payment_type_id'] == 4){
-                    $angsuranpokok		= 0;
-                    $angsuranbunga		= $angsuran_bunga_menurunharian;
-                }
+                    if($acctcreditsaccount['payment_type_id'] == 1){
+                        $angsuranpokok 		= $acctcreditsaccount['credits_account_principal_amount'];
+                        $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
+                    } else if($acctcreditsaccount['payment_type_id'] == 2){
+                        $angsuranpokok 		= $anuitas[$angsuranke]['angsuran_pokok'];
+                        $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
+                    } else if($acctcreditsaccount['payment_type_id'] == 3){
+                        $angsuranpokok 		= $slidingrate[$angsuranke]['angsuran_pokok'];
+                        $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
+                    } else if($acctcreditsaccount['payment_type_id'] == 4){
+                        $angsuranpokok		= 0;
+                        $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
+                    }
     
                     $creditaccount = AcctCreditsAccount::where('credits_account_id',$creditspayment->credits_account_id)
                     ->first();
@@ -1282,7 +1303,7 @@ class AcctNominativeSavingsPickupController extends Controller
     
     //------Setor Tunai Tabungan
             }else
-            if($request->type == 2){
+            if($request['type'] == 2){
     
                 $savingscashmutation = AcctSavingsCashMutation::select('*')
                 ->where('savings_cash_mutation_id',$request->id)
@@ -1421,7 +1442,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 
     //------Tarik Tunai Tabungan
             }else
-            if($request->type == 3){
+            if($request['type'] == 3){
     
                 $savingscashmutation = AcctSavingsCashMutation::select('*')
                 ->where('savings_cash_mutation_id',$request->id)
@@ -1448,9 +1469,10 @@ class AcctNominativeSavingsPickupController extends Controller
                     // 'savings_cash_mutation_remark' => $request->savings_cash_mutation_remark,
                     'branch_id' => auth()->user()->branch_id,
                     'operated_name' => auth()->user()->username,
-                    'created_id' => auth()->user()->user_id,
+                    'created_id' =>  $savingscashmutation->created_id,
                 ];
                 // AcctSavingsCashMutation::create($data);
+               
     
                 $transaction_module_code = 'TTAB';
                 $transaction_module_id = PreferenceTransactionModule::select('transaction_module_id')
@@ -1465,6 +1487,10 @@ class AcctNominativeSavingsPickupController extends Controller
                     ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
+                
+                    echo '<pre>';
+                    print_r($acctsavingscash_last); // Untuk menampilkan data array di dalam loop
+                    echo '</pre>';
     
                 $data_journal = [
                     'branch_id' => auth()->user()->branch_id,
@@ -1558,7 +1584,7 @@ class AcctNominativeSavingsPickupController extends Controller
                                               'pickup_date'=> Carbon::now()]);
     //------Setor Simpanan Wajib
             }else
-            if($request->type == 4){
+            if($request['type'] == 4){
                 
                 $membersavings = CoreMember::select('*')
                                 ->where('member_id',$request->id)
@@ -1724,17 +1750,21 @@ class AcctNominativeSavingsPickupController extends Controller
     
     
             }
-            DB::commit();
-            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Update Berhasil',
-            'alert' => 'success']);
-            } catch (\Exception $e) {
-            // Jika ada kesalahan, rollback transaksi
-            DB::rollBack();
-            // Lakukan sesuatu dengan error, misalnya log error atau tampilkan pesan
-            throw $e;
-            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Update Gagal',
-            'alert' => 'danger']);
-            }
-            
         }
+
+        DB::commit();
+        return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Proses Pickup Berhasil','alert' => 'success']);
+            } catch (\Exception $e) {
+        // Jika ada kesalahan, rollback transaksi
+        DB::rollBack();
+        // Lakukan sesuatu dengan error, misalnya log error atau tampilkan pesan
+        throw $e;
+        // Log error ke log file
+        Log::error('Proses Pickup Gagal: ' . $e->getMessage(), [
+            'exception' => $e
+        ]);
+             redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Proses Pickup Gagal',
+        'alert' => 'danger']);
+        }
+    }
 }
