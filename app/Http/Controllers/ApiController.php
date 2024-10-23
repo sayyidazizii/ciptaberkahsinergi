@@ -795,6 +795,17 @@ class ApiController extends Controller
 				}
 			}
 
+            //update saldo pinjaman
+            $acctcreditsaccount = AcctCreditsAccount::findOrFail($data['credits_account_id']);
+            $acctcreditsaccount->credits_account_last_balance           = $data['credits_principal_last_balance'];
+            $acctcreditsaccount->credits_account_last_payment_date      = $data['credits_payment_date'];
+            $acctcreditsaccount->credits_account_interest_last_balance  = $data['credits_interest_last_balance'];
+            $acctcreditsaccount->credits_account_payment_date           = $credits_account_payment_date;
+            $acctcreditsaccount->credits_account_payment_to             = $data['credits_payment_to'];
+            $acctcreditsaccount->credits_account_accumulated_fines      = $request->credits_account_accumulated_fines;
+            $acctcreditsaccount->credits_account_status                 = $credits_account_status;
+            $acctcreditsaccount->save();
+
             DB::commit();
             $message = array(
                 'pesan' => 'Angsuran Tunai berhasil ditambah',
