@@ -180,7 +180,7 @@ class AcctNominativeSavingsPickupController extends Controller
             ->get();
 
             $creditspaymentlast = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
-                ->where('credits_account_id', $sessiondata['credits_account_id'])
+                ->where('credits_account_id', $acctcreditsaccount['credits_account_id'])
                 ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
                 ->first();
 
