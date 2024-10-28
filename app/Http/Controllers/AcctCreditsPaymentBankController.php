@@ -237,7 +237,7 @@ class AcctCreditsPaymentBankController extends Controller
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
                 'pickup_state'                              => 1,
-                'pickup_date'                               => Carbon::now(),
+                // 'pickup_date'                               => Carbon::now(),
             );
             AcctCreditsPayment::create($data);
 

@@ -160,6 +160,8 @@ class AcctSavingsBankMutationController extends Controller
                 'branch_id'                             => auth()->user()->branch_id,
                 'operated_name'                         => auth()->user()->username,
                 'created_id'                            => auth()->user()->user_id,
+                'pickup_state'                          => 1,
+                    // 'pickup_date'=> Carbon::now(),
             );
             AcctSavingsBankMutation::create($data);
 

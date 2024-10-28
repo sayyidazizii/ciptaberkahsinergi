@@ -127,7 +127,7 @@ class AcctCreditsPaymentCashController extends Controller
             } else {
                 $credits_payment_day_of_delay 	= 0;
             }
-            
+
             if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                 $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
             }else{
@@ -231,7 +231,7 @@ class AcctCreditsPaymentCashController extends Controller
         $fields = request()->validate([
             'credits_account_id' => ['required'],
         ]);
-        
+
         $credits_account_payment_date = date('Y-m-d');
         if($request->credits_payment_to < $request->credits_account_period){
             if($request->credits_payment_period == 1){
@@ -258,7 +258,7 @@ class AcctCreditsPaymentCashController extends Controller
 				'credits_principal_opening_balance'			=> $request->sisa_pokok,
 				'credits_principal_last_balance'			=> $request->sisa_pokok - $request->angsuran_pokok,
 				'credits_interest_opening_balance'			=> $request->sisa_bunga,
-				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,				
+				'credits_interest_last_balance'				=> $request->sisa_bunga + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->credits_payment_fine,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
 				'credits_payment_to'						=> $request->credits_payment_to,
@@ -266,7 +266,7 @@ class AcctCreditsPaymentCashController extends Controller
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
                 'pickup_state'                              => 1,
-                'pickup_date'                               => Carbon::now(),
+                // 'pickup_date'                               => Carbon::now(),
             );
             AcctCreditsPayment::create($data);
 
@@ -482,7 +482,7 @@ class AcctCreditsPaymentCashController extends Controller
             );
             return redirect('credits-payment-cash')->with($message);
         }
-        
+
     }
 
     public function printNote($credits_payment_id){
@@ -578,7 +578,7 @@ class AcctCreditsPaymentCashController extends Controller
              <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditspayment['credits_payment_amount'], 2)."</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         $export .= "
@@ -591,8 +591,8 @@ class AcctCreditsPaymentCashController extends Controller
             <tr>
                 <td width=\"30%\"><div style=\"text-align: center;\">Penyetor</div></td>
                 <td width=\"10%\"><div style=\"text-align: center;\"></div></td>
-                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>               
-            </tr>				
+                <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>
+            </tr>
         </table>";
 
         //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
