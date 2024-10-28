@@ -62,7 +62,7 @@
 
     $title = '';
     $branch_id          = auth()->user()->branch_id;
-            $title = 'LAPORAN KONSOLIDASI';
+            $title = 'LAPORAN NERACA KONSOLIDASI';
     } 
 
     $grand_total_account_pendapatan = 0;
@@ -141,7 +141,7 @@
                                 <th colspan="2"><b>{{ $title }}</b></th>
                             </tr>
                             <tr align="center">
-                                <th colspan="2"><b>{{ $preferencecompany['company_name']." ".$session['branch_name'] ?? '' }}</b></th>
+                                <th colspan="2"><b>Kantor Pusat</b></th>
                             </tr>
                             <tr align="center">
                                 <th colspan="2"><b>Periode {{ $period }}</b></th>
@@ -687,10 +687,10 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-end py-6 px-9">
-            <a href="{{ route('balance-sheet.preview') }}" class="btn btn-primary me-2">
+            <a href="{{ route('balance-sheet-consolidation.preview') }}" class="btn btn-primary me-2">
                 {{__('Preview')}}
             </a>
-            <a href="{{ route('balance-sheet.export') }}" class="btn btn-primary me-2">
+            <a href="{{ route('balance-sheet-consolidation.export') }}" class="btn btn-primary me-2">
                 {{__('Cetak')}}
             </a>
         </div>

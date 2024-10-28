@@ -110,6 +110,7 @@ use App\Http\Controllers\SavingsDailyCashDepositMutationController;
 use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
+use App\Http\Controllers\AcctProfitLossReportConsolidationController;
 use App\Http\Controllers\SavingsDailyCashWithdrawalMutationController;
 use App\Http\Controllers\DepositoDailyCashWithdrawalMutationController;
 
@@ -414,6 +415,16 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/process-shu', [AcctProfitLossReportController::class, 'processSHU'])->name('process-shu');
         Route::get('/print', [AcctProfitLossReportController::class, 'processPrinting'])->name('print');
         Route::get('/export', [AcctProfitLossReportController::class, 'export'])->name('export');
+    });
+
+    // AcctProfitLossReport Consolidation pages
+    Route::prefix('profit-loss-report-consolidation')->name('profit-loss-report-consolidation.')->group(function () {
+        Route::get('/', [AcctProfitLossReportConsolidationController::class, 'index'])->name('index');
+        Route::post('/filter', [AcctProfitLossReportConsolidationController::class, 'filter'])->name('filter');
+        Route::get('/filter-reset', [AcctProfitLossReportConsolidationController::class, 'filterReset'])->name('filter-reset');
+        // Route::get('/process-shu', [AcctProfitLossReportConsolidationController::class, 'processSHU'])->name('process-shu');
+        Route::get('/print', [AcctProfitLossReportConsolidationController::class, 'processPrinting'])->name('print');
+        Route::get('/export', [AcctProfitLossReportConsolidationController::class, 'export'])->name('export');
     });
 
     // AcctSavings pages

@@ -92,13 +92,13 @@ class BalanceSheetConsolidationController extends Controller
         $data = AcctAccountOpeningBalance::where('account_id', $account_id)
         ->where('month_period', $month)
         ->where('year_period', $year)
-        // ->where('branch_id', $branch_id)
-        ->first();
+        ->whereIn('branch_id', [1, 6])
+        ->sum('opening_balance');
         
         if (empty($data)) {
             return 0;
         } else {
-            return $data->opening_balance;
+            return $data;
         }
 
     }
@@ -106,7 +106,7 @@ class BalanceSheetConsolidationController extends Controller
     public static function getSHUTahunLalu($branch_id, $month, $year)
     {
         $data = AcctProfitLoss::where('year_period', '<', $year)
-        // ->where('branch_id', $branch_id)
+        ->whereIn('branch_id', [1, 6])
         ->first();
 
         if (empty($data)) {
@@ -119,7 +119,7 @@ class BalanceSheetConsolidationController extends Controller
     public static function getSHUTahunBerjalan($account_id, $branch_id, $month, $year)
     {
         $data = AcctAccountMutation::where('account_id', $account_id)
-        // ->where('branch_id', $branch_id)
+        ->whereIn('branch_id', [1, 6])
         ->where('year_period', $year)
         ->where('month_period', $month)
         ->get();
@@ -136,7 +136,7 @@ class BalanceSheetConsolidationController extends Controller
     {
         $data = AcctProfitLoss::where('month_period','<=',$month)
         ->where('year_period', $year)
-        // ->where('branch_id', $branch_id)
+        ->whereIn('branch_id', [1, 6])
         ->first();
 
         return $data->profit_loss_amount;
@@ -272,7 +272,7 @@ class BalanceSheetConsolidationController extends Controller
         $tbl = "
             <table cellspacing=\"0\" cellpadding=\"5\" border=\"0\">
                 <tr>
-                    <td colspan=\"5\"><div style=\"text-align: center; font-size:14px\">LAPORAN NERACA <BR>".$preferencecompany['company_name']." <BR>Periode ".$period." <BR> ".$branchname."</div> </td>
+                    <td colspan=\"5\"><div style=\"text-align: center; font-size:14px\">LAPORAN NERACA KONSOLIDASI <BR>".$preferencecompany['company_name']." <BR>Periode ".$period." <BR> Kantor Pusat </div> </td>
                 </tr>
             </table>
         ";
@@ -835,8 +835,8 @@ class BalanceSheetConsolidationController extends Controller
 
             $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getFont()->setBold(true);	
-            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Neraca ");	
-            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branchname);	
+            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Neraca konsolidasi");	
+            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']);	
             $spreadsheet->getActiveSheet()->setCellValue('B3',"Periode ".$period."");	
             
             $j = 5;
@@ -1233,14 +1233,14 @@ class BalanceSheetConsolidationController extends Controller
         
         if($profit_loss_report_type == 1){
             $account_amount = AcctAccountMutation::where('account_id', $account_id)
-            // ->where('branch_id', $branch_id)
+            ->whereIn('branch_id', [1, 6])
             ->where('month_period', '>=', $month_start)
             ->where('month_period', '<=', $month_end)
             ->where('year_period', $year)
             ->sum('last_balance');
         }else if($profit_loss_report_type == 2){
             $account_amount = AcctAccountMutation::where('account_id', $account_id)
-            // ->where('branch_id', $branch_id)
+            ->whereIn('branch_id', [1, 6])
             ->where('year_period', $year)
             ->sum('last_balance');
         }
