@@ -58,7 +58,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         CONCAT("Angsuran ",credits_name) As keterangan,
         acct_credits_payment.pickup_state AS pickup_state')
 
-        ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')			
+        ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
         ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
         ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
@@ -70,7 +70,8 @@ class NominativeSavingsPickupDataTable extends DataTable
         if(isset($sessiondata['office_id'])){
             $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
         }
-        $querydata1->where('acct_credits_payment.pickup_state', 0);
+        $querydata1->where('acct_credits_payment.pickup_state', 0)
+        ->where('acct_credits_payment.data_state', 0);
         ;
 
 
@@ -99,7 +100,8 @@ class NominativeSavingsPickupDataTable extends DataTable
         if(isset($sessiondata['office_id'])){
             $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
         }
-        $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
+        $querydata2->where('acct_savings_cash_mutation.pickup_state', 0)
+        ->where('acct_savings_cash_mutation.data_state', 0);
 
 
 //------Tarik Tunai Simpanan Biasa
@@ -126,7 +128,8 @@ class NominativeSavingsPickupDataTable extends DataTable
         if(isset($sessiondata['office_id'])){
             $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
         }
-        $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
+        $querydata3->where('acct_savings_cash_mutation.pickup_state', 0)
+        ->where('acct_savings_cash_mutation.data_state', 0);
 
 
 //------Setor Tunai Simpanan Wajib
@@ -145,7 +148,8 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
         // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id)
-        ->where('core_member.pickup_state', 0);
+        ->where('core_member.pickup_state', 0)
+        ->where('core_member.data_state', 0);
 
 
 //------Combine the queries using UNION
