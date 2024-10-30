@@ -19,6 +19,7 @@ class SystemBranchCloseController extends Controller
     {
         $endofdays = SystemEndOfDays::select('*')
         ->orderBy('created_at', 'DESC')
+        ->where('branch_id',auth()->user()->branch_id)
         ->first();
 
         if($endofdays['end_of_days_status'] == 1){
@@ -28,6 +29,7 @@ class SystemBranchCloseController extends Controller
             ->where('acct_journal_voucher.journal_voucher_date', date('Y-m-d',strtotime($endofdays['created_at'])))
             ->where('acct_journal_voucher.data_state', 0)
             ->where('acct_journal_voucher_item.journal_voucher_amount', '!=', 0)
+            ->where('branch_id',auth()->user()->branch_id )
             ->orderBy('acct_journal_voucher.created_at', 'DESC')
             ->orderBy('acct_journal_voucher.journal_voucher_date', 'DESC')
             ->get();
@@ -42,7 +44,8 @@ class SystemBranchCloseController extends Controller
     public function process(Request $request)
     {
         $endofdays                      = SystemEndOfDays::findOrFail($request->end_of_days_id);
-        $endofdays->end_of_days_status  = 0;
+        $endofdays->branch_id           = auth()->user()->branch_id;
+        $endofdays->debit_amount        = $request->debit_amount;
         $endofdays->debit_amount        = $request->debit_amount;
         $endofdays->credit_amount       = $request->credit_amount;
         $endofdays->close_id            = auth()->user()->user_id;
