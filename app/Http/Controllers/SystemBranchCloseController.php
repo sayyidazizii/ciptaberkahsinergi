@@ -43,26 +43,36 @@ class SystemBranchCloseController extends Controller
 
     public function process(Request $request)
     {
-        $endofdays                      = SystemEndOfDays::findOrFail($request->end_of_days_id);
-        $endofdays->branch_id           = auth()->user()->branch_id;
-        $endofdays->debit_amount        = $request->debit_amount;
-        $endofdays->debit_amount        = $request->debit_amount;
-        $endofdays->credit_amount       = $request->credit_amount;
-        $endofdays->close_id            = auth()->user()->user_id;
-        $endofdays->closed_at           = date('Y-m-d H:i:s');
+        try {
+            DB::beginTransaction();
 
-        if($endofdays->save()){
+            $endofdays                      = SystemEndOfDays::findOrFail($request->end_of_days_id);
+            $endofdays->branch_id           = auth()->user()->branch_id;
+            $endofdays->end_of_days_status  = 0;
+            $endofdays->debit_amount        = $request->debit_amount;
+            $endofdays->debit_amount        = $request->debit_amount;
+            $endofdays->credit_amount       = $request->credit_amount;
+            $endofdays->close_id            = auth()->user()->user_id;
+            $endofdays->closed_at           = date('Y-m-d H:i:s');
+            $endofdays->save();
+
             $message = array(
                 'pesan' => 'Cabang Telah Ditutup, Selamat Istirahat...',
                 'alert' => 'success'
             );
-        }else{
+
+            return redirect('branch-close')->with($message);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            report($e);
+
             $message = array(
                 'pesan' => 'Tutup Cabang gagal',
                 'alert' => 'error'
             );
+            return redirect('branch-close')->with($message);
         }
-
-        return redirect('branch-close')->with($message);
     }
 }
