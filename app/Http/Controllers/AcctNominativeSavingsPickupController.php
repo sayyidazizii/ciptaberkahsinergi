@@ -79,7 +79,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 credits_others_income As jumlah_4,
                 credits_payment_fine As jumlah_5,
                 CONCAT("Angsuran ",credits_name) As keterangan')
-                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')			
+                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
                 ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
                 ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
                 ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
@@ -154,7 +154,7 @@ class AcctNominativeSavingsPickupController extends Controller
     }
 
 
-    public function processAdd(Request $request) 
+    public function processAdd(Request $request)
     {
         $preferencecompany = PreferenceCompany::first();
 
@@ -194,7 +194,7 @@ class AcctNominativeSavingsPickupController extends Controller
             } else {
                 $credits_payment_day_of_delay 	= 0;
             }
-            
+
             if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                 $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
             }else{
@@ -217,7 +217,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 $angsuranpokok		= 0;
                 $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
             }
-        
+
 
         $creditaccount = AcctCreditsAccount::where('credits_account_id',$creditspayment->credits_account_id)
         ->first();
@@ -232,7 +232,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 $credits_account_payment_date 		= date('Y-m-d', strtotime("+1 weeks", strtotime($credits_account_payment_date_old)));
             }
         }
-            
+
             $data  = array(
                 'member_id'									=> $creditaccount->member_id,
 				'credits_id'								=> $creditaccount->credits_id,
@@ -245,7 +245,7 @@ class AcctNominativeSavingsPickupController extends Controller
 				'credits_principal_opening_balance'			=> $creditaccount->credits_account_last_balance,
 				'credits_principal_last_balance'			=> $creditaccount->credits_account_last_balance - $request->angsuran_pokok,
 				'credits_interest_opening_balance'			=> $creditaccount->credits_account_interest_last_balance,
-				'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,				
+				'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->jumlah_5,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
 				'credits_payment_to'						=> $angsuranke,
@@ -304,6 +304,7 @@ class AcctNominativeSavingsPickupController extends Controller
 			->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
 			->join('acct_credits','acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
 			->where('acct_credits_payment.created_id', $data['created_id'])
+			->where('acct_credits_payment.credits_account_id', $data['credits_account_id'])
 			->orderBy('acct_credits_payment.credits_payment_id','DESC')
             ->first();
 
@@ -596,7 +597,7 @@ class AcctNominativeSavingsPickupController extends Controller
             AcctSavingsCashMutation::where('savings_cash_mutation_id',$request->id)
                                 ->update(['pickup_state'=> 1,
                                           'pickup_date'=> Carbon::now()]);
-            
+
 //------Tarik Tunai Tabungan
         }else
         if($request->type == 3){
@@ -737,7 +738,7 @@ class AcctNominativeSavingsPickupController extends Controller
 //------Setor Simpanan Wajib
         }else
         if($request->type == 4){
-            
+
             $membersavings = CoreMember::select('*')
                             ->where('member_id',$request->id)
                             ->first();
@@ -763,7 +764,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 'member_mandatory_savings_last_balance'	=> $membersavings->member_mandatory_savings_last_balance,
                 'updated_id'                            => auth()->user()->user_id,
             );
-    
+
             $data_session = array(
                 'member_id'                                 => $data['member_id'],
                 'member_no'                                 => $membersavings->member_no,
@@ -778,7 +779,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 'member_special_savings_last_balance'       => $data['member_special_savings_last_balance'],
                 'member_mandatory_savings_last_balance'     => $data['member_mandatory_savings_last_balance'],
             );
-    
+
             // $total_cash_amount = $data['member_principal_savings'] + $data['member_special_savings'] + $data['member_mandatory_savings'];
             $total_cash_amount = $data['member_mandatory_savings'];
                 CoreMember::where('member_id', $data['member_id'])
@@ -798,11 +799,11 @@ class AcctNominativeSavingsPickupController extends Controller
                     'member_mandatory_savings_last_balance'	=> $data['member_mandatory_savings_last_balance'],
                     'updated_id'                            => $data['updated_id'],
                     'pickup_state'                          => 1,
-    
+
                 ]);
-    
+
                 if($data['member_principal_savings'] <> 0 || $data['member_principal_savings'] <> '' || $data['member_mandatory_savings'] <> 0 || $data['member_mandatory_savings'] <> ''  || $data['member_special_savings'] <> 0 || $data['member_special_savings'] <> ''){
-    
+
                     $data_detail = array (
                         'branch_id'						=> auth()->user()->branch_id,
                         'member_id'						=> $data['member_id'],
@@ -814,10 +815,10 @@ class AcctNominativeSavingsPickupController extends Controller
                         'operated_name'					=> auth()->user()->username,
                         'created_id'                    => auth()->user()->user_id,
                     );
-    
+
                     if(AcctSavingsMemberDetail::create($data_detail)){
                         $transaction_module_code 	= "AGT";
-    
+
                         $transaction_module_id 		= PreferenceTransactionModule::where('transaction_module_code',$transaction_module_code)
                         ->first()
                         ->transaction_module_id;
@@ -825,11 +826,11 @@ class AcctNominativeSavingsPickupController extends Controller
                         $coremember 				= CoreMember::where('data_state', 0)
                         ->where('member_id', $data['member_id'])
                         ->first();
-    
+
                         $journal_voucher_period 	= date("Ym", strtotime($coremember->member_register_date));
-    
+
                         //-------------------------Jurnal Cabang----------------------------------------------------
-    
+
                         $data_journal_cabang = array(
                             'branch_id'						=> auth()->user()->branch_id,
                             'journal_voucher_period' 		=> $journal_voucher_period,
@@ -842,21 +843,21 @@ class AcctNominativeSavingsPickupController extends Controller
                             'transaction_journal_no' 		=> $coremember->member_no,
                             'created_id' 					=> auth()->user()->user_id,
                         );
-    
+
                         AcctJournalVoucher::create($data_journal_cabang);
-    
+
                         $journal_voucher_id 			= AcctJournalVoucher::where('created_id',auth()->user()->user_id)
                         ->orderBy('journal_voucher_id', 'DESC')
                         ->first()
                         ->journal_voucher_id;
-    
+
                         // if($data_detail['mutation_id'] == $preferencecompany->cash_deposit_id){
-    
+
                             $account_id_default_status 	= AcctAccount::where('account_id',$preferencecompany->account_cash_id)
                             ->where('data_state',0)
                             ->first()
                             ->account_default_status;
-    
+
                             $data_debet = array (
                                 'journal_voucher_id'			=> $journal_voucher_id,
                                 'account_id'					=> $preferencecompany->account_cash_id,
@@ -867,17 +868,17 @@ class AcctNominativeSavingsPickupController extends Controller
                                 'account_id_status'				=> 0,
                                 'created_id' 					=> auth()->user()->user_id,
                             );
-    
+
                             AcctJournalVoucherItem::create($data_debet);
-    
+
                                 $account_id = AcctSavings::where('savings_id',$preferencecompany->mandatory_savings_id)
                                 ->first()
                                 ->account_id;
-    
+
                                 $account_id_default_status = AcctAccount::where('account_id',$account_id)
                                 ->first()
                                 ->account_default_status;
-    
+
                                 $data_credit =array(
                                     'journal_voucher_id'			=> $journal_voucher_id,
                                     'account_id'					=> $account_id,
@@ -888,7 +889,7 @@ class AcctNominativeSavingsPickupController extends Controller
                                     'account_id_status'				=> 1,
                                     'created_id' 					=> auth()->user()->user_id,
                                 );
-    
+
                                 AcctJournalVoucherItem::create($data_credit);
                             }
                 }
@@ -924,7 +925,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 credits_payment_fine As jumlah_5,
                 CONCAT("Angsuran ",credits_name) As keterangan')
 
-                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')			
+                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
                 ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
                 ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
                 ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
@@ -1034,19 +1035,19 @@ class AcctNominativeSavingsPickupController extends Controller
         foreach ($querydata as $request) {
     //------Angsuran
             if($request['type'] == 1){
-    
+
                 $creditspayment = AcctCreditsPayment::select('*')
                 ->where('credits_payment_id', $request->id)
                 ->first();
-    
+
                 // bo
                 $bo = User::select('*')
                 ->where('user_id', $creditspayment->created_id)
                 ->first();
-    
+
                 // Cek id pinjaman
                 $acctcreditsaccount = AcctCreditsAccount::with('credit','member')->find($creditspayment->credits_account_id);
-    
+
                 $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
                 ->where('credits_account_id', $request->id)
                 ->get();
@@ -1055,27 +1056,27 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->where('credits_account_id', $request['credits_account_id'])
                 ->orderBy('credits_payment_date', 'desc') // Urutkan dari yang terbaru
                 ->first();
-    
+
                 $credits_payment_date   = date('Y-m-d');
                 $date1                  = date_create($credits_payment_date);
                 $date2                  = date_create($acctcreditsaccount['credits_account_payment_date']);
-    
+
                 if($date1 > $date2){
                     $interval                       = $date1->diff($date2);
                     $credits_payment_day_of_delay   = $interval->days;
                 } else {
                     $credits_payment_day_of_delay 	= 0;
                 }
-                
+
                 if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                     $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
                 }else{
                     $angsuranke = $acctcreditsaccount['credits_account_payment_to'] + 1;
                 }
-    
+
                 $credits_payment_fine_amount 		= (($acctcreditsaccount['credits_account_payment_amount'] * $acctcreditsaccount['credit']['credits_fine']) / 100 ) * $credits_payment_day_of_delay;
                 $credits_account_accumulated_fines 	= $acctcreditsaccount['credits_account_accumulated_fines'] + $credits_payment_fine_amount;
-    
+
                     if($acctcreditsaccount['payment_type_id'] == 1){
                         $angsuranpokok 		= $acctcreditsaccount['credits_account_principal_amount'];
                         $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
@@ -1089,10 +1090,10 @@ class AcctNominativeSavingsPickupController extends Controller
                         $angsuranpokok		= 0;
                         $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
                     }
-    
+
                     $creditaccount = AcctCreditsAccount::where('credits_account_id',$creditspayment->credits_account_id)
                     ->first();
-            
+
                     $credits_account_payment_date = date('Y-m-d');
                     if($request->credits_payment_to < $request->credits_account_period){
                         if($request->credits_payment_period == 1){
@@ -1103,7 +1104,7 @@ class AcctNominativeSavingsPickupController extends Controller
                             $credits_account_payment_date 		= date('Y-m-d', strtotime("+1 weeks", strtotime($credits_account_payment_date_old)));
                         }
                     }
-                        
+
                         $data  = array(
                             'member_id'									=> $creditaccount->member_id,
                             'credits_id'								=> $creditaccount->credits_id,
@@ -1116,7 +1117,7 @@ class AcctNominativeSavingsPickupController extends Controller
                             'credits_principal_opening_balance'			=> $creditaccount->credits_account_last_balance,
                             'credits_principal_last_balance'			=> $creditaccount->credits_account_last_balance - $request->angsuran_pokok,
                             'credits_interest_opening_balance'			=> $creditaccount->credits_account_interest_last_balance,
-                            'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,				
+                            'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,
                             'credits_payment_fine'						=> $request->jumlah_5,
                             'credits_account_payment_date'				=> $credits_account_payment_date,
                             'credits_payment_to'						=> $angsuranke,
@@ -1125,12 +1126,12 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id'								=> auth()->user()->user_id,
                             'pickup_state'								=> 1,
                             'pickup_date'								=> date('Y-m-d'),
-            
+
                         );
                         // AcctCreditsPayment::create($data);
-            
+
                         $credits_account_status = 0;
-            
+
                         if($creditaccount->payment_type_id == 4){
                             if($data['credits_principal_last_balance'] <= 0){
                                 $credits_account_status = 1;
@@ -1140,14 +1141,14 @@ class AcctNominativeSavingsPickupController extends Controller
                                 $credits_account_status = 1;
                             }
                         }
-            
+
                         $transaction_module_code    = 'ANGS';
                         $journal_voucher_period     = date("Ym", strtotime($data['credits_payment_date']));
                         $transaction_module_id      = PreferenceTransactionModule::select('transaction_module_id')
                         ->where('transaction_module_code', $transaction_module_code)
                         ->first()
                         ->transaction_module_id;
-            
+
                         $acctcreditsaccount = AcctCreditsAccount::findOrFail($data['credits_account_id']);
                         $acctcreditsaccount->credits_account_last_balance           = $data['credits_principal_last_balance'];
                         $acctcreditsaccount->credits_account_last_payment_date      = $data['credits_payment_date'];
@@ -1157,7 +1158,7 @@ class AcctNominativeSavingsPickupController extends Controller
                         $acctcreditsaccount->credits_account_accumulated_fines      = $request->credits_account_accumulated_fines;
                         $acctcreditsaccount->credits_account_status                 = $credits_account_status;
                         $acctcreditsaccount->save();
-            
+
                         if($request->member_mandatory_savings > 0 && $request->member_mandatory_savings != ''){
                             $data_detail = array (
                                 'member_id'						=> $data['member_id'],
@@ -1169,7 +1170,7 @@ class AcctNominativeSavingsPickupController extends Controller
                             );
                             AcctSavingsMemberDetail::create($data_detail);
                         }
-            
+
                         $acctcashpayment_last 				= AcctCreditsPayment::select('acct_credits_payment.credits_payment_id', 'acct_credits_payment.member_id', 'core_member.member_name', 'acct_credits_payment.credits_account_id', 'acct_credits_account.credits_account_serial', 'acct_credits_account.credits_id', 'acct_credits.credits_name')
                         ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
                         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
@@ -1177,7 +1178,7 @@ class AcctNominativeSavingsPickupController extends Controller
                         ->where('acct_credits_payment.created_id', $data['created_id'])
                         ->orderBy('acct_credits_payment.credits_payment_id','DESC')
                         ->first();
-            
+
                         $data_journal = array(
                             'branch_id'						=> auth()->user()->branch_id,
                             'journal_voucher_period' 		=> $journal_voucher_period,
@@ -1191,20 +1192,20 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id' 					=> $data['created_id'],
                         );
                         AcctJournalVoucher::create($data_journal);
-            
+
                         $journal_voucher_id 				= AcctJournalVoucher::select('journal_voucher_id')
                         ->where('created_id', $data['created_id'])
                         ->orderBy('journal_voucher_id', 'DESC')
                         ->first()
                         ->journal_voucher_id;
-            
+
                         if($data['credits_others_income']!='' && $data['credits_others_income'] > 0){
                             $account_id_default_status  = AcctAccount::select('account_default_status')
                             ->where('account_id', $preferencecompany['account_others_income_id'])
                             ->where('data_state', 0)
                             ->first()
                             ->account_default_status;
-            
+
                             $data_credit = array (
                                 'journal_voucher_id'			=> $journal_voucher_id,
                                 'account_id'					=> $preferencecompany['account_others_income_id'],
@@ -1217,13 +1218,13 @@ class AcctNominativeSavingsPickupController extends Controller
                             );
                             AcctJournalVoucherItem::create($data_credit);
                         }
-            
+
                         $account_id_default_status  = AcctAccount::select('account_default_status')
                         ->where('account_id', $preferencecompany['account_cash_id'])
                         ->where('data_state', 0)
                         ->first()
                         ->account_default_status;
-            
+
                         $data_debet = array (
                             'journal_voucher_id'			=> $journal_voucher_id,
                             'account_id'					=> $preferencecompany['account_cash_id'],
@@ -1235,18 +1236,18 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id' 					=> auth()->user()->user_id,
                         );
                         AcctJournalVoucherItem::create($data_debet);
-            
+
                         $receivable_account_id 				= AcctCredits::select('receivable_account_id')
                         ->where('credits_id', $data['credits_id'])
                         ->first()
                         ->receivable_account_id;
-            
+
                         $account_id_default_status  = AcctAccount::select('account_default_status')
                         ->where('account_id', $receivable_account_id)
                         ->where('data_state', 0)
                         ->first()
                         ->account_default_status;
-            
+
                         $data_credit = array (
                             'journal_voucher_id'			=> $journal_voucher_id,
                             'account_id'					=> $receivable_account_id,
@@ -1258,13 +1259,13 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id' 					=> auth()->user()->user_id
                         );
                         AcctJournalVoucherItem::create($data_credit);
-            
+
                         $account_id_default_status  = AcctAccount::select('account_default_status')
                         ->where('account_id', $preferencecompany['account_interest_id'])
                         ->where('data_state', 0)
                         ->first()
                         ->account_default_status;
-            
+
                         $data_credit =array(
                             'journal_voucher_id'			=> $journal_voucher_id,
                             'account_id'					=> $preferencecompany['account_interest_id'],
@@ -1276,14 +1277,14 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id' 					=> auth()->user()->user_id
                         );
                         AcctJournalVoucherItem::create($data_credit);
-            
+
                         if($data['credits_payment_fine'] > 0){
                             $account_id_default_status  = AcctAccount::select('account_default_status')
                             ->where('account_id', $preferencecompany['account_credits_payment_fine'])
                             ->where('data_state', 0)
                             ->first()
                             ->account_default_status;
-            
+
                             $data_credit =array(
                                 'journal_voucher_id'			=> $journal_voucher_id,
                                 'account_id'					=> $preferencecompany['account_credits_payment_fine'],
@@ -1296,27 +1297,27 @@ class AcctNominativeSavingsPickupController extends Controller
                             );
                             AcctJournalVoucherItem::create($data_credit);
                         }
-            
+
                         AcctCreditsPayment::where('credits_payment_id',$request->id)
                                             ->update(['pickup_state'=> 1,
                                                     'pickup_date'=> Carbon::now()]);
-    
+
     //------Setor Tunai Tabungan
             }else
             if($request['type'] == 2){
-    
+
                 $savingscashmutation = AcctSavingsCashMutation::select('*')
                 ->where('savings_cash_mutation_id',$request->id)
                 ->first();
-    
+
                 // bo
                 $bo = User::select('*')
                 ->where('user_id',$savingscashmutation->created_id)
                 ->first();
-    
+
                 $savingaccount = AcctSavingsAccount::where('savings_account_id',$savingscashmutation->savings_account_id)
                 ->first();
-    
+
                 $data = [
                     'savings_account_id' => $savingaccount['savings_account_id'],
                     'mutation_id' => $savingscashmutation['mutation_id'],
@@ -1333,21 +1334,21 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' => auth()->user()->user_id,
                 ];
                 // AcctSavingsCashMutation::create($data);
-    
+
                 $transaction_module_code = 'TTAB';
                 $transaction_module_id = PreferenceTransactionModule::select('transaction_module_id')
                     ->where('transaction_module_code', $transaction_module_code)
                     ->first()->transaction_module_id;
-    
+
                 $journal_voucher_period = date('Ym', strtotime($data['savings_cash_mutation_date']));
-    
+
                 $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                     ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                     ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
-    
+
                 $data_journal = [
                     'branch_id' => auth()->user()->branch_id,
                     'journal_voucher_period' => $journal_voucher_period,
@@ -1361,18 +1362,18 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' => $data['created_id'],
                 ];
                 AcctJournalVoucher::create($data_journal);
-    
+
                 $journal_voucher_id = AcctJournalVoucher::select('journal_voucher_id')
                     ->where('acct_journal_voucher.created_id', $data['created_id'])
                     ->orderBy('acct_journal_voucher.journal_voucher_id', 'DESC')
                     ->first()->journal_voucher_id;
-    
+
                 if ($data['mutation_id'] == $preferencecompany['cash_deposit_id']) {
                     $account_id_default_status = AcctAccount::select('account_default_status')
                         ->where('acct_account.account_id', $preferencecompany['account_cash_id'])
                         ->where('acct_account.data_state', 0)
                         ->first()->account_default_status;
-    
+
                     $data_debet = [
                         'journal_voucher_id' => $journal_voucher_id,
                         'account_id' => $preferencecompany['account_cash_id'],
@@ -1384,16 +1385,16 @@ class AcctNominativeSavingsPickupController extends Controller
                         'created_id' => auth()->user()->user_id,
                     ];
                     AcctJournalVoucherItem::create($data_debet);
-    
+
                     $account_id = AcctSavings::select('account_id')
                         ->where('savings_id', $data['savings_id'])
                         ->first()->account_id;
-    
+
                     $account_id_default_status = AcctAccount::select('account_default_status')
                         ->where('acct_account.account_id', $account_id)
                         ->where('acct_account.data_state', 0)
                         ->first()->account_default_status;
-    
+
                     $data_credit = [
                         'journal_voucher_id' => $journal_voucher_id,
                         'account_id' => $account_id,
@@ -1405,7 +1406,7 @@ class AcctNominativeSavingsPickupController extends Controller
                         'created_id' => auth()->user()->user_id,
                     ];
                     AcctJournalVoucherItem::create($data_credit);
-    
+
                     if ($data['savings_cash_mutation_amount_adm'] > 0) {
                         $data_debet = [
                             'journal_voucher_id' => $journal_voucher_id,
@@ -1418,12 +1419,12 @@ class AcctNominativeSavingsPickupController extends Controller
                             'created_id' => auth()->user()->user_id,
                         ];
                         AcctJournalVoucherItem::create($data_debet);
-    
+
                         $account_id_default_status = AcctAccount::select('account_default_status')
                             ->where('acct_account.account_id', $preferencecompany['account_mutation_adm_id'])
                             ->where('acct_account.data_state', 0)
                             ->first()->account_default_status;
-    
+
                         $data_credit = [
                             'journal_voucher_id' => $journal_voucher_id,
                             'account_id' => $preferencecompany['account_mutation_adm_id'],
@@ -1439,23 +1440,23 @@ class AcctNominativeSavingsPickupController extends Controller
                 AcctSavingsCashMutation::where('savings_cash_mutation_id',$request->id)
                                     ->update(['pickup_state'=> 1,
                                               'pickup_date'=> Carbon::now()]);
-                
+
     //------Tarik Tunai Tabungan
             }else
             if($request['type'] == 3){
-    
+
                 $savingscashmutation = AcctSavingsCashMutation::select('*')
                 ->where('savings_cash_mutation_id',$request->id)
                 ->first();
-    
+
                 // bo
                 $bo = User::select('*')
                 ->where('user_id',$savingscashmutation->created_id)
                 ->first();
-    
+
                 $savingaccount = AcctSavingsAccount::where('savings_account_id',$savingscashmutation->savings_account_id)
                 ->first();
-    
+
                 $data = [
                     'savings_account_id' => $savingaccount['savings_account_id'],
                     'mutation_id' => $savingscashmutation['mutation_id'],
@@ -1472,26 +1473,26 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' =>  $savingscashmutation->created_id,
                 ];
                 // AcctSavingsCashMutation::create($data);
-               
-    
+
+
                 $transaction_module_code = 'TTAB';
                 $transaction_module_id = PreferenceTransactionModule::select('transaction_module_id')
                     ->where('transaction_module_code', $transaction_module_code)
                     ->first()->transaction_module_id;
-    
+
                 $journal_voucher_period = date('Ym', strtotime($data['savings_cash_mutation_date']));
-    
+
                 $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                     ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                     ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
-                
+
                     echo '<pre>';
                     print_r($acctsavingscash_last); // Untuk menampilkan data array di dalam loop
                     echo '</pre>';
-    
+
                 $data_journal = [
                     'branch_id' => auth()->user()->branch_id,
                     'journal_voucher_period' => $journal_voucher_period,
@@ -1505,22 +1506,22 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' => $data['created_id'],
                 ];
                 AcctJournalVoucher::create($data_journal);
-    
+
                 $journal_voucher_id = AcctJournalVoucher::select('journal_voucher_id')
                     ->where('acct_journal_voucher.created_id', $data['created_id'])
                     ->orderBy('acct_journal_voucher.journal_voucher_id', 'DESC')
                     ->first()->journal_voucher_id;
-    
-    
+
+
                 $account_id = AcctSavings::select('account_id')
                 ->where('savings_id', $data['savings_id'])
                 ->first()->account_id;
-    
+
                 $account_id_default_status = AcctAccount::select('account_default_status')
                     ->where('acct_account.account_id', $account_id)
                     ->where('acct_account.data_state', 0)
                     ->first()->account_default_status;
-    
+
                 $data_debet = [
                     'journal_voucher_id' => $journal_voucher_id,
                     'account_id' => $account_id,
@@ -1532,12 +1533,12 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' => auth()->user()->user_id,
                 ];
                 AcctJournalVoucherItem::create($data_debet);
-    
+
                 $account_id_default_status = AcctAccount::select('account_default_status')
                     ->where('acct_account.account_id', $preferencecompany['account_cash_id'])
                     ->where('acct_account.data_state', 0)
                     ->first()->account_default_status;
-    
+
                 $data_credit = [
                     'journal_voucher_id' => $journal_voucher_id,
                     'account_id' => $preferencecompany['account_cash_id'],
@@ -1549,7 +1550,7 @@ class AcctNominativeSavingsPickupController extends Controller
                     'created_id' => auth()->user()->user_id,
                 ];
                 AcctJournalVoucherItem::create($data_credit);
-    
+
                 if ($data['savings_cash_mutation_amount_adm'] > 0) {
                     $data_debet = [
                         'journal_voucher_id' => $journal_voucher_id,
@@ -1562,12 +1563,12 @@ class AcctNominativeSavingsPickupController extends Controller
                         'created_id' => auth()->user()->user_id,
                     ];
                     AcctJournalVoucherItem::create($data_debet);
-    
+
                     $account_id_default_status = AcctAccount::select('account_default_status')
                         ->where('acct_account.account_id', $preferencecompany['account_mutation_adm_id'])
                         ->where('acct_account.data_state', 0)
                         ->first()->account_default_status;
-    
+
                     $data_credit = [
                         'journal_voucher_id' => $journal_voucher_id,
                         'account_id' => $preferencecompany['account_mutation_adm_id'],
@@ -1585,15 +1586,15 @@ class AcctNominativeSavingsPickupController extends Controller
     //------Setor Simpanan Wajib
             }else
             if($request['type'] == 4){
-                
+
                 $membersavings = CoreMember::select('*')
                                 ->where('member_id',$request->id)
                                 ->first();
                 $bo = User::select('*')
                 ->where('user_id',$membersavings->updated_id)
                 ->first();
-    
-    
+
+
                 $data = array(
                     'member_id'								=> $membersavings->member_id,
                     'member_name'							=> $membersavings->member_name,
@@ -1612,8 +1613,8 @@ class AcctNominativeSavingsPickupController extends Controller
                     'member_mandatory_savings_last_balance'	=> $membersavings->member_mandatory_savings_last_balance,
                     'updated_id'                            => auth()->user()->user_id,
                 );
-        
-        
+
+
                 $data_session = array(
                     'member_id'                                 => $data['member_id'],
                     'member_no'                                 => $membersavings->member_no,
@@ -1628,8 +1629,8 @@ class AcctNominativeSavingsPickupController extends Controller
                     'member_special_savings_last_balance'       => $data['member_special_savings_last_balance'],
                     'member_mandatory_savings_last_balance'     => $data['member_mandatory_savings_last_balance'],
                 );
-        
-        
+
+
                 // $total_cash_amount = $data['member_principal_savings'] + $data['member_special_savings'] + $data['member_mandatory_savings'];
                 $total_cash_amount = $data['member_mandatory_savings'];
                     CoreMember::where('member_id', $data['member_id'])
@@ -1649,11 +1650,11 @@ class AcctNominativeSavingsPickupController extends Controller
                         'member_mandatory_savings_last_balance'	=> $data['member_mandatory_savings_last_balance'],
                         'updated_id'                            => $data['updated_id'],
                         'pickup_state'                          => 1,
-        
+
                     ]);
-        
+
                     if($data['member_principal_savings'] <> 0 || $data['member_principal_savings'] <> '' || $data['member_mandatory_savings'] <> 0 || $data['member_mandatory_savings'] <> ''  || $data['member_special_savings'] <> 0 || $data['member_special_savings'] <> ''){
-        
+
                         $data_detail = array (
                             'branch_id'						=> auth()->user()->branch_id,
                             'member_id'						=> $data['member_id'],
@@ -1665,10 +1666,10 @@ class AcctNominativeSavingsPickupController extends Controller
                             'operated_name'					=> auth()->user()->username,
                             'created_id'                    => auth()->user()->user_id,
                         );
-        
+
                         if(AcctSavingsMemberDetail::create($data_detail)){
                             $transaction_module_code 	= "AGT";
-        
+
                             $transaction_module_id 		= PreferenceTransactionModule::where('transaction_module_code',$transaction_module_code)
                             ->first()
                             ->transaction_module_id;
@@ -1676,11 +1677,11 @@ class AcctNominativeSavingsPickupController extends Controller
                             $coremember 				= CoreMember::where('data_state', 0)
                             ->where('member_id', $data['member_id'])
                             ->first();
-        
+
                             $journal_voucher_period 	= date("Ym", strtotime($coremember->member_register_date));
-        
+
                             //-------------------------Jurnal Cabang----------------------------------------------------
-        
+
                             $data_journal_cabang = array(
                                 'branch_id'						=> auth()->user()->branch_id,
                                 'journal_voucher_period' 		=> $journal_voucher_period,
@@ -1693,21 +1694,21 @@ class AcctNominativeSavingsPickupController extends Controller
                                 'transaction_journal_no' 		=> $coremember->member_no,
                                 'created_id' 					=> auth()->user()->user_id,
                             );
-        
+
                             AcctJournalVoucher::create($data_journal_cabang);
-        
+
                             $journal_voucher_id 			= AcctJournalVoucher::where('created_id',auth()->user()->user_id)
                             ->orderBy('journal_voucher_id', 'DESC')
                             ->first()
                             ->journal_voucher_id;
-        
+
                             // if($data_detail['mutation_id'] == $preferencecompany->cash_deposit_id){
-        
+
                                 $account_id_default_status 	= AcctAccount::where('account_id',$preferencecompany->account_cash_id)
                                 ->where('data_state',0)
                                 ->first()
                                 ->account_default_status;
-        
+
                                 $data_debet = array (
                                     'journal_voucher_id'			=> $journal_voucher_id,
                                     'account_id'					=> $preferencecompany->account_cash_id,
@@ -1718,17 +1719,17 @@ class AcctNominativeSavingsPickupController extends Controller
                                     'account_id_status'				=> 0,
                                     'created_id' 					=> auth()->user()->user_id,
                                 );
-        
+
                                 AcctJournalVoucherItem::create($data_debet);
-        
+
                                     $account_id = AcctSavings::where('savings_id',$preferencecompany->mandatory_savings_id)
                                     ->first()
                                     ->account_id;
-        
+
                                     $account_id_default_status = AcctAccount::where('account_id',$account_id)
                                     ->first()
                                     ->account_default_status;
-        
+
                                     $data_credit =array(
                                         'journal_voucher_id'			=> $journal_voucher_id,
                                         'account_id'					=> $account_id,
@@ -1739,16 +1740,16 @@ class AcctNominativeSavingsPickupController extends Controller
                                         'account_id_status'				=> 1,
                                         'created_id' 					=> auth()->user()->user_id,
                                     );
-        
+
                                     AcctJournalVoucherItem::create($data_credit);
                                 }
                     }
-    
+
                     CoreMember::where('member_id',$request->id)
                     ->update(['pickup_state'=>1,
                               'pickup_date'=> Carbon::now()]);
-    
-    
+
+
             }
         }
 
