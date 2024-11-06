@@ -538,11 +538,11 @@ class AcctCreditsPaymentCashController extends Controller
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
             <tr>
                 <td width=\"25%\"></td>
-                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\">BUKTI SETORAN ANGSURAN</div></td>
+                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\"><b>BUKTI SETORAN ANGSURAN</b></div></td>
             </tr>
             <tr>
                 <td width=\"25%\"></td>
-                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\">Jam : ".date('H:i:s')."</div></td>
+                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\">Tanggal : ".date('d-m-Y H:i:s')."</div></td>
             </tr>
         </table>
         <br>
