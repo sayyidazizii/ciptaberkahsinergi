@@ -504,6 +504,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                 ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                 ->first();
 
@@ -643,6 +644,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                 ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                 ->first();
 
@@ -1177,6 +1179,7 @@ class AcctNominativeSavingsPickupController extends Controller
                         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
                         ->join('acct_credits','acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
                         ->where('acct_credits_payment.created_id', $data['created_id'])
+                        ->where('acct_credits_payment.credits_account_id', $data['credits_account_id'])
                         ->orderBy('acct_credits_payment.credits_payment_id','DESC')
                         ->first();
 
@@ -1347,6 +1350,7 @@ class AcctNominativeSavingsPickupController extends Controller
                     ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                     ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                    ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
 
