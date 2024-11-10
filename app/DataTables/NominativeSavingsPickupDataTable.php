@@ -42,16 +42,14 @@ class NominativeSavingsPickupDataTable extends DataTable
         if(!$sessiondata['branch_id'] || !$sessiondata['branch_id']== 0){
             $sessiondata['branch_id'] = auth()->user()->branch_id;
         }
-        if(!$sessiondata['office_id'] || !$sessiondata['office_id']== 0){
-            $sessiondata['office_id'] = auth()->user()->office_id;
-        }
+
 
 //------Angsuran
         $querydata1 = AcctCreditsPayment::selectRaw(
         '1 As type,
         credits_payment_id As id,
         acct_credits_payment.created_at As tanggal,
-        username As operator,
+        office_name As operator,
         member_name As anggota,
         credits_account_serial As no_transaksi,
         credits_payment_amount As jumlah,
@@ -60,8 +58,8 @@ class NominativeSavingsPickupDataTable extends DataTable
 
         ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
         ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
-        ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
+        ->join('core_office','core_office.office_id', '=', 'acct_credits_account.office_id')
         ->where('acct_credits_payment.credits_payment_type', 0)
         ->where('acct_credits_payment.credits_branch_status', 0)
         // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
@@ -72,7 +70,6 @@ class NominativeSavingsPickupDataTable extends DataTable
         }
         $querydata1->where('acct_credits_payment.pickup_state', 0)
         ->where('acct_credits_payment.data_state', 0);
-        ;
 
 
 //------Setor Tunai Simpanan Biasa
@@ -80,7 +77,7 @@ class NominativeSavingsPickupDataTable extends DataTable
             '2 As type,
             savings_cash_mutation_id As id,
             acct_savings_cash_mutation.created_at As tanggal,
-            username As operator,
+            office_name As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
             savings_cash_mutation_amount As jumlah,
@@ -88,9 +85,9 @@ class NominativeSavingsPickupDataTable extends DataTable
             acct_savings_cash_mutation.pickup_state AS pickup_state')
 
         ->withoutGlobalScopes()
-        ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
         ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
         ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+        ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
         ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
         ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
         ->where('acct_savings_cash_mutation.mutation_id', 1)
@@ -98,7 +95,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id);
         if(isset($sessiondata['office_id'])){
-            $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+            $querydata2->where('acct_savings_account.office_id', $sessiondata['office_id']);
         }
         $querydata2->where('acct_savings_cash_mutation.pickup_state', 0)
         ->where('acct_savings_cash_mutation.data_state', 0);
@@ -109,16 +106,16 @@ class NominativeSavingsPickupDataTable extends DataTable
             '3 As type,
             savings_cash_mutation_id As id,
             acct_savings_cash_mutation.created_at As tanggal,
-            username As operator,
+            office_name As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
             savings_cash_mutation_amount As jumlah,
             CONCAT("Tarik Tunai ",savings_name) As keterangan,
             acct_savings_cash_mutation.pickup_state AS pickup_state')
         ->withoutGlobalScopes()
-        ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
         ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
         ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+        ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
         ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
         ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
         ->where('acct_savings_cash_mutation.mutation_id', 2)
@@ -126,7 +123,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id);
         if(isset($sessiondata['office_id'])){
-            $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+            $querydata3->where('acct_savings_account.office_id', $sessiondata['office_id']);
         }
         $querydata3->where('acct_savings_cash_mutation.pickup_state', 0)
         ->where('acct_savings_cash_mutation.data_state', 0);
@@ -185,7 +182,7 @@ class NominativeSavingsPickupDataTable extends DataTable
                     ->addClass('text-right')
                     ->width(200)
                     ->title(__('Tanggal')),
-            Column::make('operator')->title(__('Nama Operator')),
+            Column::make('operator')->title(__('BO')),
             Column::make('anggota')
                     ->addClass('text-right')
                     ->width(200)
