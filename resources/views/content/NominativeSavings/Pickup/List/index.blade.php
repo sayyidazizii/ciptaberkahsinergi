@@ -41,13 +41,14 @@
                                 class="form-select form-select-solid form-select-lg">
                                 <option value="">{{ __('Pilih bo..') }}</option>
                                 @foreach ($coreoffice as $key => $value)
-                                    <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}"
-                                        {{ $value['office_id'] === old('office_id', '' ?? '') ? 'selected' : '' }}>
-                                        {{ $value['office_name'] }}</option>
+                                    <option value="{{ $value['office_id'] }}"
+                                        {{ $value['office_id'] == old('office_id', Session::get('pickup-data.office_id', '')) ? 'selected' : '' }}>
+                                        {{ $value['office_name'] }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-4 fv-row">
+                        {{-- <div class="col-lg-4 fv-row">
                             <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Cabang') }}</label>
                             <select name="branch_id" id="branch_id" aria-label="{{ __('Cabang') }}"
                                 data-control="select2" data-placeholder="{{ __('Pilih cabang..') }}"
@@ -59,7 +60,7 @@
                                         {{ $value['branch_name'] }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
                     </div>
 
                 </div>
@@ -114,13 +115,12 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                {{-- Apakah Anda yakin ingin memproses semua data? --}}
-                                process semua sedang dalam perbaikan.
+                                Apakah Anda yakin ingin memproses semua data?
+                                {{-- process semua sedang dalam perbaikan. --}}
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                    data-bs-dismiss="modal">Batal</button>
-                                {{-- <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Ya, Proses</button> --}}
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Ya, Proses</button>
                             </div>
                         </div>
                     </form>

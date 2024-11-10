@@ -48,11 +48,18 @@ class AcctNominativeSavingsPickupController extends Controller
 
     public function filter(Request $request) {
         $filter = Session::get('pickup-data');
+
+        $coreoffice         = CoreOffice::where('data_state', 0)
+        ->where('office_id',  $request->office_id)
+        ->first();
+
         $filter['start_date'] = $request->start_date;
         $filter['end_date'] = $request->end_date;
         $filter['pickup_type'] = $request->pickup_type;
         $filter['branch_id'] = $request->branch_id;
         $filter['office_id'] = $request->office_id;
+        $filter['office_name'] = $coreoffice['office_name'];
+
         Session::put('pickup-data', $filter);
         return redirect()->route('nomv-sv-pickup.index');
     }
@@ -257,6 +264,8 @@ class AcctNominativeSavingsPickupController extends Controller
 
             );
             // AcctCreditsPayment::create($data);
+            // dd($data);
+
 
 			$credits_account_status = 0;
 
@@ -304,10 +313,11 @@ class AcctNominativeSavingsPickupController extends Controller
 			->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
 			->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
 			->join('acct_credits','acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
-			->where('acct_credits_payment.created_id', $data['created_id'])
+			// ->where('acct_credits_payment.created_id', $data['created_id'])
 			->where('acct_credits_payment.credits_account_id', $data['credits_account_id'])
 			->orderBy('acct_credits_payment.credits_payment_id','DESC')
             ->first();
+            // dd($acctcashpayment_last);
 
             $data_journal = array(
                 'branch_id'						=> auth()->user()->branch_id,
@@ -503,7 +513,7 @@ class AcctNominativeSavingsPickupController extends Controller
             $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-                ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                // ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                 ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                 ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                 ->first();
@@ -643,7 +653,7 @@ class AcctNominativeSavingsPickupController extends Controller
             $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-                ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                // ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                 ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                 ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                 ->first();
@@ -912,13 +922,13 @@ class AcctNominativeSavingsPickupController extends Controller
     public function processAll()
     {
         $preferencecompany = PreferenceCompany::first();
-
+        $sessiondata = Session::get('pickup-data');
     //------Angsuran
             $querydata1 = AcctCreditsPayment::selectRaw(
                 '1 As type,
                 credits_payment_id As id,
                 credits_payment_date As tanggal,
-                username As operator,
+                office_name As operator,
                 member_name As anggota,
                 credits_account_serial As no_transaksi,
                 credits_payment_amount As jumlah,
@@ -928,10 +938,11 @@ class AcctNominativeSavingsPickupController extends Controller
                 credits_payment_fine As jumlah_5,
                 CONCAT("Angsuran ",credits_name) As keterangan')
 
+                ->withoutGlobalScopes()
                 ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
                 ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
-                ->join('system_user','system_user.user_id', '=', 'acct_credits_payment.created_id')
                 ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_credits_account.office_id')
                 ->where('acct_credits_payment.credits_payment_type', 0)
                 ->where('acct_credits_payment.credits_branch_status', 0)
                 // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
@@ -947,7 +958,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 '2 As type,
                 savings_cash_mutation_id As id,
                 savings_cash_mutation_date As tanggal,
-                username As operator,
+                office_name As operator,
                 member_name As anggota,
                 savings_account_no As no_transaksi,
                 savings_cash_mutation_amount As jumlah,
@@ -958,9 +969,9 @@ class AcctNominativeSavingsPickupController extends Controller
                 CONCAT("Setoran Tunai ",savings_name) As keterangan')
 
                 ->withoutGlobalScopes()
-                ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
                 ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
                 ->where('acct_savings_cash_mutation.mutation_id', 1)
@@ -968,7 +979,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('core_member.branch_id', auth()->user()->branch_id);
                 if(isset($sessiondata['office_id'])){
-                    $querydata2->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+                    $querydata2->where('acct_savings_account.office_id', $sessiondata['office_id']);
                 }
             $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
 
@@ -977,7 +988,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 '3 As type,
                 savings_cash_mutation_id As id,
                 savings_cash_mutation_date As tanggal,
-                username As operator,
+                office_name As operator,
                 member_name As anggota,
                 savings_account_no As no_transaksi,
                 savings_cash_mutation_amount As jumlah,
@@ -987,9 +998,9 @@ class AcctNominativeSavingsPickupController extends Controller
                 0 As jumlah_5,
                 CONCAT("Tarik Tunai ",savings_name) As keterangan')
                 ->withoutGlobalScopes()
-                ->join('system_user','system_user.user_id', '=', 'acct_savings_cash_mutation.created_id')
                 ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
                 ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
                 ->where('acct_savings_cash_mutation.mutation_id', 2)
@@ -997,10 +1008,9 @@ class AcctNominativeSavingsPickupController extends Controller
                 // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('core_member.branch_id', auth()->user()->branch_id);
                 if(isset($sessiondata['office_id'])){
-                    $querydata3->where('acct_savings_cash_mutation.office_id', $sessiondata['office_id']);
+                    $querydata3->where('acct_savings_account.office_id', $sessiondata['office_id']);
                 }
             $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
-
 
     //------Setor Tunai Simpanan Wajib
             $querydata4 = CoreMember::selectRaw(
@@ -1023,19 +1033,19 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->where('core_member.branch_id', auth()->user()->branch_id)
             ->where('core_member.pickup_state', 0);
 
-
     //------Combine the queries using UNION
-            $querydata = $querydata1->union($querydata2)->union($querydata3)->union($querydata4);
+            $comparequery = $querydata1->union($querydata2)->union($querydata3)->union($querydata4);
             // Add ORDER BY clause to sort by the "keterangan" column
-            $querydata = $querydata->orderBy('tanggal','DESC')->get();
+            $allquery = $comparequery->where('acct_credits_account.office_id', $sessiondata['office_id'])
+            ->orderBy('tanggal','DESC')->get();
 
-    // echo json_encode($querydata);
+    // echo json_encode($allquery);
     // exit;
 
         DB::beginTransaction();
         try {
     //loop data
-        foreach ($querydata as $request) {
+        foreach ($allquery as $request) {
     //------Angsuran
             if($request['type'] == 1){
 
@@ -1178,7 +1188,7 @@ class AcctNominativeSavingsPickupController extends Controller
                         ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
                         ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
                         ->join('acct_credits','acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
-                        ->where('acct_credits_payment.created_id', $data['created_id'])
+                        // ->where('acct_credits_payment.created_id', $data['created_id'])
                         ->where('acct_credits_payment.credits_account_id', $data['credits_account_id'])
                         ->orderBy('acct_credits_payment.credits_payment_id','DESC')
                         ->first();
@@ -1349,7 +1359,7 @@ class AcctNominativeSavingsPickupController extends Controller
                 $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                     ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-                    ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                    // ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
                     ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
@@ -1490,7 +1500,8 @@ class AcctNominativeSavingsPickupController extends Controller
                 $acctsavingscash_last = AcctSavingsCashMutation::select('acct_savings_cash_mutation.savings_cash_mutation_id', 'acct_savings_cash_mutation.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_cash_mutation.member_id', 'core_member.member_name')
                     ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
-                    ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                    // ->where('acct_savings_cash_mutation.created_id', $data['created_id'])
+                    ->where('acct_savings_cash_mutation.savings_account_id', $data['savings_account_id'])
                     ->orderBy('acct_savings_cash_mutation.savings_cash_mutation_id', 'DESC')
                     ->first();
 
