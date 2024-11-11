@@ -118,9 +118,9 @@ class CoreMemberController extends Controller
             'kecamatan_id'                    =>['required'],
             'kelurahan_id'                    =>['required'],
         ]);
-        
+
         DB::beginTransaction();
-        
+
         try {
             $member  = array(
                 'kelurahan_id'                => $fields['kelurahan_id'],
@@ -847,9 +847,9 @@ class CoreMemberController extends Controller
 
                 $spreadsheet->getActiveSheet()->setCellValue('L'.$j, $partner_working_type);
                 $spreadsheet->getActiveSheet()->setCellValue('M'.$j, $val['member_company_name']);
-                $spreadsheet->getActiveSheet()->setCellValue('N'.$j, number_format($val['member_principal_savings'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('O'.$j, number_format($val['member_special_savings'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('P'.$j, number_format($val['member_mandatory_savings'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('N'.$j, number_format($val['member_principal_savings_last_balance'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('O'.$j, number_format($val['member_special_savings_last_balance'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('P'.$j, number_format($val['member_mandatory_savings_last_balance'], 2));
 
                 if($val['company_id'] == 0){
                     $count_member_entership = $count_member_entership + 1;
