@@ -70,7 +70,7 @@ class ApiController extends Controller
         }
     }
     public function tst(Request $request) {
-        
+
         return response(['mesage'=>'test']);
     }
     //data simpanan
@@ -118,14 +118,14 @@ class ApiController extends Controller
         $data = CoreMember::withoutGlobalScopes()
         ->where('data_state',0)
         ->where('member_status', 1)
-        ->orderBy('member_name', 'asc') 
+        ->orderBy('member_name', 'asc')
         ->get();
         }else{
         $data = CoreMember::withoutGlobalScopes()
         ->where('member_status', 1)
         ->where('data_state',0)
         ->where('branch_id',auth()->user()->branch_id)
-        ->orderBy('member_name', 'asc') 
+        ->orderBy('member_name', 'asc')
         ->get();
         }
         return response()->json([
@@ -141,14 +141,14 @@ class ApiController extends Controller
         $data = CoreMember::withoutGlobalScopes()
         ->where('data_state',0)
         ->where('member_name','LIKE', '%' . $member_name . '%')
-        ->orderBy('member_name', 'asc') 
+        ->orderBy('member_name', 'asc')
         ->get();
         }else{
         $data = CoreMember::withoutGlobalScopes()
         ->where('data_state',0)
         ->where('member_name','LIKE', '%' . $member_name . '%')
         ->where('branch_id',auth()->user()->branch_id)
-        ->orderBy('member_name', 'asc') 
+        ->orderBy('member_name', 'asc')
         ->get();
         }
         return response()->json([
@@ -190,7 +190,7 @@ class ApiController extends Controller
     //data simpanan by no member
     public function PostSavingsByMember($member_id){
         $data = AcctSavingsAccount::with('member','savingdata')
-        ->withoutGlobalScopes() 
+        ->withoutGlobalScopes()
         ->where('member_id',$member_id)
         ->get();
 
@@ -206,7 +206,7 @@ class ApiController extends Controller
         $user_state->save();
 
         auth()->user()->tokens()->delete();
-    
+
         return [
             'message' => 'Logged Out'
         ];
@@ -228,8 +228,8 @@ class ApiController extends Controller
         try {
             $savingacc = AcctSavingsAccount::find($sai);
             $savingacc->savings_account_pickup_date=date('Y-m-d');
-            $savingacc->save(); 
-        DB::beginTransaction(); 
+            $savingacc->save();
+        DB::beginTransaction();
         AcctSavingsCashMutation::create( [
             'savings_account_id' => $request['savings_account_id'],
             'mutation_id' => 1,
@@ -263,13 +263,13 @@ class ApiController extends Controller
             'savings_cash_mutation_id' => 'required'
         ]);
             $data = AcctSavingsCashMutation::with('member','mutation','savings','savingsaccount')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('mutation_id',1)
             ->where('data_state',0)
             ->where('savings_cash_mutation_id', $fields['savings_cash_mutation_id'])
             ->first();
-        
+
 
         $preferencecompany = User::select('core_branch.*')
         ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
@@ -278,7 +278,7 @@ class ApiController extends Controller
 
         $company = PreferenceCompany::select('company_name')
         ->first();
-        
+
         return response([
             'data'           => $data,
             'preferencecompany'     => $preferencecompany,
@@ -287,12 +287,12 @@ class ApiController extends Controller
         ],201);
     }
 
-    //data mutasi setor simpanan tunai 
+    //data mutasi setor simpanan tunai
     public function GetSavings(){
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 0){
             $data = AcctSavingsCashMutation::with('member','mutation')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('mutation_id',1)
             ->where('data_state',0)
@@ -300,7 +300,7 @@ class ApiController extends Controller
             ->get();
         }else{
             $data = AcctSavingsCashMutation::with('member','mutation')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('branch_id',auth()->user()->branch_id)
             ->where('mutation_id',1)
@@ -319,7 +319,7 @@ class ApiController extends Controller
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 0){
             $data = AcctSavingsCashMutation::with('member','mutation')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             // ->where('savings_cash_mutation_date','>=',$start_date)
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('mutation_id',2)
@@ -327,7 +327,7 @@ class ApiController extends Controller
             ->get();
         }else{
             $data = AcctSavingsCashMutation::with('member','mutation')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             // ->where('savings_cash_mutation_date','>=',$start_date)
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('branch_id',auth()->user()->branch_id)
@@ -350,13 +350,13 @@ class ApiController extends Controller
             'savings_cash_mutation_id'  => 'required'
         ]);
             $data = AcctSavingsCashMutation::with('member','mutation','savings','savingsaccount')
-            ->withoutGlobalScopes() 
+            ->withoutGlobalScopes()
             ->where('savings_cash_mutation_date',Carbon::today())
             ->where('mutation_id',2)
             ->where('data_state',0)
             ->where('savings_cash_mutation_id', $fields['savings_cash_mutation_id'])
             ->first();
-        
+
 
         $preferencecompany = User::select('core_branch.*')
         ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
@@ -365,7 +365,7 @@ class ApiController extends Controller
 
         $company = PreferenceCompany::select('company_name')
         ->first();
-        
+
         return response([
             'data'                  => $data,
             'preferencecompany'     => $preferencecompany,
@@ -415,10 +415,10 @@ class ApiController extends Controller
         }
     }
 
-    //data akhir mutasi setor simpanan tunai by member 
+    //data akhir mutasi setor simpanan tunai by member
     public function PrintmutationByMember($member_id){
         $data = AcctSavingsCashMutation::with('member','mutation')
-        ->withoutGlobalScopes() 
+        ->withoutGlobalScopes()
         ->where('member.member_id',$member_id)
         ->where('mutation_id',1)
         ->where('savings_cash_mutation_date',Carbon::today())
@@ -517,17 +517,17 @@ class ApiController extends Controller
 
     }
 
-    //histori simp wajib 
+    //histori simp wajib
     public function getHistoryMemberSavings()
     {
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 0){
-            $data = CoreMember::withoutGlobalScopes() 
+            $data = CoreMember::withoutGlobalScopes()
             ->whereDate('updated_at', '=', date('Y-m-d'))
             ->where('data_state',0)
             ->get();
         }else{
-            $data = CoreMember::withoutGlobalScopes() 
+            $data = CoreMember::withoutGlobalScopes()
             ->whereDate('updated_at', '=', date('Y-m-d'))
             ->where('branch_id',auth()->user()->branch_id)
             ->where('data_state',0)
@@ -547,12 +547,12 @@ class ApiController extends Controller
             'user_id'                   => 'required',
             'member_id'                 => 'required'
         ]);
-            $data = CoreMember::withoutGlobalScopes() 
+            $data = CoreMember::withoutGlobalScopes()
             ->whereDate('updated_at', '=', date('Y-m-d', strtotime($today)))
             ->where('data_state',0)
             ->where('member_id', $fields['member_id'])
             ->first();
-        
+
 
         $preferencecompany = User::select('core_branch.*')
         ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
@@ -561,7 +561,7 @@ class ApiController extends Controller
 
         $company = PreferenceCompany::select('company_name')
         ->first();
-        
+
         return response([
             'data'                  => $data,
             'preferencecompany'     => $preferencecompany,
@@ -569,7 +569,7 @@ class ApiController extends Controller
 
         ],201);
     }
-    
+
     //ANGSURAN
     public function getDataCredit(){
         $branch_id          = auth()->user()->branch_id;
@@ -578,8 +578,9 @@ class ApiController extends Controller
             ->join('core_member','acct_credits_account.member_id','core_member.member_id')
             ->join('acct_credits','acct_credits.credits_id','acct_credits_account.credits_id')
             ->where('acct_credits_account.data_state',0)
+            ->where('acct_credits_account.credits_approve_status','!=',2)
             ->where('acct_credits_account.credits_account_last_balance','>',0)
-            ->orderBy('core_member.member_name', 'asc') 
+            ->orderBy('core_member.member_name', 'asc')
             ->get();
         }else{
             $data = AcctCreditsAccount::withoutGlobalScopes()
@@ -587,8 +588,9 @@ class ApiController extends Controller
             ->join('acct_credits','acct_credits.credits_id','acct_credits_account.credits_id')
             ->where('acct_credits_account.data_state',0)
             ->where('acct_credits_account.credits_account_last_balance','>',0)
+            ->where('acct_credits_account.credits_approve_status','!=',2)
             ->where('acct_credits_account.branch_id',auth()->user()->branch_id)
-            ->orderBy('core_member.member_name', 'asc') 
+            ->orderBy('core_member.member_name', 'asc')
             ->get();
         }
         return response()->json([
@@ -596,7 +598,7 @@ class ApiController extends Controller
         ]);
     }
 
-    //data setor angsuran tunai by branch 
+    //data setor angsuran tunai by branch
     public function getCreditstPaymentList(){
 
         $branch_id          = auth()->user()->branch_id;
@@ -616,7 +618,7 @@ class ApiController extends Controller
             'data' => $data,
         ]);
     }
-    
+
     //History Angsuran
     public function GetAngsuran(){
             $branch_id          = auth()->user()->branch_id;
@@ -652,7 +654,7 @@ class ApiController extends Controller
         ->where('acct_credits_payment.branch_id',auth()->user()->branch_id)
         ->where('acct_credits_payment.credits_payment_id',$fields['credits_payment_id'])
         ->first();
-        
+
 
         $preferencecompany = User::select('core_branch.*')
         ->join('core_branch', 'core_branch.branch_id', 'system_user.branch_id')
@@ -661,7 +663,7 @@ class ApiController extends Controller
 
         $company = PreferenceCompany::select('company_name')
         ->first();
-        
+
         return response([
             'data'                  => $data,
             'preferencecompany'     => $preferencecompany,
@@ -682,7 +684,7 @@ class ApiController extends Controller
         return response()->json([
             'data' => $data,
         ]);
-        
+
     }
 
     //save Angsuran
@@ -706,7 +708,7 @@ class ApiController extends Controller
             } else {
                 $credits_payment_day_of_delay 	= 0;
             }
-            
+
             if(strpos($acctcreditsaccount['credits_account_payment_to'], ',') == true ||strpos($acctcreditsaccount['credits_account_payment_to'], '*') == true ){
                 $angsuranke = substr($acctcreditsaccount['credits_account_payment_to'], -1) + 1;
             }else{
@@ -729,7 +731,7 @@ class ApiController extends Controller
                 $angsuranpokok		= 0;
                 $angsuranbunga		= $angsuran_bunga_menurunharian;
             }
-        
+
 
         $creditaccount = AcctCreditsAccount::where('credits_account_id',$credits_account_id)
         ->first();
@@ -742,7 +744,7 @@ class ApiController extends Controller
         // $fields = request()->validate([
         //     'credits_account_id' => ['required'],
         // ]);
-        
+
         $credits_account_payment_date = date('Y-m-d');
         if($request->credits_payment_to < $request->credits_account_period){
             if($request->credits_payment_period == 1){
@@ -769,7 +771,7 @@ class ApiController extends Controller
 				'credits_principal_opening_balance'			=> $creditaccount->credits_account_last_balance,
 				'credits_principal_last_balance'			=> $creditaccount->credits_account_last_balance - $request->angsuran_pokok,
 				'credits_interest_opening_balance'			=> $creditaccount->credits_account_interest_last_balance,
-				'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,				
+				'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->credits_payment_fine_amount,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
 				'credits_payment_to'						=> $angsuranke,
@@ -781,7 +783,7 @@ class ApiController extends Controller
 
             );
             AcctCreditsPayment::create($data);
-            
+
 
 			$credits_account_status = 0;
 
@@ -821,7 +823,7 @@ class ApiController extends Controller
             );
             return $message;
         }
-        
+
     }
 
     public function printerAddress(Request $request){
@@ -890,8 +892,8 @@ class ApiController extends Controller
 		$ppob_company_code 				= $ppobcompany[0]->ppob_company_code;
 
         DB::beginTransaction();
-        
-        try {  
+
+        try {
 
         $fields = request()->validate([
             'ppob_topup_date'           =>['required'],
@@ -901,7 +903,7 @@ class ApiController extends Controller
             'ppob_topup_remark'		    =>['required'],
 			'ppob_topup_token'		    =>['required'],
         ]);
-       
+
 
         $data_ppob = array(
             'account_id'			=> $fields['account_id'],
@@ -917,7 +919,7 @@ class ApiController extends Controller
         );
 
             PPOBTopUp::create($data_ppob);
-       
+
             DB::commit();
             return response([
                 'message' => 'Top Up Berhasil'
@@ -934,7 +936,7 @@ class ApiController extends Controller
 
     public function getPpobCompanyID($company_database){
 
-        //koneksi database ke 2 
+        //koneksi database ke 2
         $results = DB::connection('mysql2')
         ->table('ppob_company')
         ->select('*')
@@ -950,7 +952,7 @@ class ApiController extends Controller
         $data = Documentation::select('*')->get();
         return view('content.Documentation.index',compact('data'));
     }
-    
+
 
 
 }
