@@ -591,7 +591,7 @@ class AcctCreditsPaymentDebetController extends Controller
             </tr>
             <tr>
                 <td width=\"25%\"></td>
-                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\">Jam : ".date('H:i:s')."</div></td>
+                <td width=\"75%\"><div style=\"text-align: left; font-size:14px\">Tanggal : ".date('d-m-Y H:i:s')."</div></td>
             </tr>
         </table>
         <br>
