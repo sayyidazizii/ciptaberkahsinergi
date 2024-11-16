@@ -5886,6 +5886,6 @@ class AcctCreditsAccountController extends Controller
             ->where('data_state', 0)
             ->first();
 
-        return $coremember['member_name'];
+        return $coremember['member_name'] ?? '';
     }
 }
