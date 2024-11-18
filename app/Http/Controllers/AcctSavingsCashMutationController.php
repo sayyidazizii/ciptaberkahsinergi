@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsCashMutation;
-use App\Models\CoreBranch;
-use App\Models\CoreCity;
-use App\Models\CoreKecamatan;
-use App\Models\CoreMember;
-use App\Models\AcctMutation;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\DataTables\AcctSavingsCashMutation\AcctSavingsCashMutationDataTable;
-use App\DataTables\AcctSavingsCashMutation\AcctSavingsAccountDataTable;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Helpers\Configuration;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\CoreCity;
+use App\Models\CoreBranch;
+use App\Models\CoreMember;
+use App\Models\AcctAccount;
+use App\Models\AcctSavings;
+use App\Models\AcctMutation;
+use Illuminate\Http\Request;
+use App\Models\CoreKecamatan;
+use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctSavingsCashMutation;
+use App\Models\PreferenceTransactionModule;
+use App\DataTables\AcctSavingsCashMutation\AcctSavingsAccountDataTable;
+use App\DataTables\AcctSavingsCashMutation\AcctSavingsCashMutationDataTable;
 
 class AcctSavingsCashMutationController extends Controller
 {
@@ -155,7 +156,7 @@ class AcctSavingsCashMutationController extends Controller
                     'operated_name' => auth()->user()->username,
                     'created_id' => auth()->user()->user_id,
                     'pickup_state'=> 1,
-                    // 'pickup_date'=> Carbon::now(),
+                    'pickup_date'=> Carbon::now(),
                 ];
                 AcctSavingsCashMutation::create($data);
 
@@ -555,6 +556,7 @@ class AcctSavingsCashMutationController extends Controller
                 ];
             } catch (\Exception $e) {
                 DB::rollback();
+                Log::error('Error : ' . $e->getMessage());
                 $message = [
                     'pesan' => 'Tabungan gagal ditambah',
                     'alert' => 'error',
