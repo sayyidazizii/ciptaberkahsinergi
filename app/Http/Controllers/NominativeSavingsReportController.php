@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\CoreBranch;
 use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsProfitSharing;
-use App\Models\PreferenceCompany;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctSavingsProfitSharing;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -62,8 +63,8 @@ class NominativeSavingsReportController extends Controller
                 $branch_id = $sesi['branch_id'];
             }
         }
-        
-        $kelompoklaporansimpanan	= Configuration::KelompokLaporanSimpanan();	
+
+        $kelompoklaporansimpanan	= Configuration::KelompokLaporanSimpanan();
         $acctsavings 				= AcctSavings::select('savings_id', 'savings_name')
         ->where('data_state', 0)
         ->get();
@@ -94,10 +95,11 @@ class NominativeSavingsReportController extends Controller
                 ->join('acct_savings_account', 'acct_savings_profit_sharing.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_profit_sharing.member_id', '=', 'core_member.member_id')
                 ->where('acct_savings_profit_sharing.savings_profit_sharing_period', $period);
-                
-                if(empty($val['savings_account_id'])){
+
+                if (!empty($val['savings_account_id'])) {
                     $acctsavingsprofitsharing = $acctsavingsprofitsharing->where('acct_savings_profit_sharing.savings_account_id', $val['savings_account_id']);
                 }
+
                 if($branch_id != ''){
                     $acctsavingsprofitsharing = $acctsavingsprofitsharing->where('acct_savings_profit_sharing.branch_id', $branch_id);
                 }
@@ -122,6 +124,11 @@ class NominativeSavingsReportController extends Controller
                     'savings_profit_sharing_amount'	=> $savings_profit_sharing_amount,
                     'savings_account_last_balance'	=> $savings_account_last_balance,
                 );
+                // Tambahkan logging untuk data ini
+                Log::info('Data acct savings account', [
+                    'key' => $key,
+                    'savings_account_data' => end($data_acctsavingsaccount), // Mengambil elemen terakhir yang baru ditambahkan
+                ]);
             }
         } else {
             foreach ($acctsavings as $key => $vS) {
@@ -150,9 +157,10 @@ class NominativeSavingsReportController extends Controller
                     ->join('acct_savings_account', 'acct_savings_profit_sharing.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                     ->join('core_member', 'acct_savings_profit_sharing.member_id', '=', 'core_member.member_id')
                     ->where('acct_savings_profit_sharing.savings_profit_sharing_period', $period);
-                    if(empty($val['savings_account_id'])){
+                    if (!empty($val['savings_account_id'])) {
                         $acctsavingsprofitsharing = $acctsavingsprofitsharing->where('acct_savings_profit_sharing.savings_account_id', $val['savings_account_id']);
                     }
+
                     if($branch_id != ''){
                         $acctsavingsprofitsharing = $acctsavingsprofitsharing->where('acct_savings_profit_sharing.branch_id', $branch_id);
                     }
@@ -180,7 +188,7 @@ class NominativeSavingsReportController extends Controller
                 }
             }
         }
-        
+
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
 
         $pdf::SetPrintHeader(false);
@@ -244,8 +252,8 @@ class NominativeSavingsReportController extends Controller
                 <td width=\"30%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">Alamat</div></td>
                     <td width=\"7%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: left;font-size:10;\">Bunga</div></td>
                 <td width=\"20%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">Saldo Akhir</div></td>
-                
-            </tr>				
+
+            </tr>
         </table>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">";
 
@@ -264,7 +272,7 @@ class NominativeSavingsReportController extends Controller
                     <td width=\"5%\"><div style=\"text-align: left;\"></div></td>
                     <td width=\"20%\"><div style=\"text-align: right;\"></div></td>
                 </tr>
-    
+
             ";
             }else{
 
@@ -278,9 +286,9 @@ class NominativeSavingsReportController extends Controller
                             <td width=\"5%\"><div style=\"text-align: left;\">".$val['savings_interest_rate']."%</div></td>
                             <td width=\"20%\"><div style=\"text-align: right;\">".number_format($val['savings_account_last_balance'], 2)."</div></td>
                         </tr>
-    
+
                     ";
-    
+
                     $totalbasil += $val['savings_profit_sharing_amount'];
                     $totalsaldo += $val['savings_account_last_balance'];
                     $no++;
@@ -288,7 +296,7 @@ class NominativeSavingsReportController extends Controller
             }
 
         }
-        if($sesi['kelompok'] == 1) { 
+        if($sesi['kelompok'] == 1) {
             $totalglobal    = 0;
             $totalsaldo     = 0;
             foreach ($acctsavings as $key => $vS) {
@@ -300,12 +308,12 @@ class NominativeSavingsReportController extends Controller
                         </tr>
                         <br>
                     ";
-                    
+
                     $nov = 1;
                         $subtotalbasil = 0;
                         $subtotalsaldo = 0;
                     foreach ($data_acctsavingsaccount[$vS['savings_id']] as $k => $v) {
-                        
+
                         $export .= "
                             <tr>
                                 <td width=\"5%\"><div style=\"text-align: left;\">".$nov."</div></td>
@@ -372,8 +380,8 @@ class NominativeSavingsReportController extends Controller
                 $branch_id = $sesi['branch_id'];
             }
         }
-        
-        $kelompoklaporansimpanan	= Configuration::KelompokLaporanSimpanan();	
+
+        $kelompoklaporansimpanan	= Configuration::KelompokLaporanSimpanan();
         $acctsavings 				= AcctSavings::select('savings_id', 'savings_name')
         ->where('data_state', 0)
         ->where('savings_status', 0)
@@ -403,7 +411,7 @@ class NominativeSavingsReportController extends Controller
                 ->join('acct_savings_account', 'acct_savings_profit_sharing.savings_account_id', '=', 'acct_savings_account.savings_account_id')
                 ->join('core_member', 'acct_savings_profit_sharing.member_id', '=', 'core_member.member_id')
                 ->where('acct_savings_profit_sharing.savings_profit_sharing_period', $period);
-                
+
                 if(empty($val['savings_account_id'])){
                     $acctsavingsprofitsharing = $acctsavingsprofitsharing->where('acct_savings_profit_sharing.savings_account_id', $val['savings_account_id']);
                 }
@@ -497,7 +505,7 @@ class NominativeSavingsReportController extends Controller
                                             ->setDescription("Laporan Nominatif Simpaman")
                                             ->setKeywords("Laporan Nominatif Simpaman")
                                             ->setCategory("Laporan Nominatif Simpaman");
-                                    
+
             $sheet = $spreadsheet->getActiveSheet(0);
             $spreadsheet->getActiveSheet()->setTitle("Laporan Nominatif Simpaman");
 
@@ -508,7 +516,7 @@ class NominativeSavingsReportController extends Controller
             $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(40);
             $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(20);
             $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);		
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 
             $spreadsheet->getActiveSheet()->getStyle('B4:H4')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
             $spreadsheet->getActiveSheet()->getStyle('B2:H4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -520,7 +528,7 @@ class NominativeSavingsReportController extends Controller
             } else {
                 $spreadsheet->getActiveSheet()->setCellValue('B2',"DAFTAR NOMINATIF SIMPANAN PER JENIS");
             }
-                
+
 
             $spreadsheet->getActiveSheet()->setCellValue('B4',"No");
             $spreadsheet->getActiveSheet()->setCellValue('C4',"No. Rek");
@@ -549,7 +557,7 @@ class NominativeSavingsReportController extends Controller
                     $spreadsheet->getActiveSheet()->getStyle('H'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
                     $spreadsheet->getActiveSheet()->setCellValue('B'.($row), $no);
-                    $spreadsheet->getActiveSheet()->setCellValue('C'.($row), $val['savings_account_no']);								
+                    $spreadsheet->getActiveSheet()->setCellValue('C'.($row), $val['savings_account_no']);
                     $spreadsheet->getActiveSheet()->setCellValue('D'.($row), $val['member_name']);
                     $spreadsheet->getActiveSheet()->setCellValue('E'.($row), $val['member_address']);
                     $spreadsheet->getActiveSheet()->setCellValue('F'.($row), $val['savings_daily_average_balance']);
@@ -562,7 +570,7 @@ class NominativeSavingsReportController extends Controller
                 }
             } else {
                 $i=4;
-                
+
                 foreach ($acctsavings as $k => $v) {
                     $spreadsheet->getActiveSheet()->getStyle('B'.$i)->getFont()->setBold(true)->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('B'.$i.':H'.$i)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
@@ -579,7 +587,7 @@ class NominativeSavingsReportController extends Controller
                         $spreadsheet->getActiveSheet()->getStyle('B'.($row).':H'.($row))->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                         $spreadsheet->getActiveSheet()->getStyle('B'.($row))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                         $spreadsheet->getActiveSheet()->getStyle('F'.($row).':H'.($row))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                        
+
                         $spreadsheet->getActiveSheet()->setCellValue('B'.($row), $nov);
                         $spreadsheet->getActiveSheet()->setCellValue('C'.($row), $val['savings_account_no']);
                         $spreadsheet->getActiveSheet()->setCellValue('D'.($row), $val['member_name']);
@@ -587,7 +595,7 @@ class NominativeSavingsReportController extends Controller
                         $spreadsheet->getActiveSheet()->setCellValue('F'.($row), $val['savings_daily_average_balance']);
                         $spreadsheet->getActiveSheet()->setCellValue('G'.($row), number_format($val['savings_profit_sharing_amount'],2));
                         $spreadsheet->getActiveSheet()->setCellValue('H'.($row), number_format($val['savings_account_last_balance'],2));
-                
+
                         $subtotalbasil += $val['savings_profit_sharing_amount'];
                         $subtotalsaldo += $val['savings_account_last_balance'];
                         $row++;
@@ -619,7 +627,7 @@ class NominativeSavingsReportController extends Controller
 
             $spreadsheet->getActiveSheet()->setCellValue('G'.$n, number_format($totalbasil,2));
             $spreadsheet->getActiveSheet()->setCellValue('H'.$n, number_format($totalsaldo,2));
-                
+
             ob_clean();
             $filename='Laporan Nominatif Simpaman.xls';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
