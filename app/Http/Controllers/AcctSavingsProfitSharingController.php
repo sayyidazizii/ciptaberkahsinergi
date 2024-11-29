@@ -225,6 +225,7 @@ class AcctSavingsProfitSharingController extends Controller
             return redirect('savings-profit-sharing/list-data');
         } catch (\Exception $e) {
             DB::rollback();
+            report($e);
             $message = array(
                 'pesan' => 'Bunga Tabungan gagal dihitung: '.$e->getMessage(),
                 'alert' => 'error'
@@ -430,6 +431,7 @@ class AcctSavingsProfitSharingController extends Controller
                 );
             } catch (\Exception $e) {
                 DB::rollback();
+                report($e);
                 $message = array(
                     'pesan' => 'Bunga Tabungan gagal dihitung'.$e->getMessage(),
                     'alert' => 'error'
