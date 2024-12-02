@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Models\User;
 use App\Models\CoreBranch;
 use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsProfitSharing;
-use App\Models\PreferenceCompany;
+use App\Models\AcctMutation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use App\Models\AcctSavingsProfitSharing;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use DateTime;
 
 class SavingsProfitSharingReportController extends Controller
 {
@@ -69,13 +70,13 @@ class SavingsProfitSharingReportController extends Controller
         }
 
         $export = "
-        
+
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
             <tr>
                 <td width=\"100%\"><div style=\"text-align: left; font-size:14px; font-weight:bold\">DAFTAR BUNGA TABUNGAN SIMPANAN BULAN INI</div></td>
             </tr>
         </table>";
-        
+
         $export .= "
         <br>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
@@ -86,7 +87,7 @@ class SavingsProfitSharingReportController extends Controller
                 <td width=\"7%\"><div style=\"text-align: center;border-bottom: 1px solid black;border-top: 1px solid black\">Sandi</div></td>
                 <td width=\"20%\"><div style=\"text-align: center;border-bottom: 1px solid black;border-top: 1px solid black\">Nominal</div></td>
                 <td width=\"20%\"><div style=\"text-align: center;border-bottom: 1px solid black;border-top: 1px solid black\">Saldo</div></td>
-            </tr>			
+            </tr>
         </table>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">";
 
@@ -111,7 +112,7 @@ class SavingsProfitSharingReportController extends Controller
             $total += $val['savings_profit_sharing_amount'];
             $no++;
         }
-        
+
         $export .= "
             <tr>
                 <td colspan =\"3\" style=\"border-top: 1px solid black;\"><div style=\"font-size:10;text-align:left;font-style:italic\">Printed : ".date('d-m-Y H:i:s')."  ".auth()->user()->username."</div></td>

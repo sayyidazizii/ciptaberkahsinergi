@@ -99,6 +99,7 @@ class AcctSavingsProfitSharingController extends Controller
 
         AcctSavingsAccountTemp::truncate();
         AcctSavingsAccountDetailTemp::truncate();
+        AcctSavingsProfitSharing::truncate();
         AcctSavingsProfitSharingTemp::truncate();
 
         DB::beginTransaction();
@@ -419,6 +420,11 @@ class AcctSavingsProfitSharingController extends Controller
                             'account_id_status'				=> 1,
                         );
                         AcctJournalVoucherItem::create($data_credit);
+
+                        Log::info('Total Profit Sharing for Savings ID ' . $val['savings_id'] . ': ' . $totalsavingsprofitsharing);
+                        Log::info('Total Tax for Savings ID ' . $val['savings_id'] . ': ' . $totalsavingstax);
+                        Log::info('Creating Journal Voucher: ', $data_journal);
+
                     }
                 }
 
