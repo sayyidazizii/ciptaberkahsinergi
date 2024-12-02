@@ -5,6 +5,7 @@
     $year 	= empty($session['year_period']) ? date('Y') : $session['year_period'];
 
     if($month == 12){
+        $month_start 	= empty($session['month_period']) ? date('m') : $session['month_period'];
         $last_month 	= 01;
         $last_year 		= $year + 1;
     } else {
@@ -49,7 +50,7 @@
         case '12':
             $month_name = "Desember";
             break;
-        
+
         default:
             break;
     }
@@ -67,7 +68,7 @@
         }else{
             $title = 'LAPORAN NERACA';
         }
-    } 
+    }
 
     $grand_total_account_pendapatan = 0;
     $grand_total_account_amount_beban = 0;
@@ -186,7 +187,7 @@
                                                                 <td colspan='2'><div style='font-weight:".$report_bold1."'>".$report_tab1."".$val['account_name1']."</div></td>
                                                             ";
                                                         }
-                                                        
+
                                                     echo "
                                                         </tr>
                                                     ";
@@ -201,7 +202,7 @@
                                                                 <td style='width: 25%'><div style='font-weight:".$report_bold1."'></div></td>
                                                             ";
                                                         }
-                                                            
+
                                                     echo "
                                                         </tr>
                                                     ";
@@ -220,7 +221,7 @@
 
                                                             $account_amount1_top[$val['report_no']] = $last_balance1;
                                                         }
-                                                            
+
                                                     echo "
                                                         </tr>
                                                     ";
@@ -263,7 +264,7 @@
                                                             }
                                                         }
 
-                                                    echo "			
+                                                    echo "
                                                         </tr>
                                                     ";
 
@@ -343,7 +344,7 @@
                                                         //     }
                                                         // }
 
-                                                    echo "			
+                                                    echo "
                                                         </tr>
                                                     ";
                                                 }
@@ -380,7 +381,7 @@
                                                             <td colspan='2'><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                         ";
                                                     }
-                                                    
+
                                                 echo "
                                                     </tr>
                                                 ";
@@ -395,7 +396,7 @@
                                                             <td style='width: 25%'><div style='font-weight:".$report_bold2."'></div></td>
                                                         ";
                                                     }
-                                                        
+
                                                 echo "
                                                     </tr>
                                                 ";
@@ -404,7 +405,7 @@
                                                     <tr>
                                                 ";
                                                     if($val['report_type2']	== 3){
-                                                        
+
                                                         $last_balance2 	= BalanceSheetController::getLastBalance($val['account_id2'], empty($session['branch_id']) ?  : $session['branch_id'], $last_month, $last_year);
 
                                                         echo "
@@ -423,7 +424,7 @@
                                                 <tr>
                                                 ";
                                                     if($val['report_type2']	== 7){
-                                                        
+
                                                         $last_balance2 	= BalanceSheetController::getAccountAmount($val['account_id2'],$month, $month, $last_year,empty($session['branch_id']) ? auth()->user()->branch_id : $session['branch_id'],2);
 
                                                         $account_amount2_bottom_shu[$val['report_no']] = $last_balance2;
@@ -465,9 +466,9 @@
                                                                 <td><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                                 <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($total_account_amount2, 2)."</div></td>
                                                             ";
-                                                        }	
+                                                        }
                                                     }
-                                                echo "			
+                                                echo "
                                                     </tr>
                                                 ";
                                                 echo "
@@ -504,10 +505,10 @@
                                                             }
 
                                                             $grand_total_account_pendapatan = $total_account_amount2_shu;
-                                                            
-                                                        }	
+
+                                                        }
                                                     }
-                                                echo "			
+                                                echo "
                                                     </tr>
                                                 ";
 
@@ -541,9 +542,9 @@
                                                             }
 
                                                             $grand_total_account_amount_beban = $total_account_amount_beban;
-                                                        }	
+                                                        }
                                                     }
-                                                echo "			
+                                                echo "
                                                     </tr>
                                                 ";
 
@@ -580,9 +581,9 @@
                                                                 <td><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                                 <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($total_account_amount2, 2)."</div></td>
                                                             ";
-                                                        }	
+                                                        }
                                                     }
-                                                echo "			
+                                                echo "
                                                     </tr>
                                                 ";
                                                 echo "
@@ -590,9 +591,9 @@
                                                 ";
                                                     if($val['report_type2']	== 5){
                                                         $expenditure_subtotal 	= $grand_total_account_amount2;
-                                                        
+
                                                         $account_amount2_bottom[$val['report_no']] = $expenditure_subtotal;
-                                                    }	
+                                                    }
                                                 echo "
                                                     </tr>
                                                 ";
@@ -606,7 +607,7 @@
                                                                 <td><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                                 <td style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($shu, 2)."</div></td>
                                                             ";
-                                                    }	
+                                                    }
                                                 echo "
                                                     </tr>
                                                 ";
@@ -646,9 +647,9 @@
                                                                 <td hidden><div style='font-weight:".$report_bold2."'>".$report_tab2."".$val['account_name2']."</div></td>
                                                                 <td hidden style='text-align:right'><div style='font-weight:".$report_bold2."'>".number_format($grand_total_account_amount2, 2)."</div></td>
                                                             ";
-                                                        }	
+                                                        }
                                                     }
-                                                echo "			
+                                                echo "
                                                     </tr>
                                                 ";
                                             }
@@ -675,7 +676,7 @@
                                 <td style='width: 50%'>
                                     <table class="table table-rounded border  gs-7 show-border">
                                         <tr>
-                                            <?php 
+                                            <?php
                                                 echo "
                                                     <td style=\"width: 75%\"><div style=\"font-weight:".$report_bold2.";font-size:14px\">".$report_tab2."".$grand_total_account_name2."</div></td>
                                                     <td style=\"width: 25%; text-align:right;\"><div style=\"font-weight:".$report_bold2."; font-size:14px\">".number_format($grand_total_account_amount2, 2)."</div></td>
