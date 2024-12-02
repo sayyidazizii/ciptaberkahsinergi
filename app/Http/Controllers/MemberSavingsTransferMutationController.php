@@ -33,14 +33,14 @@ class MemberSavingsTransferMutationController extends Controller
         $sessiondata = session()->get('filter_membersavingstransfermutation');
         $branch_id          = auth()->user()->branch_id;
         $coremember = AppHelper::member();
-       
+
         return $dataTable->render('content.MemberSavingsTransferMutation.List.index',compact('sessiondata','coremember'));
     }
 
     public function modalMember(CoreMemberDataTable $dataTable)
     {
         return $dataTable->render('content.MemberSavingsTransferMutation.Add.CoreMemberModal.index');
-    }   
+    }
 
     public function modalSavingsAccount(SavingsAccountDataTable $dataTable)
     {
@@ -78,15 +78,21 @@ class MemberSavingsTransferMutationController extends Controller
 
     public function add()
     {
-        $memberses = session()->get('session_member');
-        $savingsaccount = session()->get('session_savingsaccount');
-        $datases = session()->get('datases_transfermutation');
-        $acctmutation = AcctMutation::select(DB::Raw('CONCAT(mutation_code, " - " ,mutation_name) AS mutation_name'), 'mutation_id')
-        ->where('data_state', 0)
-        ->where('mutation_module', 'WJB')
-        ->first();
+        $message = array(
+                'pesan' => 'Data Debit Simpanan Wajib Dalam perbaikan',
+                'alert' => 'error'
+            );
+            return redirect('member-savings-transfer-mutation')->with($message);
 
-        return view('content.MemberSavingsTransferMutation.Add.index', compact('memberses','savingsaccount','acctmutation','datases'));
+        // $memberses = session()->get('session_member');
+        // $savingsaccount = session()->get('session_savingsaccount');
+        // $datases = session()->get('datases_transfermutation');
+        // $acctmutation = AcctMutation::select(DB::Raw('CONCAT(mutation_code, " - " ,mutation_name) AS mutation_name'), 'mutation_id')
+        // ->where('data_state', 0)
+        // ->where('mutation_module', 'WJB')
+        // ->first();
+
+        // return view('content.MemberSavingsTransferMutation.Add.index', compact('memberses','savingsaccount','acctmutation','datases'));
     }
 
     public function processAdd(Request $request)
@@ -94,7 +100,7 @@ class MemberSavingsTransferMutationController extends Controller
         $memberses = session()->get('session_member');
         $savingsaccount = session()->get('session_savingsaccount');
 
-        
+
         // dd($request->all());
 
         DB::beginTransaction();
@@ -115,7 +121,7 @@ class MemberSavingsTransferMutationController extends Controller
                 'operated_name'									=> auth()->user()->username,
                 'created_id'									=> auth()->user()->user_id,
             );
-    
+
             // dd($data);
 
             //create jurnal
@@ -132,8 +138,8 @@ class MemberSavingsTransferMutationController extends Controller
             ->where('core_member_transfer_mutation.created_id',$data['created_id'])
             ->first();
             $journal_voucher_period = date("Ym", strtotime($data['member_transfer_mutation_date']));
-            
-            
+
+
             $data_journal = array(
                 'branch_id'						=> auth()->user()->branch_id,
                 'journal_voucher_period' 		=> $journal_voucher_period,
@@ -195,13 +201,13 @@ class MemberSavingsTransferMutationController extends Controller
             );
             // dd($data_credit);
             AcctJournalVoucherItem::create($data_credit);
-           
+
             DB::commit();
             $message = array(
                 'pesan' => 'Data Debit Simpanan Wajib berhasil ditambah',
                 'alert' => 'success'
             );
-            
+
             return redirect('member-savings-transfer-mutation')->with($message);
         } catch (\Exception $e) {
             DB::rollback();
@@ -315,7 +321,7 @@ class MemberSavingsTransferMutationController extends Controller
         </table>";
 
         $pdf::writeHTML($tbl, true, false, false, false, '');
-        
+
 
         $tbl1 = "
         Telah diterima uang dari :
@@ -344,7 +350,7 @@ class MemberSavingsTransferMutationController extends Controller
                 <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($coremembertransfermutation->member_mandatory_savings, 2)."</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         $tbl2 = "
@@ -358,7 +364,7 @@ class MemberSavingsTransferMutationController extends Controller
                 <td width=\"30%\"><div style=\"text-align: center;\">Penyetor</div></td>
                 <td width=\"20%\"><div style=\"text-align: center;\"></div></td>
                 <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         $pdf::writeHTML($tbl1.$tbl2, true, false, false, false, '');
@@ -391,7 +397,7 @@ class MemberSavingsTransferMutationController extends Controller
             return redirect('member-savings-transfer-mutation')->with($message);
         }
     }
-    
+
     public function printvalidation($member_transfer_mutation_id)
     {
         $preferencecompany 	= PreferenceCompany::first();
@@ -449,7 +455,7 @@ class MemberSavingsTransferMutationController extends Controller
         </table>";
 
         $pdf::writeHTML($tbl1, true, false, false, false, '');
-        
+
         $filename = 'Validasi.pdf';
         $pdf::Output($filename, 'I');
     }
