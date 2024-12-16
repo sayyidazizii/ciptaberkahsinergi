@@ -37,7 +37,7 @@ class NominativeDepositoReportController extends Controller
         $sesi = array (
             "start_date"	=> $request->start_date,
             "kelompok"	    => $request->kelompok,
-            "branch_id"		=> $request->branch_id, 
+            "branch_id"		=> $request->branch_id,
             "view"			=> $request->view,
         );
 
@@ -62,7 +62,7 @@ class NominativeDepositoReportController extends Controller
         }
 
         // dd(date('Y-m-d', strtotime($sesi['start_date'])));
-        
+
         $acctdepositoaccount = AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.deposito_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'core_member.member_address', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_period', 'acct_deposito_account.deposito_account_status', 'acct_deposito.deposito_interest_rate')
         ->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
         ->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
@@ -88,7 +88,7 @@ class NominativeDepositoReportController extends Controller
         $acctdeposito = AcctDeposito::select('deposito_id', 'deposito_name')
         ->where('data_state', 0)
         ->get();
-        
+
         $pdf = new TCPDF('L', PDF_UNIT, 'A4', true, 'UTF-8', false);
 
         $pdf::SetPrintHeader(false);
@@ -117,7 +117,7 @@ class NominativeDepositoReportController extends Controller
         }
 
         $export = "";
-        
+
         if($sesi['kelompok'] == 0){
             $export .= "
             <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
@@ -155,7 +155,7 @@ class NominativeDepositoReportController extends Controller
                 <td width=\"10%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">JK Waktu</div></td>
                 <td width=\"10%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">Tanggal Mulai</div></td>
                 <td width=\"10%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:10;\">JT Tempo</div></td>
-            </tr>				
+            </tr>
         </table>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">";
 
@@ -182,14 +182,28 @@ class NominativeDepositoReportController extends Controller
                 $no++;
             }
         } else {
-            foreach ($acctdeposito as $kSavings => $vSavings) {			
-                $acctdepositoaccount_deposito = AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.deposito_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'core_member.member_address', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_period', 'acct_deposito_account.deposito_account_status', 'acct_deposito.deposito_interest_rate')
+            foreach ($acctdeposito as $kSavings => $vSavings) {
+                $acctdepositoaccount_deposito = AcctDepositoAccount::select(
+                    'acct_deposito_account.deposito_account_id',
+                    'acct_deposito_account.deposito_id',
+                    'acct_deposito_account.member_id',
+                    'core_member.member_name',
+                    'core_member.member_address',
+                    'acct_deposito_account.deposito_account_date',
+                    'acct_deposito_account.deposito_account_due_date',
+                    'acct_deposito_account.deposito_account_amount',
+                    'acct_deposito_account.deposito_account_no',
+                    'acct_deposito_account.deposito_account_period',
+                    'acct_deposito_account.deposito_account_status',
+                    'acct_deposito.deposito_interest_rate'
+                )
                 ->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
                 ->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
                 ->where('acct_deposito_account.deposito_account_date', '<=', date('Y-m-d', strtotime($sesi['start_date'])))
                 ->where('acct_deposito_account.deposito_id', $vSavings['deposito_id'])
                 ->where('acct_deposito_account.deposito_account_status', 0)
                 ->where('acct_deposito_account.data_state', 0)
+                ->where('acct_deposito_account.branch_id', auth()->user()->branch_id) // Filter instead of ordering
                 ->orderBy('acct_deposito_account.deposito_account_id', 'ASC')
                 ->orderBy('acct_deposito_account.deposito_id', 'ASC')
                 ->orderBy('acct_deposito_account.member_id', 'ASC')
@@ -201,7 +215,7 @@ class NominativeDepositoReportController extends Controller
                 ->orderBy('acct_deposito_account.deposito_account_period', 'ASC')
                 ->orderBy('acct_deposito_account.deposito_account_status', 'ASC')
                 ->get();
-                
+
                 if(!empty($acctdepositoaccount_deposito)){
                     $export .= "
                         <br>
@@ -280,7 +294,7 @@ class NominativeDepositoReportController extends Controller
                 $branch_id = $sesi['branch_id'];
             }
         }
-        
+
         $acctdepositoaccount = AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.deposito_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'core_member.member_address', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_period', 'acct_deposito_account.deposito_account_status', 'acct_deposito.deposito_interest_rate')
         ->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
         ->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
@@ -315,7 +329,7 @@ class NominativeDepositoReportController extends Controller
                                             ->setDescription("Laporan Nominatif Simp Bjk")
                                             ->setKeywords("Laporan, Nominatif, Simp, Bjk")
                                             ->setCategory("Laporan Nominatif Simp Bjk");
-                                    
+
             $sheet = $spreadsheet->getActiveSheet(0);
             $spreadsheet->getActiveSheet()->setTitle("Laporan Nominatif Simp Bjk");
 
@@ -325,8 +339,8 @@ class NominativeDepositoReportController extends Controller
             $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(40);
             $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(20);
             $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);		
-            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(20);		
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 
             $spreadsheet->getActiveSheet()->mergeCells("B1:I1");
             $spreadsheet->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -365,7 +379,7 @@ class NominativeDepositoReportController extends Controller
                     $spreadsheet->getActiveSheet()->getStyle('G'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $spreadsheet->getActiveSheet()->getStyle('H'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                     $spreadsheet->getActiveSheet()->getStyle('I'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-                    
+
                     $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $no);
                     $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $val['deposito_account_no']);
                     $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $val['member_name']);
@@ -374,8 +388,8 @@ class NominativeDepositoReportController extends Controller
                     $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $val['deposito_account_period']);
                     $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $val['deposito_account_date']);
                     $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $val['deposito_account_due_date']);
-                            
-                    $grandtotal += $val['deposito_account_amount'];	
+
+                    $grandtotal += $val['deposito_account_amount'];
                     $row++;
                 }
             } else {
@@ -399,7 +413,7 @@ class NominativeDepositoReportController extends Controller
                     ->orderBy('acct_deposito_account.deposito_account_period', 'ASC')
                     ->orderBy('acct_deposito_account.deposito_account_status', 'ASC')
                     ->get();
-                
+
                     if(!empty($acctdepositoaccount_deposito)){
                         $spreadsheet->getActiveSheet()->getStyle('B'.$i)->getFont()->setBold(true)->setSize(14);
                         $spreadsheet->getActiveSheet()->getStyle('B'.$i.':I'.$i)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
@@ -422,7 +436,7 @@ class NominativeDepositoReportController extends Controller
                             $spreadsheet->getActiveSheet()->getStyle('G'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                             $spreadsheet->getActiveSheet()->getStyle('H'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                             $spreadsheet->getActiveSheet()->getStyle('I'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-                            
+
                             $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $nov);
                             $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $val['deposito_account_no']);
                             $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $val['member_name']);
