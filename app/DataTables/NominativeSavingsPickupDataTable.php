@@ -188,7 +188,7 @@ class NominativeSavingsPickupDataTable extends DataTable
                     ->addClass('text-right')
                     ->width(200)
                     ->title(__('Tanggal')),
-            Column::make('operator')->title(__('BO')),
+            Column::make('operator')->title(__('AO')),
             Column::make('anggota')
                     ->addClass('text-right')
                     ->width(200)
