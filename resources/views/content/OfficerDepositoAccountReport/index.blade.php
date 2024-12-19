@@ -2,7 +2,7 @@
     <div class="card mb-5 mb-xl-10">
         <div class="card-header border-0">
             <div class="card-title m-0">
-                <h3 class="fw-bolder m-0">{{ __('Laporan Simpanan Berjangka Anggota per BO') }}</h3>
+                <h3 class="fw-bolder m-0">{{ __('Laporan Simpanan Berjangka Anggota per AO') }}</h3>
             </div>
         </div>
 
