@@ -64,7 +64,7 @@ class AcctNominativeSavingsPickupController extends Controller
         $filter['office_name'] = $coreoffice['office_name'];
 
         if($filter['office_name'] == null){
-            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'BO Harus di isi',
+            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'AO Harus di isi',
         'alert' => 'danger']);
 
         }
