@@ -533,41 +533,65 @@ function angsuranflat() {
 }
 
 function angsurananuitas() {
-    var bunga       = $("#credit_account_interest").val();
-    var jangka      = $("#credit_account_period").val();
-    var pembiayaan  = $("#credits_account_last_balance_principal").val();
-    var persbunga   = bunga / 100;
+    var bunga = parseFloat($("#credit_account_interest").val()) || 0;
+    var jangka = parseInt($("#credit_account_period").val()) || 0;
+    var pembiayaan = parseFloat($("#credits_account_last_balance_principal").val()) || 0;
+    var persbunga = bunga / 100;
 
-    if (pembiayaan == '') {
-        var totalangsuran   = 0;
-        var angsuranpokok   = 0;
-        var angsuranbunga2  = 0;
-    } else {
-        if (bunga == 0) {
-            var totalangsuran   = 0;
-            var angsuranpokok   = 0;
-            var angsuranbunga2  = 0;
-        } else {
-            var bungaA          = Math.pow((1 + parseInt(persbunga)), jangka);
-            var bungaB          = Math.pow((1 + parseInt(persbunga)), jangka) - 1;
-            var bungaC          = bungaA / bungaB;
-            var totalangsuran   = pembiayaan * persbunga * bungaC;
-            var angsuranbunga2  = (pembiayaan * bunga) / 100;
-            var angsuranpokok   = totalangsuran - angsuranbunga2;
-            var totangsuran     = Math.round((pembiayaan * (persbunga)) + pembiayaan / jangka);
+    if (pembiayaan === 0 || jangka === 0 || persbunga === 0) {
+        var totalangsuran = 0;
+        var angsuranpokok = 0;
+        var angsuranbunga2 = 0;
 
-            $.ajax({
+        $('#credit_account_payment_amount').val(totalangsuran);
+        $('#credits_account_principal_amount').val(angsuranpokok);
+        $('#credits_account_interest_amount').val(angsuranbunga2);
+        $('#credit_account_payment_amount_view').val(toRp(totalangsuran));
+        $('#credits_account_principal_amount_view').val(toRp(angsuranpokok));
+        $('#credits_account_interest_amount_view').val(toRp(angsuranbunga2));
+
+        console.warn("Pembiayaan, bunga, atau jangka tidak valid.");
+        return;
+    }
+
+    var bungaA = Math.pow(1 + persbunga, jangka);
+    var bungaB = bungaA - 1;
+
+    if (bungaB === 0) {
+        console.error("Division by zero error in bungaC calculation");
+        return; // Stop further execution
+    }
+
+    var bungaC = bungaA / bungaB;
+    var totalangsuran = pembiayaan * persbunga * bungaC;
+    var angsuranbunga2 = pembiayaan * persbunga;
+    var angsuranpokok = totalangsuran - angsuranbunga2;
+    var totangsuran = Math.round((pembiayaan * persbunga) + (pembiayaan / jangka));
+
+    console.log("Bunga:", bunga);
+    console.log("Jangka:", jangka);
+    console.log("Pembiayaan:", pembiayaan);
+    console.log("Persentase Bunga:", persbunga);
+    console.log("Total Angsuran:", totalangsuran);
+    console.log("Angsuran Pokok:", angsuranpokok);
+    console.log("Angsuran Bunga:", angsuranbunga2);
+
+    if (!isNaN(totangsuran) && totangsuran > 0) {
+        $.ajax({
                 type: "POST",
                 url: "{{ route('credits-account.rate4') }}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Ambil token dari meta tag
+                },
                 data: {
                     'nprest': jangka,
                     'vlrparc': totangsuran,
                     'vp': pembiayaan
                 },
                 success: function(rate) {
-                    var angsuranbunga2  = pembiayaan * rate;
-                    var angsuranpokok   = totangsuran - angsuranbunga2;
-                    var totalangsuran   = angsuranbunga2 + angsuranpokok;
+                    var angsuranbunga2 = pembiayaan * rate;
+                    var angsuranpokok = totangsuran - angsuranbunga2;
+                    var totalangsuran = angsuranbunga2 + angsuranpokok;
 
                     $('#credit_account_payment_amount').val(totalangsuran);
                     $('#credits_account_principal_amount').val(angsuranpokok);
@@ -575,19 +599,22 @@ function angsurananuitas() {
                     $('#credit_account_payment_amount_view').val(toRp(totalangsuran));
                     $('#credits_account_principal_amount_view').val(toRp(angsuranpokok));
                     $('#credits_account_interest_amount_view').val(toRp(angsuranbunga2));
+
+                    // Simpan hasil ke cache atau sesi seperti function_elements_add
+                    function_elements_add('credit_account_payment_amount', totalangsuran);
+                    function_elements_add('credits_account_principal_amount', angsuranpokok);
+                    function_elements_add('credits_account_interest_amount', angsuranbunga2);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", error);
                 }
             });
-        }
+
+    } else {
+        console.error("Invalid totangsuran value: ", totangsuran);
     }
-
-    var ntotalangsuran = 'credit_account_payment_amount';
-    var nangsuranpokok = 'credits_account_principal_amount';
-    var nangsuranbunga = 'credits_account_interest_amount';
-
-    function_elements_add(ntotalangsuran, totalangsuran);
-    function_elements_add(nangsuranpokok, angsuranpokok);
-    function_elements_add(nangsuranbunga, angsuranbunga2);
 }
+
 
 function duedatecalc(data) {
     var angsuran    = $("#payment_period").val();
