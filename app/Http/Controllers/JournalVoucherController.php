@@ -50,11 +50,12 @@ class JournalVoucherController extends Controller
         ->where('acct_journal_voucher_item.journal_voucher_amount','<>', 0)
         ->orderBy('acct_journal_voucher.created_at','DESC')
         ->orderBy('acct_journal_voucher.journal_voucher_date','DESC')
+        ->where('acct_journal_voucher.branch_id','=',auth()->user()->branch_id)
         ->where('acct_journal_voucher.journal_voucher_date','>=',$start_date)
         ->where('acct_journal_voucher.journal_voucher_date','<=',$end_date);
-        if(!empty($session['branch_id'])) {
-            $acctjournalvoucher = $acctjournalvoucher->where('acct_journal_voucher.branch_id', $session['branch_id']);
-        }
+            // if(!empty($session['branch_id'])) {
+            //     $acctjournalvoucher = $acctjournalvoucher->where('acct_journal_voucher.branch_id', $session['branch_id']);
+            // }
         $acctjournalvoucher = $acctjournalvoucher->get();
 
         return view('content.JournalVoucher.List.index',compact('session','corebranch','acctjournalvoucher'));
@@ -110,7 +111,7 @@ class JournalVoucherController extends Controller
             ->orderBy('journal_voucher_id','DESC')
             ->first()
             ->journal_voucher_id;
-            
+
             foreach ($acctjournalvoucheritem as $key => $val) {
                 $account_default_status = AcctAccount::select('account_default_status')
                 ->where('account_id', $val['account_id'])
@@ -192,7 +193,7 @@ class JournalVoucherController extends Controller
         session()->forget('filter_journalvoucher');
 
         return redirect('journal-voucher');
-    }   
+    }
 
     public function addArray(Request $request)
     {
@@ -287,7 +288,7 @@ class JournalVoucherController extends Controller
         </table>";
 
         $pdf::writeHTML($tbl, true, false, false, false, '');
-        
+
         $tbl1 = "
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
             <tr>
@@ -301,7 +302,7 @@ class JournalVoucherController extends Controller
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Uraian</div></td>
                 <td width=\"80%\"><div style=\"text-align: left;\">: ".$acctjournalvoucher['journal_voucher_description']."</div></td>
-            </tr>		
+            </tr>
         </table>";
 
         $tbl2 = "
@@ -338,7 +339,7 @@ class JournalVoucherController extends Controller
                 <td width=\"40%\"><div style=\"text-align: left;font-size:12px\"></div></td>
                 <td width=\"20%\"><div style=\"text-align: right;font-size:12px\"></div></td>
                 <td width=\"20%\"><div style=\"text-align: right;font-size:12px\"></div></td>
-            </tr>		
+            </tr>
         </table>
 
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"1\" width=\"100%\">
