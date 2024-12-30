@@ -272,40 +272,53 @@ class AcctNominativeSavingsReportPickupController extends Controller
         }
 
     // Header HTML
-    $html = '
-            <h1 style="text-align: center;">Laporan Pickup</h1>
-            <p>Periode: ' . $sessiondata['start_date'] . ' - ' . $sessiondata['end_date'] . '</p>
-            <p>Nama Perusahaan: ' . ($preferencecompany->company_name ?? 'N/A') . '</p>
-            <p>BO : ' . ($sessiondata['office_name'] ?? 'N/A') . '</p>
-            <table border="1" cellspacing="0" cellpadding="5">
-                <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">No</th>
-                        <th style="width: 12%; text-align: center;">Tanggal</th>
-                        <th style="width: 12%; text-align: center;">Operator</th>
-                        <th style="width: 18%; text-align: center;">Anggota</th>
-                        <th style="width: 12%; text-align: center;">No Transaksi</th>
-                        <th style="width: 10%; text-align: center;">Jumlah</th>
-                        <th style="width: 21%; text-align: center;">Keterangan</th>
-                        <th style="width: 10%; text-align: center;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>';
+        $html = '
+        <h1 style="text-align: center;">LAPORAN PICKUP</h1>
+        <p>Periode: ' . $sessiondata['start_date'] . ' - ' . $sessiondata['end_date'] . '</p>
+        <p>Nama Perusahaan: ' . ($preferencecompany->company_name ?? 'N/A') . '</p>
+        <p>BO : ' . ($sessiondata['office_name'] ?? 'N/A') . '</p>
+        <table border="1" cellspacing="0" cellpadding="4" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="width: 5%; text-align: center;">No</th>
+                    <th style="width: 12%; text-align: center;">Tanggal</th>
+                    <th style="width: 15%; text-align: center;">Operator</th>
+                    <th style="width: 20%; text-align: center;">Anggota</th>
+                    <th style="width: 12%; text-align: center;">No Transaksi</th>
+                    <th style="width: 10%; text-align: center;">Jumlah</th>
+                    <th style="width: 16%; text-align: center;">Keterangan</th>
+                    <th style="width: 10%; text-align: center;">Status</th>
+                </tr>
+            </thead>
+            <tbody>';
 
+        $total = 0;
         // Loop Data
         foreach ($allquery as $index => $item) {
-            $html .= '
-                <tr>
-                    <td style="text-align: left;">' . ($index + 1) . '</td>
-                    <td style="text-align: center;">' . $item->tanggal . '</td>
-                    <td style="text-align: center;">' . $item->operator . '</td>
-                    <td>' . $item->anggota . '</td>
-                    <td style="text-align: center;">' . $item->no_transaksi . '</td>
-                    <td style="text-align: right;">' . number_format($item->jumlah, 2) . '</td>
-                    <td>' . $item->keterangan . '</td>
-                    <td style="text-align: center;">' . $item->status . '</td>
-                </tr>';
+        $total += $item->jumlah;
+        $html .= '
+            <tr>
+                <th style="width: 5%; text-align: center;">' . ($index + 1) . '</th>
+                <th style="width: 12%; text-align: center;">' . $item->tanggal . '</th>
+                <th style="width: 15%; text-align: center;">' . $item->operator . '</th>
+                <th style="width: 20%; text-align: center;">' . $item->anggota . '</th>
+                <th style="width: 12%; text-align: center;">' . $item->no_transaksi . '</th>
+                <th style="width: 10%; text-align: center;">' . number_format($item->jumlah, 2) . '</th>
+                <th style="width: 16%; text-align: center;">' . $item->keterangan . '</th>
+                <th style="width: 10%; text-align: center;">' . $item->status . '</th>
+            </tr>';
         }
+        $html .= '
+            <tr>
+                <th style="width: 5%; text-align: center;"></th>
+                <th style="width: 12%; text-align: center;"></th>
+                <th style="width: 15%; text-align: center;"></th>
+                <th style="width: 20%; text-align: center;"></th>
+                <th style="width: 12%; text-align: center;"></th>
+                <th style="width: 10%; text-align: center;">' . number_format($total, 2) . '</th>
+                <th style="width: 16%; text-align: center;"></th>
+                <th style="width: 10%; text-align: center;"></th>
+            </tr>';
 
         $html .= '</tbody></table>';
 
