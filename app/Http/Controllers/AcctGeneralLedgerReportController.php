@@ -45,7 +45,7 @@ class AcctGeneralLedgerReportController extends Controller
                 ->get();
         }
 
-        $acctaccount = AcctAccount::select('account_id', 'account_name')
+        $acctaccount = AcctAccount::select('account_id', 'account_name','account_code')
             ->where('data_state', 0)
             ->get();
 
