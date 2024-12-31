@@ -534,6 +534,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('/process-add', [AcctSavingsProfitSharingController::class, 'processAdd'])->name('process-add');
         Route::get('/process-update', [AcctSavingsProfitSharingController::class, 'processUpdate'])->name('process-update');
         Route::put('/recalculate', [AcctSavingsProfitSharingController::class, 'recalculate'])->name('recalculate');
+        Route::post('/export', [AcctSavingsProfitSharingController::class, 'export'])->name('export');
     });
 
     // BalanceSheet pages

@@ -96,7 +96,7 @@ submitButton.addEventListener('click', function (e) {
                             <select name="year_period" id="year_period" aria-label="{{ __('Tahun') }}" data-control="select2" data-placeholder="{{ __('Pilih tahun..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
                                 <option value="">{{ __('Pilih tahun..') }}</option>
                                 @foreach($year as $key => $value)
-                                    <option data-kt-flag="{{ $key }}" value="{{ $key }}" {{ $key === old('year_period', (int)$year_period ?? '') ? 'selected' :'' }}>{{ $value }}</option>
+                                    <option data-kt-flag="{{ $key }}" value="{{ $key }}" {{ $key === old('year_period', (int)$next_year ?? '') ? 'selected' :'' }}>{{ $value }}</option>
                                 @endforeach
                             </select>
                         </div>

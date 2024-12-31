@@ -1,8 +1,19 @@
 <x-base-layout>
     <div class="card mb-5 mb-xl-10">
         <div class="card-header border-0">
-            <div class="card-title m-0">
-                <h3 class="fw-bolder m-0">{{ __('Hasil Perhitungan Bunga Tabungan') }}</h3>
+            <div class="d-flex justify-content-between w-100">
+                <div class="card-title m-0">
+                    <h3 class="fw-bolder m-0">{{ __('Hasil Perhitungan Bunga Tabungan') }}</h3>
+                </div>
+                <!-- Tombol Export -->
+                <div class="card-toolbar">
+                    <form action="{{ route('savings-profit-sharing.export') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-file-earmark-excel fs-2x"></i> {{ __('Export Excel') }}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 

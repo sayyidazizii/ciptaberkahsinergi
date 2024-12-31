@@ -63,11 +63,14 @@ class AcctSavingsProfitSharingDataTable extends DataTable
                 'scrollX' => true,
                 'dom' => 'Bfrtip',
                 'buttons' => [
-                    ['extend' => 'excel', 'text' => __('Export Excel')],
-                ]
+                    // ['extend' => 'excel', 'text' => __('Export Excel')],
+                ],
+                'lengthMenu' => [[10, 25, 50, -1], [10, 25, 50, 'All']],  // Menambahkan opsi "All"
+                'pageLength' => -1  // Mengatur jumlah default untuk menampilkan semua data
             ])
             ->addTableClass('align-middle table-row-dashed fs-6 gy-5');
     }
+
 
     protected function getColumns()
     {
