@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (empty($sessiondata)){
     $sessiondata['start_month_period']  = date('m');
     $sessiondata['end_month_period']    = date('m');
@@ -56,7 +56,7 @@ if (empty($sessiondata)){
                             <select name="account_id" id="account_id" aria-label="{{ __('Nama Perkiraan') }}" data-control="select2" data-placeholder="{{ __('Pilih nama perkiraan..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
                                 <option value="">{{ __('Pilih nama perkiraan..') }}</option>
                                 @foreach($acctaccount as $key => $value)
-                                    <option data-kt-flag="{{ $value['account_id'] }}" value="{{ $value['account_id'] }}" {{ $value['account_id'] === old('account_id', (int)$sessiondata['account_id'] ?? '') ? 'selected' :'' }}>{{ $value['account_name'] }}</option>
+                                    <option data-kt-flag="{{ $value['account_id'] }}" value="{{ $value['account_id'] }}" {{ $value['account_id'] === old('account_id', (int)$sessiondata['account_id'] ?? '') ? 'selected' :'' }}>{{ $value['account_code'] ."-". $value['account_name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -91,7 +91,7 @@ if (empty($sessiondata)){
             </div>
         </div>
         <div class="card-body pt-6">
-            <div class="table-responsive"> 
+            <div class="table-responsive">
                 <div class="col-lg-12">
                     <table class="table table-sm table-rounded border gy-3 gs-3 show-border">
                         <thead>
@@ -115,7 +115,7 @@ if (empty($sessiondata)){
 								<td colspan="5" align="center"><b> Saldo Awal</b></td>
 								<td></td>
 								<td></td>
-								<?php 
+								<?php
 									if($account_id_status == 0){
 										if($opening_balance_amount >= 0){
 											echo "
@@ -149,10 +149,10 @@ if (empty($sessiondata)){
 								$last_balance_credit	= 0;
 								$total_debet 			= 0;
 								$total_kredit 			= 0;
-								if(!empty($acctgeneralledgerreport)){	
-									foreach ($acctgeneralledgerreport as $key=>$val){	
+								if(!empty($acctgeneralledgerreport)){
+									foreach ($acctgeneralledgerreport as $key=>$val){
 										echo"
-											<tr>			
+											<tr>
 												<td style='text-align:center'>$no.</td>
 												<td style='text-align:center'>".date('d-m-Y', strtotime($val['transaction_date']))."</td>
 												<td>".$val['transaction_no']."</td>
@@ -171,7 +171,7 @@ if (empty($sessiondata)){
 
 										$total_debet 			+= $val['account_in'];
 										$total_kredit			+= $val['account_out'];
-									} 
+									}
 								} else {
 									if($account_id_status == 0){
 										if($opening_balance_amount >= 0){
