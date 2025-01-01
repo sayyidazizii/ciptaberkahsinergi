@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctAccountBalanceDetail;
-use App\Models\AcctAccountMutation;
-use App\Models\AcctAccountOpeningBalance;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctProfitLoss;
-use App\Models\AcctProfitLossReport;
-use App\Models\AcctRecalculateLog;
 use App\Models\CoreBranch;
-use App\Models\PreferenceCompany;
+use App\Models\AcctAccount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
-use App\Models\AcctJournalVoucher;
+use App\Models\AcctProfitLoss;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctRecalculateLog;
+use Illuminate\Support\Facades\DB;
+use App\Models\AcctAccountMutation;
+use App\Models\AcctProfitLossReport;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctAccountBalanceDetail;
+use App\Models\AcctAccountOpeningBalance;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -1200,7 +1201,7 @@ class AcctProfitLossReportController extends Controller
                     }
                 }
 
-
+                $income_tax = 0;
                 if($sessiondata['profit_loss_report_type'] == 1){
                     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
                     ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
@@ -1254,6 +1255,11 @@ class AcctProfitLossReportController extends Controller
             );
         } catch (\Exception $e) {
             DB::rollback();
+            // Log error message
+            Log::error('Proses SHU gagal dilakukan: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
             $message = array(
                 'pesan' => 'Proses SHU gagal dilakukan',
                 'alert' => 'error'
