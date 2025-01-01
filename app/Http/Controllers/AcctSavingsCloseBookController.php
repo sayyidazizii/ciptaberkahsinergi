@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\AcctAccountOpeningBalance;
-use App\Models\AcctBalanceSheetReport;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsAccountDetail;
-use App\Models\AcctSavingsCloseBook;
 use App\Models\SHULastYear;
+use Illuminate\Http\Request;
+use App\Models\PreferenceCompany;
+use App\Models\AcctSavingsAccount;
 use Illuminate\Support\Facades\DB;
+use App\Models\AcctAccountMutation;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctProfitLossReport;
+use App\Models\AcctSavingsCloseBook;
+use App\Models\AcctBalanceSheetReport;
+use App\Models\AcctSavingsAccountDetail;
+use App\Models\AcctAccountOpeningBalance;
+use App\Http\Controllers\AcctProfitLossReportController;
 
 class AcctSavingsCloseBookController extends Controller
 {
@@ -24,6 +29,11 @@ class AcctSavingsCloseBookController extends Controller
             'start_date' => ['required','date_format:d-m-Y']
         ]);
 
+        $preferencecompany 	= PreferenceCompany::first();
+
+        $year  = date('Y');
+        $month = date('m') + 1;
+
         $data_log = array(
             'savings_close_book_date'		=> date('Y-m-d', strtotime($fields['start_date'])),
             'savings_close_book_period'		=> date('mY', strtotime($fields['start_date'])),
@@ -34,20 +44,24 @@ class AcctSavingsCloseBookController extends Controller
         DB::beginTransaction();
 
         try {
+            // Log starting point
+            Log::info('ProcessAdd started', ['branch_id' => auth()->user()->branch_id]);
+
             AcctSavingsCloseBook::create($data_log);
-            $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes()->where('branch_id', auth()->user()->branch_id)
-            ->orderBy('savings_account_no', 'ASC')
-            ->get();
+            $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes()
+                ->where('branch_id', auth()->user()->branch_id)
+                ->orderBy('savings_account_no', 'ASC')
+                ->get();
 
             foreach ($acctsavingsaccount as $key => $val) {
-                $acctsavingsaccount_update                                  = AcctSavingsAccount::withoutGlobalScopes()->findOrFail($val['savings_account_id']);
+                $acctsavingsaccount_update = AcctSavingsAccount::withoutGlobalScopes()->findOrFail($val['savings_account_id']);
                 $acctsavingsaccount_update->savings_account_opening_balance = $val['savings_account_last_balance'];
-                $acctsavingsaccount_update->updated_id                      = auth()->user()->user_id;
+                $acctsavingsaccount_update->updated_id = auth()->user()->user_id;
                 $acctsavingsaccount_update->save();
             }
 
             foreach ($acctsavingsaccount as $key => $val) {
-                $data_detail = array (
+                $data_detail = array(
                     'branch_id'						=> auth()->user()->branch_id,
                     'member_id'						=> $val['member_id'],
                     'savings_id'					=> $val['savings_id'],
@@ -65,74 +79,157 @@ class AcctSavingsCloseBookController extends Controller
             }
 
             $shu_last_year_amount = 0;
-			$acctbalancesheetreport_right	= AcctBalanceSheetReport::select('balance_sheet_report_id', 'report_no', 'account_id2', 'account_code2', 'account_name2', 'report_formula2', 'report_operator2', 'report_type2', 'report_tab2', 'report_bold2', 'report_formula3', 'report_operator3')
-			->where('acct_balance_sheet_report.account_name2','!=', ' ')
-			->orderBy('acct_balance_sheet_report.report_no', 'ASC')
+
+
+
+//==============================================laba rugi template==============================================
+
+            $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
+            ->where('account_name', '!=', ' ')
+            ->where('account_name', '!=', '')
+            ->where('account_type_id', 2)
+            ->orderBy('report_no', 'ASC')
             ->get();
 
-            foreach($acctbalancesheetreport_right as $key => $val){
-                $year  = date('Y');
-                $month = date('m')+1;
-                if($month > 12){
-                    $month = 1;
-                    $year += 1;
+            $acctprofitlossreport_bottom	= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
+            ->where('account_name', '!=', ' ')
+            ->where('account_name', '!=', '')
+            ->where('account_type_id', 3)
+            ->orderBy('report_no', 'ASC')
+            ->get();
+
+
+            foreach ($acctprofitlossreport_top as $keyTop => $valTop) {
+
+
+                if($valTop['report_type']	== 3){
+                    $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($valTop['account_id'], $month, $month, $year, auth()->user()->branch_id,2);
+
+                    $account_amount[$valTop['report_no']] = $account_subtotal;
                 }
 
-                if($val['report_type2']	== 10){
-                    $last_balance210 	= AcctAccountOpeningBalance::select('opening_balance')
-                    ->where('account_id', $val['account_id2'])
-                    ->where('branch_id', auth()->user()->branch_id)
-                    ->where('month_period', $month)
-                    ->where('year_period', $year)
-                    ->first()
-                    ->opening_balance;
+                if($valTop['report_type'] == 5){
+                    if(!empty($valTop['report_formula']) && !empty($valTop['report_operator'])){
+                        $report_formula 	= explode('#', $valTop['report_formula']);
+                        $report_operator 	= explode('#', $valTop['report_operator']);
 
-                    $account_amount_top[$val['report_no']] = $last_balance210;
-                }
-                
-                if($val['report_type2'] == 11){
-                    if(!empty($val['report_formula2']) && !empty($val['report_operator2'])){
-                        $report_formula2 	= explode('#', $val['report_formula2']);
-                        $report_operator2 	= explode('#', $val['report_operator2']);
-
-                        $account_amount	= 0;
-                        for($i = 0; $i < count($report_formula2); $i++){
-                            if($report_operator2[$i] == '-'){
-                                if($account_amount == 0 ){
-                                    $account_amount = $account_amount + $account_amount_top[$report_formula2[$i]];
+                        $total_account_amount1	= 0;
+                        for($i = 0; $i < count($report_formula); $i++){
+                            if($report_operator[$i] == '-'){
+                                if($total_account_amount1 == 0 ){
+                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
                                 } else {
-                                    $account_amount = $account_amount - $account_amount_top[$report_formula2[$i]];
+                                    $total_account_amount1 = $total_account_amount1 - $account_amount[$report_formula[$i]];
                                 }
-                            } else if($report_operator2[$i] == '+'){
-                                if($account_amount == 0){
-                                    $account_amount = $account_amount - $account_amount_top[$report_formula2[$i]];
+                            } else if($report_operator[$i] == '+'){
+                                if($total_account_amount1 == 0){
+                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
                                 } else {
-                                    $account_amount = $account_amount + $account_amount_top[$report_formula2[$i]];
+                                    $total_account_amount1 = $total_account_amount1 + $account_amount[$report_formula[$i]];
                                 }
                             }
                         }
+                    }
+                }
 
-                        $shu_last_year_amount = $account_amount;
+            }
+
+            foreach ($acctprofitlossreport_bottom as $keyBottom => $valBottom) {
+
+
+                if($valBottom['report_type']	== 3){
+                    $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($valBottom['account_id'], $month, $month, $year, auth()->user()->branch_id,2);
+
+                    $account_amount[$valBottom['report_no']] = $account_subtotal;
+                }
+
+
+                if($valBottom['report_type'] == 5){
+                    if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
+                        $report_formula 	= explode('#', $valBottom['report_formula']);
+                        $report_operator 	= explode('#', $valBottom['report_operator']);
+
+                        $total_account_amount2	= 0;
+                        for($i = 0; $i < count($report_formula); $i++){
+                            if($report_operator[$i] == '-'){
+                                if($total_account_amount2 == 0 ){
+                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
+                                } else {
+                                    $total_account_amount2 = $total_account_amount2 - $account_amount[$report_formula[$i]];
+                                }
+                            } else if($report_operator[$i] == '+'){
+                                if($total_account_amount2 == 0){
+                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
+                                } else {
+                                    $total_account_amount2 = $total_account_amount2 + $account_amount[$report_formula[$i]];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if($valBottom['report_type'] == 6){
+                    if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
+                        $report_formula 	= explode('#', $valBottom['report_formula']);
+                        $report_operator 	= explode('#', $valBottom['report_operator']);
+
+                        $grand_total_account_amount2	= 0;
+                        for($i = 0; $i < count($report_formula); $i++){
+                            if($report_operator[$i] == '-'){
+                                if($grand_total_account_amount2 == 0 ){
+                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
+                                } else {
+                                    $grand_total_account_amount2 = $grand_total_account_amount2 - $account_amount[$report_formula[$i]];
+                                }
+                            } else if($report_operator[$i] == '+'){
+                                if($grand_total_account_amount2 == 0){
+                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
+                                } else {
+                                    $grand_total_account_amount2 = $grand_total_account_amount2 + $account_amount[$report_formula[$i]];
+                                }
+                            }
+                        }
                     }
                 }
             }
 
+
+
+            $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
+            ->where('acct_account_mutation.branch_id', auth()->user()->branch_id)
+            ->where('acct_account_mutation.year_period', $year)
+            ->sum('last_balance');
+
+            $shu = $total_account_amount1 - $grand_total_account_amount2 - $income_tax;
+
+            $shu_last_year_amount = $shu;
+
+//================================================end template==============================================
+
             $data_shu_last_year = array(
                 'branch_id'             => auth()->user()->branch_id,
                 'last_year'             => date('Y'),
-                'next_year'             => date('Y')+1,
+                'next_year'             => date('Y') + 1,
                 'shu_last_year_amount'  => $shu_last_year_amount,
             );
-            
+
             SHULastYear::create($data_shu_last_year);
 
             DB::commit();
+            Log::info('ProcessAdd completed successfully', ['branch_id' => auth()->user()->branch_id]);
+
             $message = array(
                 'pesan' => 'Tutup Buku berhasil',
                 'alert' => 'success'
             );
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('ProcessAdd failed', [
+                'branch_id' => auth()->user()->branch_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             $message = array(
                 'pesan' => 'Tutup Buku gagal',
                 'alert' => 'error'
@@ -141,4 +238,5 @@ class AcctSavingsCloseBookController extends Controller
 
         return redirect('savings-close-book')->with($message);
     }
+
 }
