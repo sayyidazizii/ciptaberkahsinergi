@@ -1200,7 +1200,6 @@ class AcctProfitLossReportController extends Controller
                     }
                 }
 
-                $shu = $total_account_amount1 - $grand_total_account_amount2;
 
                 if($sessiondata['profit_loss_report_type'] == 1){
                     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
@@ -1215,6 +1214,8 @@ class AcctProfitLossReportController extends Controller
                     ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
                     ->sum('last_balance');
                 }
+
+                $shu = $total_account_amount1 - $grand_total_account_amount2 - $income_tax;
 
                 $profit_loss_amount = $shu;
 
