@@ -89,7 +89,7 @@ class AcctCreditsAcquittanceController extends Controller
 
         $acctcreditsaccount     = array();
         $acctcreditspayment     = array();
-        $credits_account_interest_last_balance = 0; 
+        $credits_account_interest_last_balance = 0;
         if(isset($sessiondata['credits_account_id'])){
             $acctcreditsaccount = AcctCreditsAccount::with('member','credit')->find($sessiondata['credits_account_id']);
 
@@ -134,7 +134,7 @@ class AcctCreditsAcquittanceController extends Controller
             'credits_account_id' => ['required'],
         ]);
 
-        // notif jumlah pelunasan 
+        // notif jumlah pelunasan
         if($request->credits_account_last_balance < $request->credits_acquittance_principal)
             {
                 $message = array(
@@ -173,7 +173,7 @@ class AcctCreditsAcquittanceController extends Controller
                 );
                 // dd($data);
                 AcctCreditsAcquittance::create($data);
-                
+
                 $kerugian_pelunasan_peminjaman = $data['credits_account_last_balance'] - $data['credits_acquittance_principal'];
 
                 $journal_voucher_period 	= date("Ym", strtotime($data['credits_acquittance_date']));
@@ -196,7 +196,7 @@ class AcctCreditsAcquittanceController extends Controller
                 ->where('acct_credits_acquittance.created_id', $data['created_id'])
                 ->orderBy('acct_credits_acquittance.credits_acquittance_id', 'DESC')
                 ->first();
-                
+
                 $data_journal = array(
                     'branch_id'						=> auth()->user()->branch_id,
                     'journal_voucher_period' 		=> $journal_voucher_period,
@@ -326,11 +326,11 @@ class AcctCreditsAcquittanceController extends Controller
                     'alert' => 'error'
                 );
             }
-            
+
             return redirect('credits-acquittance')->with($message);
             }
 
-        
+
     }
 
     public function printNote($credits_acquittance_id){
@@ -414,12 +414,12 @@ class AcctCreditsAcquittanceController extends Controller
             </tr>
             <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Keperluan</div></td>
-                <td width=\"50%\"><div style=\"text-align: left;\">: PELUNASAN PEMINJAMAN</div></td>
+                <td width=\"50%\"><div style=\"text-align: left;\">: PELUNASAN PINJAMAN</div></td>
             </tr>
              <tr>
                 <td width=\"20%\"><div style=\"text-align: left;\">Jumlah</div></td>
                 <td width=\"50%\"><div style=\"text-align: left;\">: Rp. &nbsp;".number_format($acctcreditsacquittance['credits_acquittance_amount'], 2)."</div></td>
-            </tr>				
+            </tr>
         </table>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
             <tr>
@@ -431,7 +431,7 @@ class AcctCreditsAcquittanceController extends Controller
                 <td width=\"30%\"><div style=\"text-align: center;\">Penyetor</div></td>
                 <td width=\"10%\"><div style=\"text-align: center;\"></div></td>
                 <td width=\"30%\"><div style=\"text-align: center;\">Teller/Kasir</div></td>
-            </tr>				
+            </tr>
         </table>";
 
         //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
