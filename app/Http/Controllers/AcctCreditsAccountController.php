@@ -3421,7 +3421,7 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"100%\">
-                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>bulan dengan pembayaran setiap Hari " . $dayname[$dayPayment] . " <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
+                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>bulan dengan pembayaran setiap Tanggal " . $paymentDate . " <br>(selanjutnya di sebut dengan Tanggal Angsuran)</div>
                                 </td>
                             </tr>";
 
