@@ -251,7 +251,7 @@ class SavingsTransferMutationController extends Controller
                 AcctJournalVoucherItem::create([
                     'journal_voucher_id' => $journal_voucher_id,
                     'account_id' => $account_id_from,
-                    'journal_voucher_description' => 'NOTA DEBET ' . $member_name,
+                    'journal_voucher_description' => 'Pindah Buku Debet ' . $member_name,
                     'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
                     'journal_voucher_debit_amount' => $data['savings_transfer_mutation_amount'],
                     'account_id_status' => 1,
@@ -278,7 +278,7 @@ class SavingsTransferMutationController extends Controller
                 AcctJournalVoucherItem::create([
                     'journal_voucher_id' => $journal_voucher_id,
                     'account_id' => $account_id_to,
-                    'journal_voucher_description' => 'NOTA KREDIT ' . $member_name,
+                    'journal_voucher_description' => 'Pindah Buku Kredit ' . $member_name,
                     'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
                     'journal_voucher_credit_amount' => $data['savings_transfer_mutation_amount'],
                     'account_id_status' => 0,
