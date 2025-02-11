@@ -320,7 +320,7 @@ class SavingsTransferMutationController extends Controller
 
     public function printValidation($savings_transfer_mutation_id)
     {
-        $acctsavingstransfermutation = AcctSavingsTransferMutation::select('updated_at', 'validation_id', 'savings_transfer_mutation_amount')
+        $acctsavingstransfermutation = AcctSavingsTransferMutation::select('updated_at', 'validation_id', 'created_at', 'created_id', 'savings_transfer_mutation_amount')
             ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
             ->where('data_state', 0)
             ->first();
@@ -329,66 +329,68 @@ class SavingsTransferMutationController extends Controller
             ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
             ->first();
 
+        $acctsavingstransfermutationto = AcctSavingsTransferMutationTo::select('savings_account_id', 'member_id')
+            ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
+            ->first();
+
         $preferencecompany = PreferenceCompany::first();
         $path = public_path('storage/' . $preferencecompany['logo_koperasi']);
 
-        $pdf = new tcpdf('P', PDF_UNIT, 'F4', true, 'UTF-8', false);
-
+        $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
-
-        $pdf::SetMargins(7, 7, 7, 7);
-
+        $pdf::SetMargins(10, 10, 10);
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
-            require_once dirname(__FILE__) . '/lang/eng.php';
-            $pdf::setLanguageArray($l);
-        }
-        $pdf::SetFont('helvetica', 'B', 20);
-
+        $pdf::SetFont('helvetica', '', 10);
         $pdf::AddPage();
 
-        $pdf::SetFont('helveticaI', '', 7);
-
-        $tbl =
-            "
-        <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+        $tbl = "
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
             <tr>
-                <td rowspan=\"2\" width=\"10%\"><img src=\"" .
-            $path .
-            "\" alt=\"\" width=\"700%\" height=\"300%\"/></td>
+                <td width='20%'><img src='" . $path . "' width='80' height='80'/></td>
+                <td width='80%' style='text-align: center; font-size: 16px; font-weight: bold;'>
+                    KWITANSI TRANSFER TABUNGAN
+                </td>
+            </tr>
+        </table>
+        <hr/>
+        <br/>
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
+            <tr>
+                <td width='50%'><b>Transfer Dari:</b></td>
+                <td width='50%'><b>Transfer Ke:</b></td>
+            </tr>
+            <tr>
+                <td>Rekening: " . $this->getSavingsAccountNo($acctsavingstransfermutationfrom['savings_account_id']) . "</td>
+                <td>Rekening: " . $this->getSavingsAccountNo($acctsavingstransfermutationto['savings_account_id']) . "</td>
+            </tr>
+            <tr>
+                <td>Nama: " . $this->getMemberName($acctsavingstransfermutationfrom['member_id']) . "</td>
+                <td>Nama: " . $this->getMemberName($acctsavingstransfermutationto['member_id']) . "</td>
             </tr>
         </table>
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
             <tr>
-                <td width=\"55%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getSavingsAccountNo($acctsavingstransfermutationfrom['savings_account_id']) .
-            "</div></td>
-                <td width=\"45%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getMemberName($acctsavingstransfermutationfrom['member_id']) .
-            "</div></td>
+                <td width='50%'>Tanggal: " . date('d-m-Y', strtotime($acctsavingstransfermutation['created_at'])) . "</td>
+                <td width='50%' style='text-align: right;'>Jumlah: <b>IDR " . number_format($acctsavingstransfermutation['savings_transfer_mutation_amount'], 2) . "</b></td>
             </tr>
             <tr>
-                <td width=\"52%\"><div style=\"text-align: right; font-size:14px\">" .
-            $acctsavingstransfermutation['validation_on'] .
-            "</div></td>
-                <td width=\"18%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getUsername($acctsavingstransfermutation['validation_id']) .
-            "</div></td>
-                <td width=\"30%\"><div style=\"text-align: right; font-size:14px\"> IDR &nbsp; " .
-            number_format($acctsavingstransfermutation['savings_transfer_mutation_amount'], 2) .
-            "</div></td>
+                <td>Dibuat oleh: " . $this->getUsername($acctsavingstransfermutation['created_id']) . "</td>
+                <td></td>
             </tr>
-        </table>";
+        </table>
+        <br/><br/><br/>
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
+            <tr>
+                <td width='50%' style='text-align: center;'>_________________________<br/>Penerima</td>
+                <td width='50%' style='text-align: center;'>_________________________<br/>Petugas</td>
+            </tr>
+        </table>
+        ";
 
         $pdf::writeHTML($tbl, true, false, false, false, '');
-
-        $filename = 'Validasi.pdf';
-        $pdf::Output($filename, 'I');
+        $pdf::Output('kwitansi_transfer.pdf', 'I');
     }
 
     public function getSavingsAccountNo($savings_account_id)
