@@ -170,19 +170,9 @@ class SavingsTransferMutationController extends Controller
         $savingsaccountfrom = session()->get('session_savingsaccountfrom');
         $savingsaccountto = session()->get('session_savingsaccountto');
 
-        Log::info('Memulai proses transfer antar rekening', [
-            'savingsaccountfrom' => $savingsaccountfrom,
-            'savingsaccountto' => $savingsaccountto,
-            'transfer_amount' => $request->savings_transfer_mutation_amount
-        ]);
-
         DB::beginTransaction();
 
         if ($request->savings_account_last_balance < $request->savings_transfer_mutation_amount) {
-            Log::warning('Saldo tidak mencukupi untuk transfer', [
-                'saldo' => $request->savings_account_last_balance,
-                'transfer_amount' => $request->savings_transfer_mutation_amount
-            ]);
 
             $message = [
                 'pesan' => 'Saldo Tidak Mencukupi !',
@@ -201,17 +191,17 @@ class SavingsTransferMutationController extends Controller
                 'created_id' => auth()->user()->user_id,
             ];
 
-            Log::info('Membuat transfer mutation', ['data' => $data]);
+            // Log::info('Membuat transfer mutation', ['data' => $data]);
             AcctSavingsTransferMutation::create($data);
 
             $savings_transfer_mutation_id = AcctSavingsTransferMutation::where('created_id', $data['created_id'])
                 ->orderBy('savings_transfer_mutation_id', 'DESC')
                 ->first()->savings_transfer_mutation_id;
 
-            Log::info('Transfer mutation berhasil dibuat', ['id' => $savings_transfer_mutation_id]);
+            // Log::info('Transfer mutation berhasil dibuat', ['id' => $savings_transfer_mutation_id]);
 
             $preferencecompany = PreferenceCompany::first();
-            Log::info('Mendapatkan preference company', ['data' => $preferencecompany]);
+            // Log::info('Mendapatkan preference company', ['data' => $preferencecompany]);
 
             // Data FROM (Rekening sumber)
             $datafrom = [
@@ -226,13 +216,13 @@ class SavingsTransferMutationController extends Controller
                 'savings_account_last_balance' => $request->savings_account_from_last_balance,
             ];
 
-            Log::info('Data rekening sumber', ['data' => $datafrom]);
+            // Log::info('Data rekening sumber', ['data' => $datafrom]);
 
             $member_name = CoreMember::where('member_id', $datafrom['member_id'])->first()->member_name;
-            Log::info('Nama member sumber', ['name' => $member_name]);
+            // Log::info('Nama member sumber', ['name' => $member_name]);
 
             if (AcctSavingsTransferMutationFrom::create($datafrom)) {
-                Log::info('Berhasil menyimpan data FROM');
+                // Log::info('Berhasil menyimpan data FROM');
 
                 // Mendapatkan transaksi terakhir
                 $acctsavingstr_last = AcctSavingsTransferMutation::select(
@@ -249,7 +239,7 @@ class SavingsTransferMutationController extends Controller
                     ->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')
                     ->first();
 
-                Log::info('Transaksi terakhir', ['data' => $acctsavingstr_last]);
+                // Log::info('Transaksi terakhir', ['data' => $acctsavingstr_last]);
 
                 // Membuat jurnal
                 $journal_voucher_period = now()->format('Ym');
@@ -266,7 +256,7 @@ class SavingsTransferMutationController extends Controller
                     'created_id' => $data['created_id'],
                 ];
 
-                Log::info('Data jurnal', ['data' => $data_journal]);
+                // Log::info('Data jurnal', ['data' => $data_journal]);
                 AcctJournalVoucher::create($data_journal);
 
                 // Data TO (Rekening tujuan)
@@ -290,7 +280,6 @@ class SavingsTransferMutationController extends Controller
             }
 
             DB::commit();
-            Log::info('Transfer antar rekening berhasil disimpan');
 
             return redirect('savings-transfer-mutation')->with([
                 'pesan' => 'Transfer Antar Rekening berhasil ditambah',
