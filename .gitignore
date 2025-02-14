@@ -18,7 +18,6 @@ testDiagram.drawio
 debug.log
 settings.json
 .vscode/settings.json
-composer.lock
 
 /public/hot
 /public/storage
