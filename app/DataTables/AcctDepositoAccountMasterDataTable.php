@@ -65,7 +65,7 @@ class AcctDepositoAccountMasterDataTable extends DataTable
         }
 
         $querydata = $model->newQuery()
-        ->select('acct_deposito_account.deposito_account_id', 'core_member.member_name', 'acct_deposito.deposito_name', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_extra_type', 'acct_deposito_account.deposito_account_serial_no', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_interest_amount', 'acct_deposito_account.validation')
+        ->select('acct_deposito_account.deposito_account_id', 'core_member.member_name', 'acct_deposito.deposito_name', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_extra_type', 'acct_deposito_account.deposito_account_serial_no', 'acct_deposito_account.deposito_account_amount','acct_deposito_account.deposito_account_interest','acct_deposito_account.deposito_account_interest_amount', 'acct_deposito_account.validation')
         ->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
         ->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
         ->where('acct_deposito_account.deposito_account_status', 0)
@@ -111,6 +111,7 @@ class AcctDepositoAccountMasterDataTable extends DataTable
             Column::make('acct_deposito_account.deposito_account_extra_type')->title(__('Jenis Perpanjangan'))->data('deposito_account_extra_type'),
             Column::make('acct_deposito_account.deposito_account_serial_no')->title(__('Nomor Seri'))->data('deposito_account_serial_no'),
             Column::make('acct_deposito_account.deposito_account_date')->title(__('Tanggal Buka'))->data('deposito_account_date'),
+            Column::make('acct_deposito_account.deposito_account_interest')->title(__('Bunga'))->data('deposito_account_interest'),
             Column::make('acct_deposito_account.deposito_account_due_date')->title(__('Tanggal Jatuh Tempo'))->data('deposito_account_due_date'),
             Column::make('acct_deposito_account.deposito_account_amount')->title(__('Nominal'))->data('deposito_account_amount'),
             Column::make('acct_deposito_account.deposito_account_interest_amount')->title(__('Bunga Diterima'))->data('deposito_account_interest_amount'),
