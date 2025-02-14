@@ -1098,6 +1098,13 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('save', [BackupDataController::class, 'store'])->name('save');
     });
 
+    Route::prefix('wa')->name('wa.')->group(function () {
+        Route::get('/', [WhatsappController::class, 'index'])->name('index');
+        Route::post('/reload', [WhatsappController::class, 'reload'])->name('reload');
+        Route::get('/broadcast', [WhatsappController::class, 'broadcast'])->name('broadcast');
+        Route::post('/broadcast', [WhatsappController::class, 'processAdd'])->name('process-add');
+    });
+
 });
 
 // Route::resource('users', UsersController::class);
