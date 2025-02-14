@@ -9,17 +9,12 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/CiptasolutindoTech/PPOBLibary"
-        },
-        {
-            "type": "vcs",
             "url": "https://github.com/CiptasolutindoTech/wa-laravel"
         }
     ],
     "license": "MIT",
     "require": {
         "anlutro/l4-settings": "^1.0",
-        "cst/ppob-laravel": "^1.0@alpha",
         "cst/wa-laravel": "^1.2",
         "elibyy/tcpdf-laravel": "^9.1",
         "fideloper/proxy": "^4.4",
