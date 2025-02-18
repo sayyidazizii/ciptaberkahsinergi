@@ -123,7 +123,7 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Master_Data_Pinjaman_' . date('YmdHis');
     }

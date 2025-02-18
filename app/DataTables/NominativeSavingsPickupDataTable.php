@@ -210,7 +210,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'pickup_' . date('YmdHis');
     }

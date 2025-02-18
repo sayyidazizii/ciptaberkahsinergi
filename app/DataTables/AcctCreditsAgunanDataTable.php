@@ -183,7 +183,7 @@ class AcctCreditsAgunanDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Master_Data_Agunan_' . date('YmdHis');
     }

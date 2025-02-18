@@ -116,7 +116,7 @@ class AcctSavingsCashMutationDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Mutasi_Tunai' . date('YmdHis');
     }

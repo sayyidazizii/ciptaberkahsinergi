@@ -103,7 +103,7 @@ class AcctSavingsAccountSrhDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'SavingsAccountSrh_' . date('YmdHis');
     }

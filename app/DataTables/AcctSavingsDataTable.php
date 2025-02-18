@@ -67,7 +67,7 @@ class AcctSavingsDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'Mutation_' . date('YmdHis');
     }

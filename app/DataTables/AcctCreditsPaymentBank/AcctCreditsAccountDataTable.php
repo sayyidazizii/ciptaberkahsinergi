@@ -89,7 +89,7 @@ class AcctCreditsAccountDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'AcctCreditsPaymentBank/AcctCreditsAccount_' . date('YmdHis');
     }

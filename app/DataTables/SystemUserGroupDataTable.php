@@ -56,7 +56,7 @@ class SystemUserGroupDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'UserGroup_' . date('YmdHis');
     }

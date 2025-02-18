@@ -101,7 +101,7 @@ class AcctCreditsPaymentSuspendDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Penundaan_angsuran' . date('YmdHis');
     }

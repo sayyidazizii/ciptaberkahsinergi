@@ -110,7 +110,7 @@ class AuditLogsDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'DataLogs_'.date('YmdHis');
     }
