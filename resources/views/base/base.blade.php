@@ -30,7 +30,6 @@ License: {{ theme()->getOption('product', 'license') }}
     {{-- begin::Fonts --}}
     {{ theme()->includeFonts() }}
     {{-- end::Fonts --}}
-
     @if (theme()->hasOption('page', 'assets/vendors/css'))
         {{-- begin::Page Vendor Stylesheets(used by this page) --}}
         @foreach (theme()->getOption('page', 'assets/vendors/css') as $file)
@@ -61,7 +60,7 @@ License: {{ theme()->getOption('product', 'license') }}
     @endif
 
     @yield('styles')
-
+    @livewireStyles
 </head>
 {{-- end::Head --}}
 
@@ -252,6 +251,8 @@ License: {{ theme()->getOption('product', 'license') }}
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @yield('scripts')
 @yield('bladeScripts')
+@livewireScripts
+
 </body>
 {{-- end::Body --}}
 </html>

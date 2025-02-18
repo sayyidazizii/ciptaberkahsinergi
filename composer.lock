@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "629caf8f3b63cb1c46baa5cd18e82683",
+    "content-hash": "365da06fece5c5f13e95c55561d22fea",
     "packages": [
         {
             "name": "anlutro/l4-settings",
@@ -436,16 +436,16 @@
         },
         {
             "name": "cst/wa-laravel",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CiptasolutindoTech/wa-laravel.git",
-                "reference": "34ec10b64d9071718924cc939fb0d65f64892440"
+                "reference": "e27d5fe2f66110d353168c2d34c30e5e17d5a929"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CiptasolutindoTech/wa-laravel/zipball/34ec10b64d9071718924cc939fb0d65f64892440",
-                "reference": "34ec10b64d9071718924cc939fb0d65f64892440",
+                "url": "https://api.github.com/repos/CiptasolutindoTech/wa-laravel/zipball/e27d5fe2f66110d353168c2d34c30e5e17d5a929",
+                "reference": "e27d5fe2f66110d353168c2d34c30e5e17d5a929",
                 "shasum": ""
             },
             "require": {
@@ -505,10 +505,10 @@
             ],
             "description": "Helper for sending wa on laravel via ruang wa and/or wasender, build and designed for all procjecy by ciptasolutido and team",
             "support": {
-                "source": "https://github.com/CiptasolutindoTech/wa-laravel/tree/1.3.1",
+                "source": "https://github.com/CiptasolutindoTech/wa-laravel/tree/1.3.2",
                 "issues": "https://github.com/CiptasolutindoTech/wa-laravel/issues"
             },
-            "time": "2025-02-17T10:23:00+00:00"
+            "time": "2025-02-18T19:55:43+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -11488,6 +11488,6 @@
     "platform": {
         "php": "^8.1"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
