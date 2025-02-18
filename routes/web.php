@@ -1110,5 +1110,7 @@ Route::middleware(['auth','loged'])->group(function () {
 // Route::resource('users', UsersController::class);
 
 Route::get('/auth/redirect/{provider}', [SocialiteLoginController::class, 'redirect']);
-
+Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/ciptaberkahsinergi/livewire/update', $handle);
+});
 require __DIR__.'/auth.php';
