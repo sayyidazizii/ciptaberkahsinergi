@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class Configuration
 {
-    
+
 	public static function Month(){
 		$month  = array(
             '01'    => "Januari",
@@ -19,7 +19,7 @@ class Configuration
             '10'    => "Oktober",
             '11'    => "November",
             '12'    => "Desember",
-        ); 
+        );
 
 		return $month;
 	}
@@ -38,7 +38,7 @@ class Configuration
             'October'		=> "10",
             'November'		=> "11",
             'December'		=> "12",
-        ); 
+        );
 
 		return $month_name;
 	}
@@ -52,14 +52,14 @@ class Configuration
             'Thu'   => "Kamis",
             'Fri'   => "Jumat",
             'Sat'   => "Sabtu",
-        ); 
+        );
 
 		return $day_name;
 	}
 
 	public static function ReportType(){
 		$report_type = array (
-            1 => 'Laba Rugi', 
+            1 => 'Laba Rugi',
             2 => 'Neraca'
         );
 
@@ -68,8 +68,8 @@ class Configuration
 
 	public static function MemberGender(){
 		$member_gender = array (
-            9 => ' ', 
-            0 => 'Perempuan', 
+            9 => ' ',
+            0 => 'Perempuan',
             1 => 'Laki - Laki'
         );
 
@@ -78,7 +78,7 @@ class Configuration
 
 	public static function MemberStatus(){
 		$member_status = array (
-            0 => 'Calon Anggota', 
+            0 => 'Calon Anggota',
             1 => 'Anggota'
         );
 
@@ -87,7 +87,7 @@ class Configuration
 
 	public static function MemberStatusAktif(){
 		$member_status_aktif = array (
-            0 => 'Aktif', 
+            0 => 'Aktif',
             1 => 'Tidak Aktif'
         );
 
@@ -96,7 +96,7 @@ class Configuration
 
 	public static function SavingsProfitSharing(){
 		$savings_provit_sharing = array (
-            0 => 'Tidak Dapat Bunga', 
+            0 => 'Tidak Dapat Bunga',
             1 => 'Dapat Bunga'
         );
 
@@ -105,7 +105,7 @@ class Configuration
 
 	public static function AccountStatus(){
 		$account_status = array (
-            0 => 'Debit', 
+            0 => 'Debit',
             1 => 'Kredit'
         );
 
@@ -114,7 +114,7 @@ class Configuration
 
 	public static function DepositoExtraType(){
 		$deposito_extra_type = array (
-            0 => 'Manual', 
+            0 => 'Manual',
             1 => 'ARO'
         );
 
@@ -123,7 +123,7 @@ class Configuration
 
 	public static function DepositoInterestType(){
 		$deposito_extra_type = array (
-            0 => 'Simpanan Biasa', 
+            0 => 'Simpanan Biasa',
             1 => 'Simpanan Deposito'
         );
 
@@ -132,17 +132,17 @@ class Configuration
 
 	public static function KelompokPerkiraan(){
 		return collect([
-            0 => 'NA - Neraca Aktiva', 
-            1 => 'NP - Neraca Pasiva', 
-            2 => 'RA - Rugi Laba (A)', 
+            0 => 'NA - Neraca Aktiva',
+            1 => 'NP - Neraca Pasiva',
+            2 => 'RA - Rugi Laba (A)',
             3 => 'RP - Rugi Laba (B)']);
 	}
 
 	public static function MemberCharacter(){
 		$member_character = array (
-            9 => ' ', 
-            2 => 'Pendiri', 
-            0 => 'Biasa', 
+            9 => ' ',
+            2 => 'Pendiri',
+            0 => 'Biasa',
             1 => 'Luar Biasa'
         );
 
@@ -151,8 +151,8 @@ class Configuration
 
 	public static function debetsource(){
 		$source = array (
-            9 => ' ', 
-            1 => 'Simpanan Pokok', 
+            9 => ' ',
+            1 => 'Simpanan Pokok',
             2 => 'Tabungan'
         );
 
@@ -161,10 +161,10 @@ class Configuration
 
 	public static function MemberIdentity(){
 		$member_identity = array (
-            9 => ' ', 
-            0 => 'KTP', 
-            1 => 'KK', 
-            2 => 'SIM', 
+            9 => ' ',
+            0 => 'KTP',
+            1 => 'KK',
+            2 => 'SIM',
             3 => 'AKTA'
         );
 
@@ -173,7 +173,7 @@ class Configuration
 
 	public static function KelompokLaporanSimpanan(){
 		$kelompok_laporan_simpanan = array (
-            0 => 'Global', 
+            0 => 'Global',
             1 => 'Jenis Simpanan'
         );
 
@@ -182,16 +182,16 @@ class Configuration
 
 	public static function KelompokLaporanSimpanan1(){
 		$kelompok_laporan_simpanan = array (
-            0 => 'Global', 
+            0 => 'Global',
             1 => 'Jenis Transaksi'
         );
 
 		return $kelompok_laporan_simpanan;
 	}
-	
+
 	public static function KelompokLaporanSimpananBerjangka(){
 		$kelompok_laporan_simpanan_berjangka = array (
-            0 => 'Global', 
+            0 => 'Global',
             1 => 'Jenis Waktu'
         );
 
@@ -200,8 +200,8 @@ class Configuration
 
 	public static function KelompokLaporanPembiayaan(){
 		$kelompok_laporan_pembiayaan = array (
-            0 => 'Global', 
-            1 => 'Jenis Akad', 
+            0 => 'Global',
+            1 => 'Jenis Akad',
             2 => 'Sumber Dana'
         );
 
@@ -210,9 +210,9 @@ class Configuration
 
 	public static function FamilyRelationship(){
 		$family_relationship = array (
-            1 => 'Anak', 
-            2 => 'Istri/Suami', 
-            3 => 'Saudara', 
+            1 => 'Anak',
+            2 => 'Istri/Suami',
+            3 => 'Saudara',
             4 => 'Lainnya'
         );
 
@@ -220,8 +220,8 @@ class Configuration
 	}
 	public static function ApprovalStatus(){
 		$approve = array(
-            0 => 'Belum Disetujui', 
-            1 =>'Terima', 
+            0 => 'Belum Disetujui',
+            1 =>'Terima',
             9=>'Tolak'
         );
 
@@ -230,8 +230,8 @@ class Configuration
 
 	public static function BlockirType(){
 		$blockir_type = array (
-            9 => '', 
-            0 => 'Rekening', 
+            9 => '',
+            0 => 'Rekening',
             1 => 'Saldo'
         );
 
@@ -240,8 +240,8 @@ class Configuration
 
 	public static function BlockirStatus(){
 		$blockir_status = array (
-            9 => '', 
-            0 => 'UnBlockir', 
+            9 => '',
+            0 => 'UnBlockir',
             1 => 'Blockir'
         );
 
@@ -250,11 +250,11 @@ class Configuration
 
 	public static function AcctReportType(){
 		$acct_report_type = array (
-            1 => 'Title', 
-            2 => 'Subtitle', 
-            3 => 'Parent', 
-            4 => 'Loop', 
-            5 => 'Sum', 
+            1 => 'Title',
+            2 => 'Subtitle',
+            3 => 'Parent',
+            4 => 'Loop',
+            5 => 'Sum',
             6 => 'GrandTotal'
         );
 
@@ -263,7 +263,7 @@ class Configuration
 
 	public static function ProfitLossReportType(){
 		$profit_loss_report_type = array (
-            1 => 'Rugi Laba Bulanan', 
+            1 => 'Rugi Laba Bulanan',
             2 => 'Rugi Laba Tahunan'
         );
 
@@ -272,8 +272,8 @@ class Configuration
 
 	public static function ProfitLossReportFormat(){
 		$profit_loss_report_format = array (
-            1 => 'USP', 
-            2 => 'Koperasi', 
+            1 => 'USP',
+            2 => 'Koperasi',
             3 => 'Konsolidasi'
         );
 
@@ -282,15 +282,15 @@ class Configuration
 
 	public static function AgunanType(){
 		$agunan_type = array (
-            9 => '', 
-            1 => 'BPKB', 
+            9 => '',
+            1 => 'BPKB',
             2 => 'Sertifikat'
         );
 	}
 
 	public static function AccountComparationReportType(){
 		$account_comparation_report_type = array (
-            1 => 'Komparasi Bulanan', 
+            1 => 'Komparasi Bulanan',
             2 => 'Komparasi Tahunan'
         );
 
@@ -311,8 +311,8 @@ class Configuration
 
 	public static function ManagementZakatType(){
 		$management_zakat_type = array (
-            9 => '', 
-            0 => 'Penerimaan Zakat', 
+            9 => '',
+            0 => 'Penerimaan Zakat',
             1 => 'Penyaluran Zakat'
         );
 
@@ -321,8 +321,8 @@ class Configuration
 
 	public static function SourceFundZakat(){
 		$source_fund_zakat = array (
-            9 => '', 
-            0 => 'KSPPS (Internal)', 
+            9 => '',
+            0 => 'KSPPS (Internal)',
             1 => 'Pihak Luar (Eksternal)'
         );
 
@@ -331,8 +331,8 @@ class Configuration
 
 	public static function DistributionZakat(){
 		$distribution_zakat = array (
-            9 => '', 
-            0 => 'Badan / Yayasan', 
+            9 => '',
+            0 => 'Badan / Yayasan',
             1 => 'Lainnya'
         );
 
@@ -341,7 +341,7 @@ class Configuration
 
 	public static function BranchStatus(){
 		$branch_status = array (
-            0 => 'Kantor Cabang', 
+            0 => 'Kantor Cabang',
             1 => 'Kantor Pusat'
         );
 
@@ -350,8 +350,8 @@ class Configuration
 
 	public static function ConsolidationReport(){
 		$consolidation_report = array (
-            9 => '', 
-            0 => 'Cabang', 
+            9 => '',
+            0 => 'Cabang',
             1 => 'Konsolidasi'
         );
 
@@ -360,7 +360,7 @@ class Configuration
 
 	public static function SavingsCashMutationStatus(){
 		$savings_cash_mutation_status = array (
-            0 => 'Admin', 
+            0 => 'Admin',
             1 => 'Android'
         );
 
@@ -369,7 +369,7 @@ class Configuration
 
 	public static function CreditsPaymentStatus(){
 		$credits_payment_status = array (
-            0 => 'Admin', 
+            0 => 'Admin',
             1 => 'Android'
         );
 
@@ -378,9 +378,9 @@ class Configuration
 
 	public static function PaymentType(){
 		$payment_type = array (
-            1 => 'Flat', 
-            2 => 'Flat Anuitas', 
-            3 => 'Slidingrate', 
+            1 => 'Flat',
+            2 => 'Flat Anuitas',
+            // 3 => 'Slidingrate',
             4 => 'Menurun Harian'
         );
 
@@ -389,7 +389,7 @@ class Configuration
 
 	public static function PaymentPreference(){
 		$payment_preference = array (
-            1 => 'Manual', 
+            1 => 'Manual',
             2 => 'Auto Debet'
         );
 
@@ -398,7 +398,7 @@ class Configuration
 
 	public static function CreditsPaymentPeriod(){
 		$period = array (
-            1 => 'Bulanan', 
+            1 => 'Bulanan',
             2 => 'Mingguan'
         );
 
@@ -407,8 +407,8 @@ class Configuration
 
 	public static function CreditsPaymentPeriodAkad(){
 		$period = array (
-            0 => 'Pilih Salah Satu', 
-            1 => 'bulan', 
+            0 => 'Pilih Salah Satu',
+            1 => 'bulan',
             2 => 'minggu'
         );
 
@@ -417,10 +417,10 @@ class Configuration
 
 	public static function MaritalStatus(){
 		$marital_status = array (
-            0 => '', 
-            1 => 'Kawin', 
-            2 => 'Belum Kawin', 
-            3 => 'Duda', 
+            0 => '',
+            1 => 'Kawin',
+            2 => 'Belum Kawin',
+            3 => 'Duda',
             4 =>'Janda'
         );
 
@@ -429,12 +429,12 @@ class Configuration
 
 	public static function HomeStatus(){
 		$home_status = array (
-            0 => '', 
-            1 => 'Sendiri', 
-            2 => 'Keluarga', 
-            3 => 'Sewa', 
-            4 => 'KPR', 
-            5 => 'Dinas', 
+            0 => '',
+            1 => 'Sendiri',
+            2 => 'Keluarga',
+            3 => 'Sewa',
+            4 => 'KPR',
+            5 => 'Dinas',
             6 => 'Lainnya'
         );
 
@@ -443,8 +443,8 @@ class Configuration
 
 	public static function Vehicle(){
 		$vehicle = array (
-            0 => '', 
-            1 => 'Motor', 
+            0 => '',
+            1 => 'Motor',
             2 => 'Mobil'
         );
 
@@ -453,13 +453,13 @@ class Configuration
 
 	public static function LastEducation(){
 		$last_education = array (
-            0 => '', 
-            1 => 'SD', 
-            2 => 'SLTP', 
-            3 => 'SLTA', 
-            4 => 'D3', 
-            5 =>'S1', 
-            6=>'S2', 
+            0 => '',
+            1 => 'SD',
+            2 => 'SLTP',
+            3 => 'SLTA',
+            4 => 'D3',
+            5 =>'S1',
+            6=>'S2',
             7=>'Lainnya'
         );
 
@@ -468,10 +468,10 @@ class Configuration
 
 	public static function UnitUser(){
 		$unit_user = array (
-            0 => '', 
-            1 => 'Sendiri', 
-            2 => 'Pasangan', 
-            3 => 'Anak', 
+            0 => '',
+            1 => 'Sendiri',
+            2 => 'Pasangan',
+            3 => 'Anak',
             4 => 'Lainnya'
         );
 
@@ -480,40 +480,40 @@ class Configuration
 
 	public static function WorkingType(){
 		$working_type = array (
-            0 => '', 
-            1 => 'Karyawan', 
-            2 => 'Profesional', 
+            0 => '',
+            1 => 'Karyawan',
+            2 => 'Profesional',
             3 => 'Non Karyawan'
         );
 
 		return $working_type;
-	}	
+	}
 
 	public static function BusinessScale(){
 		$business_scale = array (
-            0 => '', 
-            1 => 'Besar', 
-            2 => 'Menengah', 
+            0 => '',
+            1 => 'Besar',
+            2 => 'Menengah',
             3 => 'Kecil'
         );
 
 		return $business_scale;
-	}	
+	}
 
 	public static function BusinessOwner(){
 		$business_owner = array (
-            0 => '', 
-            1 => 'Milik Sendiri', 
-            2 => 'Sewa', 
+            0 => '',
+            1 => 'Milik Sendiri',
+            2 => 'Sewa',
             3 => 'Lainnya'
         );
 
 		return $business_owner;
-	}	
+	}
 
 	public static function AgunanStatus(){
-		$agunan_status = array ( 
-            0 => 'Aktif', 
+		$agunan_status = array (
+            0 => 'Aktif',
             1 => 'Dikembalikan'
         );
 
@@ -521,9 +521,9 @@ class Configuration
 	}
 
 	public static function CreditsApproveStatus(){
-		$approve_status = array ( 
-            0 => 'Belum Aktif', 
-            1 => 'Disetujui', 
+		$approve_status = array (
+            0 => 'Belum Aktif',
+            1 => 'Disetujui',
             2 => 'Dibatalkan'
         );
 
@@ -531,9 +531,9 @@ class Configuration
 	}
 
 	public static function CreditsAccountStatus(){
-		$credits_account_status = array ( 
-            0 => 'Aktif', 
-            1 => 'Selesai', 
+		$credits_account_status = array (
+            0 => 'Aktif',
+            1 => 'Selesai',
             2 => 'Pelunasan'
         );
 
@@ -542,8 +542,8 @@ class Configuration
 
 	public static function PenaltyType(){
 		$penalty_type = array (
-            0 => '', 
-            1 => ' Dari Pokok', 
+            0 => '',
+            1 => ' Dari Pokok',
             2 => 'Dari Bunga'
         );
 
@@ -563,7 +563,7 @@ class Configuration
 		}
 		return $dresult;
 	}
-	
+
 	public static function convert($msg){
 		$division	= bindec("010");
 		$lenght		= strlen($msg);
@@ -592,7 +592,7 @@ class Configuration
 		}
 		return $ret;
 	}
-	
+
 	public static function Text($plain){
 		$division	= bindec("010");
 		$lenght		= strlen($plain);
@@ -617,7 +617,7 @@ class Configuration
 		}
 		return chr(bindec($ret));
 	}
-	
+
 	public static function reassembly($byte){
 		$text = '';
 		for($i=0;$i<(strlen($byte)/6);$i++){
@@ -625,7 +625,7 @@ class Configuration
 		}
 		return $text;
 	}
-	
+
 	public static function rearrange($text){
 		for($i=0;$i<(strlen($text)/2);$i++){
 			$arr[$i] = substr($text,$i*2,2);
@@ -638,7 +638,7 @@ class Configuration
 		$tdiv 	= array("","","ratus ","ribu ", "ratus ", "juta ", "ratus ","miliar ");
 		$divs 	= array( 0,0,0,0,0,0,0);
 		$pos 	= 0;
-		$num 	= strval(strrev(number_format($num, 2, '.',''))); 
+		$num 	= strval(strrev(number_format($num, 2, '.','')));
 		$answer = "";
 		while (strlen($num)) {
 			if ( strlen($num) == 1 || ($pos >2 && $pos % 2 == 1))  {
@@ -679,18 +679,18 @@ class Configuration
 	    }
 	    return strtoupper($answer.'rupiah');
 	}
-	
+
 
 	public static function doone2($onestr) {
 	    $tsingle = array("","satu ","dua ","tiga ","empat ","lima ",
 		"enam ","tujuh ","delapan ","sembilan ");
 	      return strtoupper($tsingle[$onestr]);
-	}	
-	 
+	}
+
 	public static function doone($onestr) {
 	    $tsingle = array("","se","dua ","tiga ","empat ","lima ", "enam ","tujuh ","delapan ","sembilan ");
 	      return strtoupper($tsingle[$onestr]);
-	}	
+	}
 
 	public static function dotwo($twostr) {
 	    $tdouble = array("","puluh ","dua puluh ","tiga puluh ","empat puluh ","lima puluh ", "enam puluh ","tujuh puluh ","delapan puluh ","sembilan puluh ");

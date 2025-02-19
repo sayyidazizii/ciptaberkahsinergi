@@ -106,7 +106,7 @@ class PPOBTopUpDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'PPOBTopUP_' . date('YmdHis');
     }

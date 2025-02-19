@@ -84,7 +84,7 @@ class CoreMemberDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'Anggota_' . date('YmdHis');
     }

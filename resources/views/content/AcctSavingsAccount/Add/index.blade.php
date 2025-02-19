@@ -61,7 +61,7 @@ var validator = FormValidation.formValidation(
         }
     }
 );
-var needPeriod = !!false; 
+var needPeriod = !!false;
 	function showPeriod(){
 		needPeriod = !!true;
 		$('#period_date_input').removeAttr("hidden");
@@ -153,7 +153,7 @@ $(document).ready(function(){
             }
         });
     });
-    
+
     $("#savings_account_first_deposit_amount_view").change(function(){
         var savings_account_first_deposit_amount                                    = $("#savings_account_first_deposit_amount_view").val();
         document.getElementById("savings_account_first_deposit_amount").value       = savings_account_first_deposit_amount;
@@ -167,7 +167,7 @@ function function_elements_add(name, value){
         type: "POST",
         url : "{{route('savings-account.elements-add')}}",
         data : {
-            'name'      : name, 
+            'name'      : name,
             'value'     : value,
             '_token'    : '{{csrf_token()}}'
         },
@@ -181,7 +181,7 @@ function changeSavings(){
     function_elements_add('savings_id', savings_id);
     if(index.includes($('#savings_id').val())){
             doDateCalc();
-			showPeriod();	
+			showPeriod();
 			} else {
 			hidePeriod();
 			}
@@ -194,7 +194,7 @@ function changeSavings(){
             'savings_id'    : savings_id,
             '_token'        : '{{csrf_token()}}',
         },
-        success: function(return_data){ 
+        success: function(return_data){
             $('#savings_interest_rate').val(return_data);
             function_elements_add('savings_interest_rate', return_data);
         },
@@ -213,18 +213,18 @@ function doDateCalc(){
     var date1	= new Date(date);
     var period 	= document.getElementById("saving_account_period").value;
     function_elements_add('saving_account_period', period);
-			var a 		= moment(date1); 
-			var b 		= a.add(period, 'month'); 
+			var a 		= moment(date1);
+			var b 		= a.add(period, 'month');
 			var tmp 	= date1.setMonth(date1.getMonth() + period);
 			var endDate = new Date(tmp);
 			var name 	= 'savings_account_pickup_date';
-			var value 	= b.format('DD-MM-YYYY');			
+			var value 	= b.format('DD-MM-YYYY');
 			var testDate 	= new Date(date);
 			var tmp2 		= testDate.setMonth(testDate.getMonth() + 1);
 			var date_first 	= testDate.toISOString();
 			var day2 		= date_first.substring(8, 10);
 			var month2 		= date_first.substring(5, 7);
-			var year2 		= date_first.substring(0, 4); 
+			var year2 		= date_first.substring(0, 4);
 			var first 		= day2 + '-' + month2 + '-' + year2;
 			$('#savings_account_pickup_date').val(b.format('DD-MM-YYYY'));
 			function_elements_add(name, value);
@@ -232,7 +232,7 @@ function doDateCalc(){
 $(document).ready(function(){
 		if(index.includes($('#savings_id').val())){
             doDateCalc();
-			showPeriod();	
+			showPeriod();
 			} else {
 			hidePeriod();
 			}
@@ -241,7 +241,7 @@ $(document).ready(function(){
 $('#saving_account_period').change(function(){doDateCalc();});
 </script>
 @endsection
-<?php 
+<?php
 if(empty($sessiondata)){
     $sessiondata['savings_id']                              = null;
     $sessiondata['savings_interest_rate']                   = null;
@@ -411,10 +411,10 @@ if(!isset($coremember['member_gender'])){
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('BO') }}</label>
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('AO') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="function_elements_add(this.name, this.value)">
-                                        <option value="">{{ __('Pilih bo..') }}</option>
+                                    <select name="office_id" id="office_id" aria-label="{{ __('AO') }}" data-control="select2" data-placeholder="{{ __('Pilih AO..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="function_elements_add(this.name, this.value)">
+                                        <option value="">{{ __('Pilih AO..') }}</option>
                                         @foreach($coreoffice as $key => $value)
                                             <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] === old('office_id', (int)$sessiondata['office_id'] ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>
                                         @endforeach
@@ -433,7 +433,7 @@ if(!isset($coremember['member_gender'])){
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <button type="reset" class="btn btn-white btn-active-light-primary me-2">{{ __('Batal') }}</button>
-    
+
                     <button type="submit" class="btn btn-primary" id="kt_savings_account_add_submit">
                         @include('partials.general._button-indicator', ['label' => __('Simpan')])
                     </button>
@@ -447,15 +447,15 @@ if(!isset($coremember['member_gender'])){
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Daftar Anggota</h3>
-    
+
                     <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                         <span class="bi bi-x-lg"></span>
                     </div>
                 </div>
-    
+
                 <div class="modal-body" id="modal-body">
                 </div>
-    
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                 </div>

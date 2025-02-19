@@ -134,7 +134,7 @@ class SavingsTransferMutationDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'SavingsTransferMutation/SavingsTransferMutation_' . date('YmdHis');
     }

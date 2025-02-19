@@ -24,6 +24,9 @@ use App\Models\AcctSavingsMemberDetail;
 use Illuminate\Support\Facades\Session;
 use App\Models\PreferenceTransactionModule;
 use App\DataTables\NominativeSavingsPickupDataTable;
+use Elibyy\TCPDF\Facades\TCPDF;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\View;
 
 class AcctNominativeSavingsPickupController extends Controller
 {
@@ -59,6 +62,12 @@ class AcctNominativeSavingsPickupController extends Controller
         $filter['branch_id'] = $request->branch_id;
         $filter['office_id'] = $request->office_id;
         $filter['office_name'] = $coreoffice['office_name'];
+
+        if($filter['office_name'] == null){
+            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'AO Harus di isi',
+        'alert' => 'danger']);
+
+        }
 
         Session::put('pickup-data', $filter);
         return redirect()->route('nomv-sv-pickup.index');
@@ -945,8 +954,8 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->join('core_office','core_office.office_id', '=', 'acct_credits_account.office_id')
                 ->where('acct_credits_payment.credits_payment_type', 0)
                 ->where('acct_credits_payment.credits_branch_status', 0)
-                // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-                // ->where('acct_credits_payment.credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('acct_credits_payment.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_credits_payment.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
                 if(isset($sessiondata['office_id'])){
                     $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
@@ -975,8 +984,8 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
                 ->where('acct_savings_cash_mutation.mutation_id', 1)
-                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('core_member.branch_id', auth()->user()->branch_id);
                 if(isset($sessiondata['office_id'])){
                     $querydata2->where('acct_savings_account.office_id', $sessiondata['office_id']);
@@ -1004,8 +1013,8 @@ class AcctNominativeSavingsPickupController extends Controller
                 ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
                 ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
                 ->where('acct_savings_cash_mutation.mutation_id', 2)
-                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-                // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('core_member.branch_id', auth()->user()->branch_id);
                 if(isset($sessiondata['office_id'])){
                     $querydata3->where('acct_savings_account.office_id', $sessiondata['office_id']);
@@ -1028,8 +1037,8 @@ class AcctNominativeSavingsPickupController extends Controller
                 CONCAT("Setor Tunai Simpanan Wajib ") As keterangan')
                 ->withoutGlobalScopes()
                 ->join('system_user','system_user.user_id', '=', 'core_member.created_id')
-                // ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-                // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
                 ->where('core_member.branch_id', auth()->user()->branch_id)
             ->where('core_member.pickup_state', 0);
 
@@ -1783,5 +1792,216 @@ class AcctNominativeSavingsPickupController extends Controller
              redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Proses Pickup Gagal',
         'alert' => 'danger']);
         }
+    }
+
+    // print
+    public function print()
+    {
+        $preferencecompany = PreferenceCompany::first();
+        $sessiondata = Session::get('pickup-data');
+    //------Angsuran
+            $querydata1 = AcctCreditsPayment::selectRaw(
+                '1 As type,
+                credits_payment_id As id,
+                credits_payment_date As tanggal,
+                office_name As operator,
+                member_name As anggota,
+                credits_account_serial As no_transaksi,
+                credits_payment_amount As jumlah,
+                credits_payment_principal As jumlah_2,
+                credits_payment_interest As jumlah_3,
+                credits_others_income As jumlah_4,
+                credits_payment_fine As jumlah_5,
+                CONCAT("Angsuran ",credits_name) As keterangan,
+                acct_credits_payment.pickup_state AS pickup_state')
+
+                ->withoutGlobalScopes()
+                ->join('core_member','acct_credits_payment.member_id', '=', 'core_member.member_id')
+                ->join('acct_credits','acct_credits_payment.credits_id', '=', 'acct_credits.credits_id')
+                ->join('acct_credits_account','acct_credits_payment.credits_account_id', '=', 'acct_credits_account.credits_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_credits_account.office_id')
+                ->where('acct_credits_payment.credits_payment_type', 0)
+                ->where('acct_credits_payment.credits_branch_status', 0)
+                ->where('acct_credits_payment.pickup_date', '!=',null)
+                ->where('acct_credits_payment.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_credits_payment.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
+                }
+            // $querydata1->where('acct_credits_payment.pickup_state', 0);
+
+    //------Setor Tunai Simpanan Biasa
+            $querydata2 = AcctSavingsCashMutation::selectRaw(
+                '2 As type,
+                savings_cash_mutation_id As id,
+                savings_cash_mutation_date As tanggal,
+                office_name As operator,
+                member_name As anggota,
+                savings_account_no As no_transaksi,
+                savings_cash_mutation_amount As jumlah,
+                savings_cash_mutation_amount_adm As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Setoran Tunai ",savings_name) As keterangan,
+                acct_savings_cash_mutation.pickup_state AS pickup_state')
+
+                ->withoutGlobalScopes()
+                ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
+                ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
+                ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
+                ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
+                ->where('acct_savings_cash_mutation.mutation_id', 1)
+                ->where('acct_savings_cash_mutation.pickup_date', '!=',null)
+                ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata2->where('acct_savings_account.office_id', $sessiondata['office_id']);
+                }
+            // $querydata2->where('acct_savings_cash_mutation.pickup_state', 0);
+
+    //------Tarik Tunai Simpanan Biasa
+            $querydata3 = AcctSavingsCashMutation::selectRaw(
+                '3 As type,
+                savings_cash_mutation_id As id,
+                savings_cash_mutation_date As tanggal,
+                office_name As operator,
+                member_name As anggota,
+                savings_account_no As no_transaksi,
+                savings_cash_mutation_amount As jumlah,
+                savings_cash_mutation_amount_adm As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Tarik Tunai ",savings_name) As keterangan,
+                acct_savings_cash_mutation.pickup_state AS pickup_state')
+                ->withoutGlobalScopes()
+                ->join('acct_mutation', 'acct_savings_cash_mutation.mutation_id', '=', 'acct_mutation.mutation_id')
+                ->join('acct_savings_account', 'acct_savings_cash_mutation.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                ->join('core_office','core_office.office_id', '=', 'acct_savings_account.office_id')
+                ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
+                ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
+                ->where('acct_savings_cash_mutation.mutation_id', 2)
+                ->where('acct_savings_cash_mutation.pickup_date', '!=',null)
+                ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id);
+                if(isset($sessiondata['office_id'])){
+                    $querydata3->where('acct_savings_account.office_id', $sessiondata['office_id']);
+                }
+            // $querydata3->where('acct_savings_cash_mutation.pickup_state', 0);
+
+    //------Setor Tunai Simpanan Wajib
+            $querydata4 = CoreMember::selectRaw(
+                '4 As type,
+                member_id As id,
+                core_member.updated_at As tanggal,
+                username As operator,
+                member_name As anggota,
+                member_no As no_transaksi,
+                member_mandatory_savings As jumlah,
+                member_mandatory_savings_last_balance As jumlah_2,
+                0 As jumlah_3,
+                0 As jumlah_4,
+                0 As jumlah_5,
+                CONCAT("Setor Tunai Simpanan Wajib ") As keterangan,
+                core_member.pickup_state AS pickup_state')
+                ->withoutGlobalScopes()
+                ->join('system_user','system_user.user_id', '=', 'core_member.created_id')
+                ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+                ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+                ->where('core_member.branch_id', auth()->user()->branch_id)
+            ->where('core_member.pickup_state', 0);
+
+    //------Combine the queries using UNION
+            $comparequery = $querydata1->union($querydata2)->union($querydata3)->union($querydata4);
+            // Add ORDER BY clause to sort by the "keterangan" column
+            $allquery = $comparequery->where('acct_credits_account.office_id', $sessiondata['office_id'])
+            ->orderBy('tanggal','DESC')->get();
+
+    // echo json_encode($allquery);
+    // exit;
+
+    $allquery->transform(function ($item) {
+        $item->status = $item->pickup_state == 0 ? 'Belum Disetor' : 'Sudah Disetorkan';
+        return $item;
+    });
+
+    // Inisialisasi TCPDF
+        $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
+
+        $pdf::SetPrintHeader(false);
+        $pdf::SetPrintFooter(false);
+
+        $pdf::SetMargins(6, 6, 6, 6);
+
+        $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+            require_once(dirname(__FILE__).'/lang/eng.php');
+            $pdf::setLanguageArray($l);
+        }
+
+        $pdf::SetFont('helvetica', 'B', 20);
+
+        $pdf::AddPage();
+
+        $pdf::SetFont('helvetica', '', 8);
+
+        $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+            require_once(dirname(__FILE__).'/lang/eng.php');
+            $pdf::setLanguageArray($l);
+        }
+
+    // Header HTML
+    $html = '
+            <h1 style="text-align: center;">Laporan Pickup</h1>
+            <p>Periode: ' . $sessiondata['start_date'] . ' - ' . $sessiondata['end_date'] . '</p>
+            <p>Nama Perusahaan: ' . ($preferencecompany->company_name ?? 'N/A') . '</p>
+            <p>BO : ' . ($sessiondata['office_name'] ?? 'N/A') . '</p>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">No</th>
+                        <th style="width: 12%; text-align: center;">Tanggal</th>
+                        <th style="width: 12%; text-align: center;">Operator</th>
+                        <th style="width: 18%; text-align: center;">Anggota</th>
+                        <th style="width: 12%; text-align: center;">No Transaksi</th>
+                        <th style="width: 10%; text-align: center;">Jumlah</th>
+                        <th style="width: 21%; text-align: center;">Keterangan</th>
+                        <th style="width: 10%; text-align: center;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+        // Loop Data
+        foreach ($allquery as $index => $item) {
+            $html .= '
+                <tr>
+                    <td style="text-align: left;">' . ($index + 1) . '</td>
+                    <td style="text-align: center;">' . $item->tanggal . '</td>
+                    <td style="text-align: center;">' . $item->operator . '</td>
+                    <td>' . $item->anggota . '</td>
+                    <td style="text-align: center;">' . $item->no_transaksi . '</td>
+                    <td style="text-align: right;">' . number_format($item->jumlah, 2) . '</td>
+                    <td>' . $item->keterangan . '</td>
+                    <td style="text-align: center;">' . $item->status . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        // Tulis HTML ke PDF
+        $pdf::writeHTML($html, true, false, true, false, '');
+
+        // Output PDF
+        $pdf::Output('pickup_report.pdf', 'I');
+
+
     }
 }

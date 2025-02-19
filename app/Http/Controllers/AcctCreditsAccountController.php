@@ -412,8 +412,8 @@ class AcctCreditsAccountController extends Controller
                 'branch_id' => auth()->user()->branch_id,
                 'journal_voucher_period' => $journal_voucher_period,
                 'journal_voucher_date' => date('Y-m-d'),
-                'journal_voucher_title' => 'PEMBIAYAAN ' . $acctcreditsaccount['credits_name'] . ' ' . $acctcreditsaccount['member_name'],
-                'journal_voucher_description' => 'PEMBIAYAAN ' . $acctcreditsaccount['credits_name'] . ' ' . $acctcreditsaccount['member_name'],
+                'journal_voucher_title' => 'PEMBIAYAAN ' . $acctcreditsaccount['credit']['credits_name'] . ' ' . $acctcreditsaccount['member']['member_name'],
+                'journal_voucher_description' => 'PEMBIAYAAN ' . $acctcreditsaccount['credit']['credits_name'] . ' ' . $acctcreditsaccount['member']['member_name'],
                 'transaction_module_id' => $transaction_module_id,
                 'transaction_module_code' => $transaction_module_code,
                 'transaction_journal_id' => $acctcreditsaccount['credits_account_id'],
@@ -892,29 +892,46 @@ class AcctCreditsAccountController extends Controller
 
     public function rate4(Request $request)
     {
-        $nprest = $request->nprest;
-        $vlrparc = $request->vlrparc;
-        $vp = $request->vp;
-        $guess = 0.25;
-        $maxit = 100;
-        $precision = 14;
-        $check = 1;
-        // $guess 		= round($guess,$precision);
-        for ($i = 0; $i < $maxit; $i++) {
-            $divdnd = $vlrparc - ($vlrparc * (pow(1 + $guess, -$nprest))) - ($vp * $guess);
-            $divisor = $nprest * $vlrparc * pow(1 + $guess, (-$nprest - 1)) - $vp;
-            $newguess = $guess - ($divdnd / $divisor);
-            // $newguess = round($newguess, $precision);
-            if ($newguess == $guess) {
-                if ($check == 1) {
-                    return $newguess;
-                    $check++;
+        try {
+            $nprest = $request->nprest;
+            $vlrparc = $request->vlrparc;
+            $vp = $request->vp;
+            $guess = 0.25;
+            $maxit = 100;
+            $precision = 14;
+            $check = 1;
+
+            for ($i = 0; $i < $maxit; $i++) {
+                $divdnd = $vlrparc - ($vlrparc * (pow(1 + $guess, -$nprest))) - ($vp * $guess);
+                $divisor = $nprest * $vlrparc * pow(1 + $guess, (-$nprest - 1)) - $vp;
+
+                // Check for division by zero
+                if ($divisor == 0) {
+                    throw new \Exception("Division by zero detected during iteration $i.");
                 }
-            } else {
+
+                $newguess = $guess - ($divdnd / $divisor);
+
+                // Check for convergence
+                if (abs($newguess - $guess) < pow(10, -$precision)) {
+                    return round($newguess, $precision);
+                }
+
                 $guess = $newguess;
             }
+
+            // If no convergence after max iterations
+            throw new \Exception("Failed to converge to a solution within $maxit iterations.");
+        } catch (\Exception $e) {
+            // Log the error or report it
+            \Log::error('Error in rate4 calculation: ' . $e->getMessage());
+
+            // Optionally, return a meaningful response
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ], 500);
         }
-        return null;
     }
 
     public function getBranchCity($branch_id)
@@ -3404,7 +3421,7 @@ class AcctCreditsAccountController extends Controller
                                     <div style=\"font-size:12px;\">:</div>
                                 </td>
                                 <td style=\"text-align:justify;\" width=\"100%\">
-                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>bulan dengan pembayaran setiap Hari " . $dayname[$dayPayment] . " <br>(selanjutnya di sebut dengan Hari Angsuran)</div>
+                                    <div style=\"font-size:12px;text-align: left\">Rp. " . number_format($acctcreditsaccount['credits_account_payment_amount'], 2) . " (" . $this->numtotxt($acctcreditsaccount['credits_account_payment_amount']) . ") / <br>bulan dengan pembayaran setiap tanggal " . $paymentDate . " <br>(selanjutnya di sebut dengan tanggal Angsuran)</div>
                                 </td>
                             </tr>";
 

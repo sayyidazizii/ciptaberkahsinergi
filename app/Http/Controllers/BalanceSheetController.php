@@ -42,7 +42,7 @@ class BalanceSheetController extends Controller
                 'year_period'   => date('Y'),
                 'branch_id'     => $branch_id,
                 'branch_name'   => $this->getBranchName($branch_id),
-            ); 
+            );
         }else{
             $session = session()->get('filter_balencesheet');
         }
@@ -117,7 +117,7 @@ class BalanceSheetController extends Controller
         ->where('year_period', $year)
         ->where('branch_id', $branch_id)
         ->first();
-        
+
         if (empty($data)) {
             return 0;
         } else {
@@ -242,7 +242,7 @@ class BalanceSheetController extends Controller
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
 
-        $pdf::SetMargins(6, 6, 6, 6); 
+        $pdf::SetMargins(6, 6, 6, 6);
 
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
 
@@ -306,7 +306,7 @@ class BalanceSheetController extends Controller
             case '12':
                 $month_name = "Desember";
                 break;
-            
+
             default:
                 break;
         }
@@ -324,11 +324,11 @@ class BalanceSheetController extends Controller
         $pdf::writeHTML($tbl, true, false, false, false, '');
 
         $tblHeader = "
-        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"1\">			        
+        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"1\">
             <tr>";
                 $tblheader_left = "
-                    <td style=\"width: 50%\">	
-                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";	
+                    <td style=\"width: 50%\">
+                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";
                             $tblitem_left = "";
                             $grand_total_account_amount1 = 0;
                             $grand_total_account_amount2 = 0;
@@ -347,7 +347,7 @@ class BalanceSheetController extends Controller
                                     $report_bold1 = 'bold';
                                 } else {
                                     $report_bold1 = 'normal';
-                                }									
+                                }
 
                                 if($valLeft['report_type1'] == 1){
                                     $tblitem_left1 = "
@@ -366,10 +366,10 @@ class BalanceSheetController extends Controller
                                         </tr>";
                                 } else {
                                     $tblitem_left2 = "";
-                                }									
+                                }
 
                                 if($valLeft['report_type1']	== 3){
-                                    $last_balance1 	= $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
+                                    $last_balance1 	= $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
 
                                     $tblitem_left3 = "
                                         <tr>
@@ -419,10 +419,10 @@ class BalanceSheetController extends Controller
                                 }
 
                                 if($valLeft['report_type1']	== 5){
-                                    $last_balance10 	= $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
+                                    $last_balance10 	= $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
                                     $account_amount10_top[$valLeft['report_no']] = $last_balance10;
                                 }
-                                
+
                                 $total_account_amount10 = 0;
 
                                 if($valLeft['report_type1'] == 6){
@@ -467,8 +467,8 @@ class BalanceSheetController extends Controller
                     </td>";
 
                 $tblheader_right = "
-                    <td style=\"width: 50%\">	
-                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";		
+                    <td style=\"width: 50%\">
+                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";
                             $tblitem_right = "";
                             foreach ($acctbalancesheetreport_right as $keyRight => $valRight) {
                                 if($valRight['report_tab2'] == 0){
@@ -485,7 +485,7 @@ class BalanceSheetController extends Controller
                                     $report_bold2 = 'bold';
                                 } else {
                                     $report_bold2 = 'normal';
-                                }									
+                                }
 
                                 if($valRight['report_type2'] == 1){
                                     $tblitem_right1 = "
@@ -504,7 +504,7 @@ class BalanceSheetController extends Controller
                                         </tr>";
                                 } else {
                                     $tblitem_right2 = "";
-                                }									
+                                }
 
                                 if($valRight['report_type2'] == 3){
                                     $last_balance2 	= $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
@@ -666,7 +666,7 @@ class BalanceSheetController extends Controller
                                 }
 
                                 if($valRight['report_type2'] == 5){
-                                    $last_balance210 	= $this->getSHUTahunBerjalan($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $month, $year);		
+                                    $last_balance210 	= $this->getSHUTahunBerjalan($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $month, $year);
 
                                     $account_amount210_top[$valRight['report_no']] = $last_balance210;
                                 }
@@ -741,7 +741,7 @@ class BalanceSheetController extends Controller
                 </td>
             </tr>
         </table>";
-            
+
         $table = $tblHeader.$tblheader_left.$tblitem_left.$tblfooter_left.$tblheader_right.$tblitem_right.$tblfooter_right.$tblFooter;
 
         $pdf::writeHTML($table, true, false, false, false, '');
@@ -819,7 +819,7 @@ class BalanceSheetController extends Controller
             $last_month 	= $month + 1;
             $last_year 		= $year;
         }
-                        
+
         switch ($month) {
             case '01':
                 $month_name = "Januari";
@@ -857,7 +857,7 @@ class BalanceSheetController extends Controller
             case '12':
                 $month_name = "Desember";
                 break;
-            
+
             default:
                 break;
         }
@@ -867,10 +867,10 @@ class BalanceSheetController extends Controller
         $grand_total_account_pendapatan = 0;
         $grand_total_account_amount_beban = 0;
 
-        
+
         if(!empty($acctbalancesheetreport_left && $acctbalancesheetreport_right)){
             $spreadsheet = new Spreadsheet();
-            
+
             $spreadsheet->getProperties()->setCreator("SIS Integrated System")
                                     ->setLastModifiedBy("SIS Integrated System")
                                     ->setTitle("Laporan Neraca")
@@ -878,7 +878,7 @@ class BalanceSheetController extends Controller
                                     ->setDescription("Laporan Neraca")
                                     ->setKeywords("Neraca, Laporan, SIS, Integrated")
                                     ->setCategory("Laporan Neraca");
-                                    
+
             $spreadsheet->setActiveSheetIndex(0);
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
@@ -886,7 +886,7 @@ class BalanceSheetController extends Controller
             $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20);
             $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(50);
             $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(20);
-            
+
             $spreadsheet->getActiveSheet()->mergeCells("B1:E1");
             $spreadsheet->getActiveSheet()->mergeCells("B2:E2");
             $spreadsheet->getActiveSheet()->mergeCells("B3:E3");
@@ -899,24 +899,24 @@ class BalanceSheetController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('B3')->getFont()->setBold(true)->setSize(12);
 
             $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-            $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getFont()->setBold(true);	
-            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Neraca ");	
-            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branchname);	
-            $spreadsheet->getActiveSheet()->setCellValue('B3',"Periode ".$period."");	
-            
+            $spreadsheet->getActiveSheet()->getStyle('B4:E4')->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Neraca ");
+            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branchname);
+            $spreadsheet->getActiveSheet()->setCellValue('B3',"Periode ".$period."");
+
             $j = 5;
             $no = 0;
             $grand_total = 0;
             $grand_total_account_amount1 = 0;
             $grand_total_account_amount2 = 0;
-            
+
             foreach($acctbalancesheetreport_left as $keyLeft =>$valLeft){
                 if(is_numeric($keyLeft)){
-                    
+
                     $spreadsheet->setActiveSheetIndex(0);
                     $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                     $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                
+
                     if($valLeft['report_tab1'] == 0){
                         $report_tab1 = ' ';
                     } else if($valLeft['report_tab1'] == 1){
@@ -928,9 +928,9 @@ class BalanceSheetController extends Controller
                     }
 
                     if($valLeft['report_bold1'] == 1){
-                        $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);	
-                        $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);	
-                    }									
+                        $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);
+                        $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);
+                    }
 
                     if($valLeft['report_type1'] == 1){
                         $spreadsheet->getActiveSheet()->mergeCells("B".$j.":C".$j."");
@@ -939,10 +939,10 @@ class BalanceSheetController extends Controller
 
                     if($valLeft['report_type1']	== 2){
                         $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $report_tab1.$valLeft['account_name1']);
-                    }								
+                    }
 
                     if($valLeft['report_type1']	== 3){
-                        $last_balance1 = $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
+                        $last_balance1 = $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
 
                         if (empty($last_balance1)){
                             $last_balance1 = 0;
@@ -978,13 +978,13 @@ class BalanceSheetController extends Controller
 
                             $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $report_tab1.$valLeft['account_name1']);
                             $spreadsheet->getActiveSheet()->setCellValue('C'.$j, $report_tab1.($total_account_amount1));
-                            
+
                             $grand_total_account_amount1 +=  $total_account_amount1;
                         }
                     }
 
                     if($valLeft['report_type1']	== 5){
-                        $last_balance10 = $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
+                        $last_balance10 = $this->getLastBalance($valLeft['account_id1'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
 
                         if (empty($last_balance10)){
                             $last_balance10 = 0;
@@ -992,7 +992,7 @@ class BalanceSheetController extends Controller
 
                         $account_amount10_top[$valLeft['report_no']] = $last_balance10;
                     }
-                    
+
                     $total_account_amount10 = 0;
 
                     if($valLeft['report_type1'] == 6){
@@ -1019,7 +1019,7 @@ class BalanceSheetController extends Controller
 
                             $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $report_tab1.$valLeft['account_name1']);
                             $spreadsheet->getActiveSheet()->setCellValue('C'.$j, $report_tab1.($total_account_amount1));
-                            
+
                             $grand_total_account_amount1 =  $total_account_amount1;
                         }
                     }
@@ -1038,11 +1038,11 @@ class BalanceSheetController extends Controller
 
             foreach($acctbalancesheetreport_right as $keyRight =>$valRight){
                 if(is_numeric($keyRight)){
-                    
+
                     $spreadsheet->setActiveSheetIndex(0);
                     $spreadsheet->getActiveSheet()->getStyle('D'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                     $spreadsheet->getActiveSheet()->getStyle('E'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                
+
                     if($valRight['report_tab2'] == 0){
                         $report_tab2 = ' ';
                     } else if($valRight['report_tab2'] == 1){
@@ -1054,9 +1054,9 @@ class BalanceSheetController extends Controller
                     }
 
                     if($valRight['report_bold2'] == 1){
-                        $spreadsheet->getActiveSheet()->getStyle('D'.$j)->getFont()->setBold(true);	
-                        $spreadsheet->getActiveSheet()->getStyle('E'.$j)->getFont()->setBold(true);	
-                    }								
+                        $spreadsheet->getActiveSheet()->getStyle('D'.$j)->getFont()->setBold(true);
+                        $spreadsheet->getActiveSheet()->getStyle('E'.$j)->getFont()->setBold(true);
+                    }
 
                     if($valRight['report_type2'] == 1){
                         $spreadsheet->getActiveSheet()->mergeCells("D".$j.":E".$j."");
@@ -1065,10 +1065,10 @@ class BalanceSheetController extends Controller
 
                     if($valRight['report_type2']	== 2){
                         $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
-                    }									
+                    }
 
                     if($valRight['report_type2']	== 3){
-                        $last_balance2 = $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);		
+                        $last_balance2 = $this->getLastBalance($valRight['account_id2'], empty($sesi['branch_id']) ? auth()->user()->branch_id : $sesi['branch_id'], $last_month, $last_year);
 
                         if (empty($last_balance2)){
                             $last_balance2 = 0;
@@ -1117,7 +1117,7 @@ class BalanceSheetController extends Controller
                             $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                             $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
-                            
+
                             $grand_total_account_amount2 += $total_account_amount2;
                         }
                     }
@@ -1147,7 +1147,7 @@ class BalanceSheetController extends Controller
                             // $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                             // $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
-                            
+
                             $grand_total_account_pendapatan += $total_account_amount2;
                         }
                     }
@@ -1177,7 +1177,7 @@ class BalanceSheetController extends Controller
                             // $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                             // $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount_beban);
 
-                            
+
                             $grand_total_account_amount_beban += $total_account_amount_beban;
                         }
                     }
@@ -1207,7 +1207,7 @@ class BalanceSheetController extends Controller
                             $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                             $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
-                            
+
                             $grand_total_account_amount2 += $total_account_amount2;
                         }
                     }
@@ -1219,7 +1219,7 @@ class BalanceSheetController extends Controller
                         $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                         $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$shu);
                     }
-                    
+
                     if($valRight['report_type2'] == 6){
                         if(!empty($valRight['report_formula2']) && !empty($valRight['report_operator2'])){
                             $report_formula2 	= explode('#', $valRight['report_formula2']);
@@ -1245,7 +1245,7 @@ class BalanceSheetController extends Controller
                             $spreadsheet->getActiveSheet()->setCellValue('D'.$j, $report_tab2.$valRight['account_name2']);
                             $spreadsheet->getActiveSheet()->setCellValue('E'.$j, $report_tab2.$total_account_amount2);
 
-                            
+
                             // $grand_total_account_amount2 = $total_account_amount2;
                             $shu = $grand_total_account_pendapatan - $grand_total_account_amount_beban;
                             $grand_total_account_amount2 =  $total_account_amount2 + $shu;
@@ -1272,7 +1272,7 @@ class BalanceSheetController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('D'.$total_row_right)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
             $spreadsheet->getActiveSheet()->getStyle('E'.$total_row_right)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            $spreadsheet->getActiveSheet()->getStyle("B".$total_row_left.":E".$total_row_right)->getFont()->setBold(true);	
+            $spreadsheet->getActiveSheet()->getStyle("B".$total_row_left.":E".$total_row_right)->getFont()->setBold(true);
 
             $spreadsheet->getActiveSheet()->setCellValue('B'.$total_row_left, $report_tab1.$valLeft['account_name1']);
             $spreadsheet->getActiveSheet()->setCellValue('C'.$total_row_left, $report_tab1.$grand_total_account_amount1);
@@ -1293,26 +1293,38 @@ class BalanceSheetController extends Controller
         }
     }
 
-    public static function getAccountAmount($account_id, $month_start, $month_end, $year, $branch_id,$profit_loss_report_type){
+    public static function getAccountAmount($account_id, $month_start, $month_end, $year, $branch_id, $profit_loss_report_type) {
         $account_amount = 0;
-        
-        if($profit_loss_report_type == 1){
-            $account_amount = AcctAccountMutation::where('account_id', $account_id)
-            ->where('branch_id', $branch_id)
-            ->where('month_period', '>=', $month_start)
-            ->where('month_period', '<=', $month_end)
-            ->where('year_period', $year)
-            ->sum('last_balance');
-        }else if($profit_loss_report_type == 2){
-            $account_amount = AcctAccountMutation::where('account_id', $account_id)
-            ->where('branch_id', $branch_id)
-            ->where('year_period', $year)
-            ->sum('last_balance');
-        }
-        
-        return $account_amount;
 
+        if ($profit_loss_report_type == 1) {
+            // Laporan laba rugi bulanan
+            $account_amount = AcctAccountMutation::where('account_id', $account_id)
+                ->where('branch_id', $branch_id)
+                ->where('month_period', '>=', $month_start)
+                ->where('month_period', '<=', $month_end)
+                ->where('year_period', $year)
+                ->sum('last_balance');
+        } else if ($profit_loss_report_type == 2) {
+            // Laporan laba rugi tahunan: ambil jumlah dari bulan saat ini dan sebelumnya
+            if($month_start == 12){
+                $account_amount = AcctAccountMutation::where('account_id', $account_id)
+                ->where('branch_id', $branch_id)
+                ->where('month_period', '<=', $month_end) // Hingga bulan akhir yang diberikan
+                // ->where('year_period', $year)
+                ->sum('last_balance');
+            }else{
+                $account_amount = AcctAccountMutation::where('account_id', $account_id)
+                ->where('branch_id', $branch_id)
+                ->where('month_period', '<=', $month_end) // Hingga bulan akhir yang diberikan
+                ->where('year_period', $year)
+                ->sum('last_balance');
+            }
+        }
+
+
+        return $account_amount;
     }
+
 
 
 }

@@ -281,7 +281,7 @@
                                 <select name="savings_account_id" id="savings_account_id" data-control="select2" data-placeholder="{{ __('Pilih No. Simpanan') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg" disabled>
                                     <option value="">{{ __('Pilih') }}</option>
                                     @foreach($acctsavingsaccount as $key => $value)
-                                        <option data-kt-flag="{{ $value['savings_account_id'] }}" value="{{ $value['savings_account_id'] }}" {{ $value['savings_account_id'] == old('savings_account_id', $creditsdata['savings_account_id'] ?? '') ? 'selected' :'' }}>{{ $value['savings_account_no'] }} - {{ $value->member->member_name }} ({{$value->savingdata->savings_name}})</option>
+                                        <option data-kt-flag="{{ $value['savings_account_id'] }}" value="{{ $value['savings_account_id'] }}" {{ $value['savings_account_id'] == old('savings_account_id', $creditsdata['savings_account_id'] ?? '') ? 'selected' :'' }}>{{ $value['savings_account_no'] }} </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -305,9 +305,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     if(!empty($datapola)){
-                                    ?> 
+                                    ?>
                                     @foreach($datapola as $key => $val)
                                         <tr>
                                             <td class="text-center">{{ $val['ke'] }}</td>
@@ -369,10 +369,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                 $no = 1;
                                 if(!empty($creditsdata->anggunan)){
-                                ?> 
+                                ?>
                                 @foreach($creditsdata->anggunan as $key => $val)
                                     @if ($val['credits_agunan_type'] == "BPKB")
                                         <tr>

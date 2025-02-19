@@ -70,7 +70,7 @@ class AcctDepositoAccountMasterController extends Controller
         $spreadsheet        = new Spreadsheet();
         $preferencecompany	= PreferenceCompany::select('company_name')->first();
 
-        $depositoaccount = AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'acct_deposito_account.deposito_id', 'acct_deposito.deposito_code', 'acct_deposito.deposito_name', 'acct_deposito_account.deposito_account_extra_type', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_serial_no', 'acct_deposito_account.deposito_account_interest_amount', 'acct_deposito_account.validation', 'acct_deposito_account.validation_id', 'acct_deposito_account.validation_at')
+        $depositoaccount = AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'acct_deposito_account.deposito_id', 'acct_deposito.deposito_code', 'acct_deposito.deposito_name', 'acct_deposito_account.deposito_account_extra_type', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.deposito_account_serial_no','acct_deposito_account.deposito_account_interest','acct_deposito_account.deposito_account_interest_amount', 'acct_deposito_account.validation', 'acct_deposito_account.validation_id', 'acct_deposito_account.validation_at')
         ->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
         ->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
         ->where('acct_deposito_account.deposito_account_status', 0)
@@ -86,7 +86,7 @@ class AcctDepositoAccountMasterController extends Controller
                                             ->setDescription("Master Data Simpanan Berjangka")
                                             ->setKeywords("Master Data Simpanan Berjangka")
                                             ->setCategory("Master Data Simpanan Berjangka");
-                                    
+
             $sheet = $spreadsheet->getActiveSheet(0);
             $spreadsheet->getActiveSheet()->setTitle("Master Data Simpanan Berjangka");
 
@@ -100,17 +100,18 @@ class AcctDepositoAccountMasterController extends Controller
             $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(20);
             $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(20);
             $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(20);
-            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(20);			
-            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(20);			
-            
-            $spreadsheet->getActiveSheet()->mergeCells("B1:K1");
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(20);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(20);
+
+            $spreadsheet->getActiveSheet()->mergeCells("B1:L1");
             $spreadsheet->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('B1')->getFont()->setBold(true)->setSize(16);
-            $spreadsheet->getActiveSheet()->getStyle('B3:K3')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-            $spreadsheet->getActiveSheet()->getStyle('B3:K3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-            $spreadsheet->getActiveSheet()->getStyle('B3:K3')->getFont()->setBold(true);	
+            $spreadsheet->getActiveSheet()->getStyle('B3:L3')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $spreadsheet->getActiveSheet()->getStyle('B3:L3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('B3:L3')->getFont()->setBold(true);
 
-            $spreadsheet->getActiveSheet()->setCellValue('B1',"Master Data Simpanan Berjangka");	
+            $spreadsheet->getActiveSheet()->setCellValue('B1',"Master Data Simpanan Berjangka");
             $spreadsheet->getActiveSheet()->setCellValue('B3',"No");
             $spreadsheet->getActiveSheet()->setCellValue('C3',"Nama Anggota");
             $spreadsheet->getActiveSheet()->setCellValue('D3',"Jenis Simp Berjangka");
@@ -118,10 +119,11 @@ class AcctDepositoAccountMasterController extends Controller
             $spreadsheet->getActiveSheet()->setCellValue('F3',"No. SimKa");
             $spreadsheet->getActiveSheet()->setCellValue('G3',"No. seri");
             $spreadsheet->getActiveSheet()->setCellValue('H3',"Tgl Buka");
-            $spreadsheet->getActiveSheet()->setCellValue('I3',"JT Tempo");
-            $spreadsheet->getActiveSheet()->setCellValue('J3',"Nominal");
-            $spreadsheet->getActiveSheet()->setCellValue('K3',"Bagi Hasil");
-            
+            $spreadsheet->getActiveSheet()->setCellValue('I3',"Bunga");
+            $spreadsheet->getActiveSheet()->setCellValue('J3',"JT Tempo");
+            $spreadsheet->getActiveSheet()->setCellValue('K3',"Nominal");
+            $spreadsheet->getActiveSheet()->setCellValue('L3',"Bagi Hasil");
+
             $j  = 4;
             $no = 0;
             foreach($depositoaccount as $key=>$val){
@@ -132,8 +134,8 @@ class AcctDepositoAccountMasterController extends Controller
                 }
 
                 $no++;
-                
-                $spreadsheet->getActiveSheet()->getStyle('B'.$j.':K'.$j)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+                $spreadsheet->getActiveSheet()->getStyle('B'.$j.':L'.$j)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 $spreadsheet->getActiveSheet()->getStyle('D'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
@@ -144,6 +146,7 @@ class AcctDepositoAccountMasterController extends Controller
                 $spreadsheet->getActiveSheet()->getStyle('I'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 $spreadsheet->getActiveSheet()->getStyle('J'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $spreadsheet->getActiveSheet()->getStyle('K'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $spreadsheet->getActiveSheet()->getStyle('L'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
                 $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $no);
                 $spreadsheet->getActiveSheet()->setCellValue('C'.$j, $val['member_name']);
@@ -152,13 +155,14 @@ class AcctDepositoAccountMasterController extends Controller
                 $spreadsheet->getActiveSheet()->setCellValue('F'.$j, $val['deposito_account_no']);
                 $spreadsheet->getActiveSheet()->setCellValue('G'.$j, $val['deposito_account_serial_no']);
                 $spreadsheet->getActiveSheet()->setCellValue('H'.$j, $val['deposito_account_date']);
-                $spreadsheet->getActiveSheet()->setCellValue('I'.$j, $val['deposito_account_due_date']);	
-                $spreadsheet->getActiveSheet()->setCellValue('J'.$j, number_format($val['deposito_account_amount'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('K'.$j, $val['deposito_account_interest_amount']);				
-                    
+                $spreadsheet->getActiveSheet()->setCellValue('I'.$j, $val['deposito_account_interest'] .' %');
+                $spreadsheet->getActiveSheet()->setCellValue('J'.$j, $val['deposito_account_due_date']);
+                $spreadsheet->getActiveSheet()->setCellValue('K'.$j, number_format($val['deposito_account_amount'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('L'.$j, $val['deposito_account_interest_amount']);
+
                 $j++;
             }
-            
+
             ob_clean();
             $filename='Master Data Simpanan Berjangka.xls';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

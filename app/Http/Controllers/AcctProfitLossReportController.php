@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\User;
-use App\Models\AcctAccount;
-use App\Models\AcctAccountBalanceDetail;
-use App\Models\AcctAccountMutation;
-use App\Models\AcctAccountOpeningBalance;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctProfitLoss;
-use App\Models\AcctProfitLossReport;
-use App\Models\AcctRecalculateLog;
 use App\Models\CoreBranch;
-use App\Models\PreferenceCompany;
+use App\Models\AcctAccount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Configuration;
-use App\Models\AcctJournalVoucher;
+use App\Models\AcctProfitLoss;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctRecalculateLog;
+use Illuminate\Support\Facades\DB;
+use App\Models\AcctAccountMutation;
+use App\Models\AcctProfitLossReport;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctAccountBalanceDetail;
+use App\Models\AcctAccountOpeningBalance;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -27,12 +28,12 @@ class AcctProfitLossReportController extends Controller
     {
         $sessiondata = session()->get('filter_profitlossreport');
         // dd($sessiondata);
-        
-        
+
+
         $monthlist              = array_filter(Configuration::Month());
         $profitlossreporttype   = array_filter(Configuration::ProfitLossReportType());
 
-        
+
         $branch_id          = auth()->user()->branch_id;
         if($branch_id == 1){
             $corebranch         = CoreBranch::where('data_state', 0)
@@ -41,7 +42,7 @@ class AcctProfitLossReportController extends Controller
             $corebranch         = CoreBranch::where('data_state', 0)
             ->where('branch_id', $branch_id)
             ->get();
-        }  
+        }
 
         if (empty($sessiondata)){
             $sessiondata['start_month_period']          = date('m');
@@ -61,12 +62,12 @@ class AcctProfitLossReportController extends Controller
         ->get();
 
         $company_name = PreferenceCompany::first()->company_name;
-        
+
         $year_now 	=	date('Y');
         for($i=($year_now-2); $i<($year_now+2); $i++){
             $year[$i] = $i;
         }
-        
+
 
         $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
         ->where('account_name', '!=', ' ')
@@ -165,7 +166,7 @@ class AcctProfitLossReportController extends Controller
         $monthlist 			= array_filter(Configuration::Month());
 
         $sessiondata = session()->get('filter_profitlossreport');
-        
+
         if (empty($sessiondata)){
             $sessiondata['start_month_period']          = date('m');
             $sessiondata['end_month_period']            = date('m');
@@ -173,7 +174,7 @@ class AcctProfitLossReportController extends Controller
             $sessiondata['profit_loss_report_type']     = null;
             $sessiondata['branch_id']                   = auth()->user()->branch_id;
         }
-        
+
         $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
         ->where('account_name', '!=', ' ')
         ->where('account_name', '!=', '')
@@ -224,7 +225,7 @@ class AcctProfitLossReportController extends Controller
         $income_tax = 0;
 
         $export = "
-        
+
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
             <tr>
                 <td><div style=\"text-align: center;font-size:10; font-weight:bold;\">LAPORAN PERHITUNGAN SHU</div></td>
@@ -237,19 +238,19 @@ class AcctProfitLossReportController extends Controller
             </tr>
             <tr>
                 <td><div style=\"text-align: center;font-size:10;\">Periode : ".$monthlist[$sessiondata['start_month_period']].' - '.$monthlist[$sessiondata['end_month_period']].' '.$sessiondata['year_period']."</div></td>
-            </tr>					
+            </tr>
         </table>
         <br>";
-        
+
         $export .= "
         <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"1\" border=\"0\">";
 
             $export .= "
                 <tr>
                     <td width=\"10%\"></td>
-                    <td width=\"80%\" style=\"border-top:1px black solid;border-left:1px black solid;border-right:1px black solid\">	
-                        
-                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";	
+                    <td width=\"80%\" style=\"border-top:1px black solid;border-left:1px black solid;border-right:1px black solid\">
+
+                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";
                             $export .= "";
                             foreach ($acctprofitlossreport_top as $keyTop => $valTop) {
                                 if($valTop['report_tab'] == 0){
@@ -266,7 +267,7 @@ class AcctProfitLossReportController extends Controller
                                     $report_bold = 'bold';
                                 } else {
                                     $report_bold = 'normal';
-                                }									
+                                }
 
                                 if($valTop['report_type'] == 1){
                                     $export .= "
@@ -281,7 +282,7 @@ class AcctProfitLossReportController extends Controller
                                         <td style=\"width: 73%\"><div style='font-weight:".$report_bold."'>".$report_tab."".$valTop['account_name']."</div></td>
                                         <td style=\"width: 25%\"><div style='font-weight:".$report_bold."'></div></td>
                                     </tr>";
-                                }									
+                                }
 
                                 if($valTop['report_type'] == 3){
                                     if($sessiondata['profit_loss_report_type'] == 1){
@@ -370,8 +371,8 @@ class AcctProfitLossReportController extends Controller
 				$export .= "
                 <tr>
                     <td width=\"10%\"></td>
-                    <td width=\"80%\" style=\"border-bottom:1px black solid;border-left:1px black solid;border-right:1px black solid\">	
-                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";		
+                    <td width=\"80%\" style=\"border-bottom:1px black solid;border-left:1px black solid;border-right:1px black solid\">
+                        <table id=\"items\" width=\"100%\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">";
                             foreach ($acctprofitlossreport_bottom as $keyBottom => $valBottom) {
                                 if($valBottom['report_tab'] == 0){
                                     $report_tab = ' ';
@@ -387,7 +388,7 @@ class AcctProfitLossReportController extends Controller
                                     $report_bold = 'bold';
                                 } else {
                                     $report_bold = 'normal';
-                                }									
+                                }
 
                                 if($valBottom['report_type'] == 1){
                                     $export .= "
@@ -402,7 +403,7 @@ class AcctProfitLossReportController extends Controller
                                         <td style=\"width: 73%\"><div style=\"font-weight:".$report_bold."\">".$report_tab."".$valBottom['account_name']."</div></td>
                                         <td style=\"width: 25%\"><div style=\"font-weight:".$report_bold."\"></div></td>
                                     </tr>";
-                                }									
+                                }
 
                                 if($valBottom['report_type'] == 3){
                                     if($sessiondata['profit_loss_report_type'] == 1){
@@ -489,7 +490,7 @@ class AcctProfitLossReportController extends Controller
         </tr>";
 
         $shu = $total_account_amount1 - $grand_total_account_amount2;
-        
+
         // if($sessiondata['profit_loss_report_type'] == 1){
         //     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
         //     ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
@@ -532,7 +533,7 @@ class AcctProfitLossReportController extends Controller
         $preferencecompany 	= PreferenceCompany::first();
 
         $sessiondata = session()->get('filter_profitlossreport');
-        
+
         if (empty($sessiondata)){
             $sessiondata['start_month_period']          = date('m');
             $sessiondata['end_month_period']            = date('m');
@@ -540,7 +541,7 @@ class AcctProfitLossReportController extends Controller
             $sessiondata['profit_loss_report_type']     = null;
             $sessiondata['branch_id']                   = auth()->user()->branch_id;
         }
-        
+
         $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
         ->where('account_name', '!=', ' ')
         ->where('account_name', '!=', '')
@@ -574,16 +575,16 @@ class AcctProfitLossReportController extends Controller
                                             ->setDescription("Laporan Laba Rugi")
                                             ->setKeywords("Laporan Laba Rugi")
                                             ->setCategory("Laporan Laba Rugi");
-                                    
+
             $sheet = $spreadsheet->getActiveSheet(0);
             $spreadsheet->getActiveSheet()->setTitle("Laporan Laba Rugi");
 
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
-            
+
             $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(50);
             $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20);
-            
+
             $spreadsheet->getActiveSheet()->mergeCells("B1:C1");
             $spreadsheet->getActiveSheet()->mergeCells("B2:C2");
             $spreadsheet->getActiveSheet()->mergeCells("B3:C3");
@@ -595,12 +596,12 @@ class AcctProfitLossReportController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('B2')->getFont()->setBold(true)->setSize(12);
             $spreadsheet->getActiveSheet()->getStyle('B3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('B3')->getFont()->setBold(true)->setSize(12);
-            
-            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Perhitungan SHU ");	
-            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branch_name);	
-            $spreadsheet->getActiveSheet()->setCellValue('B3',$branch_name);	
-            $spreadsheet->getActiveSheet()->setCellValue('B4',"Periode ".$period);	
-            
+
+            $spreadsheet->getActiveSheet()->setCellValue('B1',"Laporan Perhitungan SHU ");
+            $spreadsheet->getActiveSheet()->setCellValue('B2',$preferencecompany['company_name']." ".$branch_name);
+            $spreadsheet->getActiveSheet()->setCellValue('B3',$branch_name);
+            $spreadsheet->getActiveSheet()->setCellValue('B4',"Periode ".$period);
+
             $j              = 5;
             $no             = 0;
             $grand_total    = 0;
@@ -620,10 +621,10 @@ class AcctProfitLossReportController extends Controller
                 }
 
                 if($valTop['report_bold'] == 1){
-                    $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);	
-                    $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);	
+                    $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);
+                    $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);
                 } else {
-                
+
                 }
 
                 if($valTop['report_type'] == 1){
@@ -632,15 +633,15 @@ class AcctProfitLossReportController extends Controller
 
                     $j++;
                 }
-                    
-                
+
+
                 if($valTop['report_type']	== 2){
                     $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $valTop['account_name']);
 
                     $j++;
                 }
-                        
-                
+
+
                 if($valTop['report_type']	== 3){
                     $account_subtotal = 0;
                     if($sessiondata['profit_loss_report_type'] == 1){
@@ -659,7 +660,7 @@ class AcctProfitLossReportController extends Controller
 
                     $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $report_tab.$valTop['account_name']);
                     $spreadsheet->getActiveSheet()->setCellValue('C'.$j, $report_tab.$account_subtotal);
- 
+
                     $account_amount[$valTop['report_no']] = $account_subtotal;
                     $j++;
                 }
@@ -728,7 +729,7 @@ class AcctProfitLossReportController extends Controller
 
             foreach($acctprofitlossreport_bottom as $keyBottom => $valBottom){
                 $spreadsheet->getActiveSheet()->getStyle('B'.$j.':C'.$j)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-        
+
                 $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
@@ -743,22 +744,22 @@ class AcctProfitLossReportController extends Controller
                 }
 
                 if($valBottom['report_bold'] == 1){
-                    $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);	
-                    $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);	
+                    $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getFont()->setBold(true);
+                    $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getFont()->setBold(true);
                 } else {
-                
+
                 }
 
                 if($valBottom['report_type'] == 1){
                     $spreadsheet->getActiveSheet()->mergeCells("B".$j.":C".$j."");
                     $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $valBottom['account_name']);
                 }
-                    
-                
+
+
                 if($valBottom['report_type']	== 2){
                     $spreadsheet->getActiveSheet()->setCellValue('B'.$j, $valBottom['account_name']);
                 }
-                        
+
 
                 if($valBottom['report_type']	== 3){
                     if($sessiondata['profit_loss_report_type'] == 1){
@@ -840,11 +841,11 @@ class AcctProfitLossReportController extends Controller
             $spreadsheet->getActiveSheet()->getStyle('B'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
             $spreadsheet->getActiveSheet()->getStyle('C'.$j)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
             $spreadsheet->getActiveSheet()->getStyle('B'.$j.':C'.$j)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-            $spreadsheet->getActiveSheet()->getStyle("B".($j-3).":C".$j)->getFont()->setBold(true);	
+            $spreadsheet->getActiveSheet()->getStyle("B".($j-3).":C".$j)->getFont()->setBold(true);
 
             // $shu = $grand_total_account_amount1 - $grand_total_account_amount2;
             $shu = $total_account_amount1 - $grand_total_account_amount2;
-            
+
             $income_tax = 0;
             if($sessiondata['profit_loss_report_type'] == 1){
                 $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_id'])
@@ -891,7 +892,7 @@ class AcctProfitLossReportController extends Controller
 
             $spreadsheet->getActiveSheet()->getStyle('B'.$l)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('C'.$l)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-            $spreadsheet->getActiveSheet()->getStyle("B".$l.":C".$l)->getFont()->setBold(true);	
+            $spreadsheet->getActiveSheet()->getStyle("B".$l.":C".$l)->getFont()->setBold(true);
 
             $branch_manager = CoreBranch::select('branch_manager')
             ->where('branch_id', $sessiondata['branch_id'])
@@ -900,7 +901,7 @@ class AcctProfitLossReportController extends Controller
 
             $spreadsheet->getActiveSheet()->setCellValue('B'.$l, "ADMIN");
             $spreadsheet->getActiveSheet()->setCellValue('C'.$l, strtoupper($branch_manager));
-            
+
             ob_clean();
             $filename='Laporan Laba Rugi.xls';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -920,7 +921,7 @@ class AcctProfitLossReportController extends Controller
         $preferencecompany 	= PreferenceCompany::first();
 
         $sessiondata = session()->get('filter_profitlossreport');
-        
+
         if (empty($sessiondata)){
             $sessiondata['start_month_period']          = date('m');
             $sessiondata['end_month_period']            = date('m');
@@ -940,7 +941,7 @@ class AcctProfitLossReportController extends Controller
 
         try {
             AcctRecalculateLog::create($data_recalculate_log);
-            
+
             $acctaccount 	= AcctAccount::where('data_state', 0)
             ->get();
 
@@ -957,9 +958,9 @@ class AcctProfitLossReportController extends Controller
                 }else{
                     $opening_balance_old = 0;
                 }
-                
+
     //!===========================================================================================================================================
-                
+
                 //*Pakai AcctAccountBalanceDetail
                 $total_mutation_in 		= AcctAccountBalanceDetail::where("account_id", $val['account_id'])
                 ->whereMonth("transaction_date", $sessiondata['start_month_period'])
@@ -1050,7 +1051,7 @@ class AcctProfitLossReportController extends Controller
             $data_state = false;
             if(count($check_data_account_opening_balance) == 0){
                 if(count($check_data_account_mutation) == 0){
-                    $data_state = true;	
+                    $data_state = true;
                 } else {
                     if(AcctAccountMutation::where("month_period", $sessiondata['start_month_period'])
                     ->where("year_period", $sessiondata['year_period'])
@@ -1068,7 +1069,7 @@ class AcctProfitLossReportController extends Controller
                 ->delete()){
 
                     if(count($check_data_account_mutation) == 0){
-                        $data_state = true;	
+                        $data_state = true;
                     } else {
                         if(AcctAccountMutation::where("month_period", $sessiondata['start_month_period'])
                         ->where("year_period", $sessiondata['year_period'])
@@ -1090,7 +1091,7 @@ class AcctProfitLossReportController extends Controller
 
 
     //==============================================laba rugi template==============================================
-            
+
                 $acctprofitlossreport_top		= AcctProfitLossReport::select('acct_profit_loss_report.profit_loss_report_id', 'acct_profit_loss_report.report_no', 'acct_profit_loss_report.account_id', 'acct_profit_loss_report.account_code', 'acct_profit_loss_report.account_name', 'acct_profit_loss_report.report_formula', 'acct_profit_loss_report.report_operator', 'acct_profit_loss_report.report_type', 'acct_profit_loss_report.report_tab', 'acct_profit_loss_report.report_bold')
                 ->where('account_name', '!=', ' ')
                 ->where('account_name', '!=', '')
@@ -1107,7 +1108,7 @@ class AcctProfitLossReportController extends Controller
 
 
                 foreach ($acctprofitlossreport_top as $keyTop => $valTop) {
-                    				
+
 
                     if($valTop['report_type']	== 3){
                         $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($valTop['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'], $sessiondata['branch_id'],$sessiondata['profit_loss_report_type']);
@@ -1140,16 +1141,16 @@ class AcctProfitLossReportController extends Controller
                     }
 
                 }
-	
+
                 foreach ($acctprofitlossreport_bottom as $keyBottom => $valBottom) {
-                
+
 
                     if($valBottom['report_type']	== 3){
                         $account_subtotal 	= AcctProfitLossReportController::getAccountAmount($valBottom['account_id'], $sessiondata['start_month_period'], $sessiondata['end_month_period'], $sessiondata['year_period'], $sessiondata['branch_id'],$sessiondata['profit_loss_report_type']);
 
                         $account_amount[$valBottom['report_no']] = $account_subtotal;
                     }
-                    
+
 
                     if($valBottom['report_type'] == 5){
                         if(!empty($valBottom['report_formula']) && !empty($valBottom['report_operator'])){
@@ -1200,8 +1201,7 @@ class AcctProfitLossReportController extends Controller
                     }
                 }
 
-                $shu = $total_account_amount1 - $grand_total_account_amount2;
-        
+                $income_tax = 0;
                 if($sessiondata['profit_loss_report_type'] == 1){
                     $income_tax 	= AcctAccountMutation::where('acct_account_mutation.account_id', $preferencecompany['account_income_tax_id'])
                     ->where('acct_account_mutation.branch_id', $sessiondata['branch_id'])
@@ -1215,6 +1215,8 @@ class AcctProfitLossReportController extends Controller
                     ->where('acct_account_mutation.year_period', $sessiondata['year_period'])
                     ->sum('last_balance');
                 }
+
+                $shu = $total_account_amount1 - $grand_total_account_amount2 - $income_tax;
 
                 $profit_loss_amount = $shu;
 
@@ -1245,7 +1247,7 @@ class AcctProfitLossReportController extends Controller
                     AcctProfitLoss::create($data_profit_loss);
                 }
             }
-        
+
             DB::commit();
             $message = array(
                 'pesan' => 'Proses SHU berhasil dilakukan',
@@ -1253,6 +1255,11 @@ class AcctProfitLossReportController extends Controller
             );
         } catch (\Exception $e) {
             DB::rollback();
+            // Log error message
+            Log::error('Proses SHU gagal dilakukan: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
             $message = array(
                 'pesan' => 'Proses SHU gagal dilakukan',
                 'alert' => 'error'
@@ -1265,7 +1272,7 @@ class AcctProfitLossReportController extends Controller
 
     public static function getAccountAmount($account_id, $month_start, $month_end, $year, $branch_id,$profit_loss_report_type){
         $account_amount = 0;
-        
+
         if($profit_loss_report_type == 1){
             $account_amount = AcctAccountMutation::where('account_id', $account_id)
             ->where('branch_id', $branch_id)
@@ -1279,7 +1286,7 @@ class AcctProfitLossReportController extends Controller
             ->where('year_period', $year)
             ->sum('last_balance');
         }
-        
+
         return $account_amount;
 
     }

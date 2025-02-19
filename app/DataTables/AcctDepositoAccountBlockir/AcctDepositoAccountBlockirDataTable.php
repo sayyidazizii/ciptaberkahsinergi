@@ -118,7 +118,7 @@ class AcctDepositoAccountBlockirDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'AcctDepositoAccountBlockir/AcctDepositoAccountBlockir_' . date('YmdHis');
     }

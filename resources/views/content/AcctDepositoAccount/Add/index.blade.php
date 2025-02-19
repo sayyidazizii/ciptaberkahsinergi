@@ -77,7 +77,7 @@ var validator = FormValidation.formValidation(
                     }
                 }
             },
-            
+
         },
 
         plugins: {
@@ -146,7 +146,7 @@ $(document).ready(function(){
             }
         });
     });
-    
+
     $("#deposito_account_amount_view").change(function(){
         var deposito_account_amount                                    = $("#deposito_account_amount_view").val();
         document.getElementById("deposito_account_amount").value       = deposito_account_amount;
@@ -158,7 +158,7 @@ $(document).ready(function(){
 
         // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
         var incentive_decimal = incentive / 100;
-        
+
         // Hitung nominal
         var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
 
@@ -185,7 +185,7 @@ $(document).ready(function(){
 
         // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
         var incentive_decimal = incentive / 100;
-        
+
         // Hitung nominal
         var deposito_account_incentive_amount = deposito_amount * incentive_decimal;
 
@@ -213,7 +213,7 @@ function function_elements_add(name, value){
         type: "POST",
         url : "{{route('deposito-account.elements-add')}}",
         data : {
-            'name'      : name, 
+            'name'      : name,
             'value'     : value,
             '_token'    : '{{csrf_token()}}'
         },
@@ -234,7 +234,7 @@ function changeDeposito(){
             'deposito_id'    : deposito_id,
             '_token'        : '{{csrf_token()}}',
         },
-        success: function(return_data){ 
+        success: function(return_data){
             return_data = JSON.parse(return_data);
 
             $('#deposito_period').val(return_data.deposito_period);
@@ -263,7 +263,7 @@ function changeOffice(){
             'office_id'    : office_id,
             '_token'        : '{{csrf_token()}}',
         },
-        success: function(return_data){ 
+        success: function(return_data){
             return_data = JSON.parse(return_data);
 
         var deposito_amount = parseFloat($('#deposito_account_amount').val());
@@ -271,7 +271,7 @@ function changeOffice(){
 
         // Jika return_data.incentive dalam bentuk persentase (misalnya 5 untuk 5%)
         var incentive_decimal = incentive / 100;
-        
+
         $('#deposito_account_incentive').val(incentive);
         function_elements_add('deposito_account_incentive', incentive);
         $('#deposito_account_incentive_view').val(incentive);
@@ -295,7 +295,7 @@ function changeOffice(){
 }
 </script>
 @endsection
-<?php 
+<?php
 if(empty($sessiondata)){
     $sessiondata['deposito_id']                             = null;
     $sessiondata['deposito_account_extra_type']             = null;
@@ -463,10 +463,10 @@ if(!isset($coremember['member_gender'])){
                                 </div>
                             </div>
                             <div class="row mb-6">
-                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('BO') }}</label>
+                                <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('AO') }}</label>
                                 <div class="col-lg-8 fv-row">
-                                    <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="changeOffice()">
-                                        <option value="">{{ __('Pilih bo..') }}</option>
+                                    <select name="office_id" id="office_id" aria-label="{{ __('AO') }}" data-control="select2" data-placeholder="{{ __('Pilih AO..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg select2-hidden-accessible" onchange="changeOffice()">
+                                        <option value="">{{ __('Pilih AO..') }}</option>
                                         @foreach($coreoffice as $key => $value)
                                             <option data-kt-flag="{{ $value['office_id'] }}" value="{{ $value['office_id'] }}" {{ $value['office_id'] === old('office_id', (int)$sessiondata['office_id'] ?? '') ? 'selected' :'' }}>{{ $value['office_name'] }}</option>
                                         @endforeach
@@ -539,7 +539,7 @@ if(!isset($coremember['member_gender'])){
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <button type="reset" class="btn btn-white btn-active-light-primary me-2">{{ __('Batal') }}</button>
-    
+
                     <button type="submit" class="btn btn-primary" id="kt_deposito_account_add_submit">
                         @include('partials.general._button-indicator', ['label' => __('Simpan')])
                     </button>
@@ -553,15 +553,15 @@ if(!isset($coremember['member_gender'])){
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Daftar Anggota</h3>
-    
+
                     <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                         <span class="bi bi-x-lg"></span>
                     </div>
                 </div>
-    
+
                 <div class="modal-body" id="modal-member-body">
                 </div>
-    
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -574,15 +574,15 @@ if(!isset($coremember['member_gender'])){
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Daftar Tabungan</h3>
-    
+
                     <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                         <span class="bi bi-x-lg"></span>
                     </div>
                 </div>
-    
+
                 <div class="modal-body" id="modal-savings-account-body">
                 </div>
-    
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                 </div>

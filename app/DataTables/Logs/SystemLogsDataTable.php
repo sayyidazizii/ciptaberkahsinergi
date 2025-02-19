@@ -136,7 +136,7 @@ class SystemLogsDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'SystemLogs_'.date('YmdHis');
     }

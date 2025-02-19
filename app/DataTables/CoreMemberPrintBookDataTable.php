@@ -71,7 +71,7 @@ class CoreMemberPrintBookDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'Cetak_Buku_Anggota_' . date('YmdHis');
     }

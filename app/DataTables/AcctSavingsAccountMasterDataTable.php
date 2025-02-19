@@ -108,7 +108,7 @@ class AcctSavingsAccountMasterDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Master_Data_Tabungan_' . date('YmdHis');
     }

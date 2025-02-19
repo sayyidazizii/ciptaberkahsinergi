@@ -118,7 +118,7 @@ class AcctSavingsAccountCoverDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Cover_Data_Tabungan_' . date('YmdHis');
     }

@@ -101,7 +101,7 @@ class AcctCreditsAccountRescheduleDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Reschedule_Pinjaman' . date('YmdHis');
     }

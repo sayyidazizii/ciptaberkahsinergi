@@ -136,7 +136,7 @@ class AcctDepositoAccountClosingDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Bunga_Simpanan_Berjangka_' . date('YmdHis');
     }

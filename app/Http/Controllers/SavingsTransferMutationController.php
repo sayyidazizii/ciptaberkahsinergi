@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\DataTables\SavingsTransferMutation\SavingsTransferMutationDataTable;
-use App\DataTables\SavingsTransferMutation\SavingsAccountFromDataTable;
-use App\DataTables\SavingsTransferMutation\SavingsAccountToDataTable;
-use App\Models\AcctAccount;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
-use App\Models\AcctMutation;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
-use App\Models\AcctSavingsTransferMutation;
-use App\Models\AcctSavingsTransferMutationFrom;
-use App\Models\AcctSavingsTransferMutationTo;
-use App\Models\CoreMember;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\CoreMember;
+use App\Models\AcctAccount;
+use App\Models\AcctSavings;
+use App\Models\AcctMutation;
+use Illuminate\Http\Request;
 use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\AcctJournalVoucherItem;
+use App\Models\AcctSavingsTransferMutation;
+use App\Models\PreferenceTransactionModule;
+use App\Models\AcctSavingsTransferMutationTo;
+use App\Models\AcctSavingsTransferMutationFrom;
+use App\DataTables\SavingsTransferMutation\SavingsAccountToDataTable;
+use App\DataTables\SavingsTransferMutation\SavingsAccountFromDataTable;
+use App\DataTables\SavingsTransferMutation\SavingsTransferMutationDataTable;
 
 class SavingsTransferMutationController extends Controller
 {
@@ -89,7 +90,7 @@ class SavingsTransferMutationController extends Controller
 
     public function selectSavingsAccountFrom($savings_account_id)
     {
-        $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes() 
+        $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes()
             ->where('acct_savings_account.savings_account_id', $savings_account_id)
             ->join('acct_savings', 'acct_savings.savings_id', '=', 'acct_savings_account.savings_id')
             ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
@@ -119,7 +120,7 @@ class SavingsTransferMutationController extends Controller
 
     public function selectSavingsAccountTo($savings_account_id)
     {
-        $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes() 
+        $acctsavingsaccount = AcctSavingsAccount::withoutGlobalScopes()
             ->where('acct_savings_account.savings_account_id', $savings_account_id)
             ->join('acct_savings', 'acct_savings.savings_id', '=', 'acct_savings_account.savings_id')
             ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
@@ -169,154 +170,128 @@ class SavingsTransferMutationController extends Controller
         $savingsaccountfrom = session()->get('session_savingsaccountfrom');
         $savingsaccountto = session()->get('session_savingsaccountto');
 
-        // dd($savingsaccountfrom);
-
         DB::beginTransaction();
-        
-        if($request->savings_account_last_balance < $request->savings_transfer_mutation_amount){
-            $message = [
+
+        if ($request->savings_account_last_balance < $request->savings_transfer_mutation_amount) {
+            return redirect('savings-transfer-mutation/add')->with([
                 'pesan' => 'Saldo Tidak Mencukupi !',
                 'alert' => 'error',
-            ];
-            return redirect('savings-transfer-mutation/add')->with($message);
-        }else{
-            try {
-                $data = [
-                    'branch_id' => auth()->user()->branch_id,
-                    'savings_transfer_mutation_date' => date('Y-m-d'),
-                    'savings_transfer_mutation_amount' => $request->savings_transfer_mutation_amount,
-                    'member_id' => $request->member_id,
-                    'operated_name' => auth()->user()->username,
-                    'created_id' => auth()->user()->user_id,
-                ];
-                // dd($data);
-    
-                AcctSavingsTransferMutation::create($data);
-    
-                $savings_transfer_mutation_id = AcctSavingsTransferMutation::where('created_id', $data['created_id'])
-                    ->orderBy('savings_transfer_mutation_id', 'DESC')
-                    ->first()->savings_transfer_mutation_id;
-    
-                $preferencecompany = PreferenceCompany::first();
-    
-                $datafrom = [
-                    'savings_transfer_mutation_id' => $savings_transfer_mutation_id,
-                    'savings_account_id' => $savingsaccountfrom['savings_account_id'],
-                    'savings_id' => $savingsaccountfrom['savings_id'],
-                    'member_id' => $savingsaccountfrom['member_id'],
-                    'branch_id' => auth()->user()->branch_id,
-                    'mutation_id' => $preferencecompany['account_savings_transfer_from_id'],
-                    'savings_account_opening_balance' => $request->savings_account_from_opening_balance,
-                    'savings_transfer_mutation_from_amount' => $request->savings_transfer_mutation_amount,
-                    'savings_account_last_balance' => $request->savings_account_from_last_balance,
-                ];
-    
-                $member_name = CoreMember::where('member_id', $datafrom['member_id'])->first()->member_name;
-    
-                if (AcctSavingsTransferMutationFrom::create($datafrom)) {
-                    $transaction_module_code = 'TRTAB';
-                    $transaction_module_id = PreferenceTransactionModule::where('transaction_module_code', $transaction_module_code)->first()->transaction_module_id;
-    
-                    $acctsavingstr_last = AcctSavingsTransferMutation::select('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'acct_savings_transfer_mutation_from.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_transfer_mutation_from.member_id', 'core_member.member_name')
-                        ->join('acct_savings_transfer_mutation_from', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_from.savings_transfer_mutation_id')
-                        ->join('acct_savings_account', 'acct_savings_transfer_mutation_from.savings_account_id', '=', 'acct_savings_account.savings_account_id')
-                        ->join('core_member', 'acct_savings_transfer_mutation_from.member_id', '=', 'core_member.member_id')
-                        ->where('acct_savings_transfer_mutation.created_id', $data['created_id'])
-                        ->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')
-                        ->first();
-    
-                    // dd($acctsavingstr_last);
-    
-                    $journal_voucher_period = date('Ym', strtotime($data['savings_transfer_mutation_date']));
-    
-                    $data_journal = [
-                        'branch_id' => auth()->user()->branch_id,
-                        'journal_voucher_period' => $journal_voucher_period,
-                        'journal_voucher_date' => date('Y-m-d'),
-                        'journal_voucher_title' => 'TRANSFER ANTAR REKENING ' . $acctsavingstr_last->member_name,
-                        'journal_voucher_description' => 'TRANSFER ANTAR REKENING ' . $acctsavingstr_last->member_name,
-                        'transaction_module_id' => $transaction_module_id,
-                        'transaction_module_code' => $transaction_module_code,
-                        'transaction_journal_id' => $acctsavingstr_last->savings_transfer_mutation_id,
-                        'transaction_journal_no' => $acctsavingstr_last->savings_account_no,
-                        'created_id' => $data['created_id'],
-                    ];
-                    // dd($data_journal);
-                    if (AcctJournalVoucher::create($data_journal)) {
-                        $journal_voucher_id = AcctJournalVoucher::where('created_id', $data['created_id'])
-                            ->orderBy('journal_voucher_id', 'DESC')
-                            ->first()->journal_voucher_id;
-    
-                        $account_id = AcctSavings::where('savings_id', $datafrom['savings_id'])->first()->account_id;
-    
-                        $account_id_default_status = AcctAccount::where('account_id', $account_id)
-                            ->where('data_state', 0)
-                            ->first()->account_default_status;
-    
-                        $data_debet = [
-                            'journal_voucher_id' => $journal_voucher_id,
-                            'account_id' => $account_id,
-                            'journal_voucher_description' => 'NOTA DEBET ' . $member_name,
-                            'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
-                            'journal_voucher_debit_amount' => $data['savings_transfer_mutation_amount'],
-                            'account_id_status' => 1,
-                            'created_id' => $data['created_id'],
-                        ];
-                        // dd($data_debet);
-                        AcctJournalVoucherItem::create($data_debet);
-                    }
-                    $datato = [
-                        'savings_transfer_mutation_id' => $savings_transfer_mutation_id,
-                        'savings_account_id' => $savingsaccountto['savings_account_id'],
-                        'savings_id' => $savingsaccountto['savings_id'],
-                        'member_id' => $savingsaccountto['member_id'],
-                        'branch_id' => auth()->user()->branch_id,
-                        'mutation_id' => $preferencecompany['account_savings_transfer_to_id'],
-                        'savings_account_opening_balance' => $request->savings_account_to_opening_balance,
-                        'savings_transfer_mutation_to_amount' => $request->savings_transfer_mutation_amount,
-                        'savings_account_last_balance' => $request->savings_account_to_last_balance,
-                    ];
-        
-                    $member_name = CoreMember::where('member_id', $datato['member_id'])->first()->member_name;
-                    // dd($datato);
-        
-                    if (AcctSavingsTransferMutationTo::create($datato)) {
-                        $account_id = AcctSavings::where('savings_id', $datato['savings_id'])->first()->account_id;
-        
-                        $account_id_default_status = AcctAccount::where('account_id', $account_id)->first()->account_default_status;
-        
-                        $data_credit = [
-                            'journal_voucher_id' => $journal_voucher_id,
-                            'account_id' => $account_id,
-                            'journal_voucher_description' => 'NOTA KREDIT ' . $member_name,
-                            'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
-                            'journal_voucher_credit_amount' => $data['savings_transfer_mutation_amount'],
-                            'account_id_status' => 0,
-                            'created_id' => $data['created_id'],
-                        ];
-        
-                        AcctJournalVoucherItem::create($data_credit);   
-                    }
-                }
-    
-               
-    
-                DB::commit();
-                $message = [
-                    'pesan' => 'Transfer Antar Rekening berhasil ditambah',
-                    'alert' => 'success',
-                ];
-                return redirect('savings-transfer-mutation')->with($message);
-            } catch (\Exception $e) {
-                DB::rollback();
-                $message = [
-                    'pesan' => 'Transfer Antar Rekening gagal ditambah',
-                    'alert' => 'error',
-                ];
-                return redirect('savings-transfer-mutation')->with($message);
-            }
+            ]);
         }
 
+        try {
+            $data = [
+                'branch_id' => auth()->user()->branch_id,
+                'savings_transfer_mutation_date' => now(),
+                'savings_transfer_mutation_amount' => $request->savings_transfer_mutation_amount,
+                'member_id' => $request->member_id,
+                'operated_name' => auth()->user()->username,
+                'created_id' => auth()->user()->user_id,
+            ];
+
+            AcctSavingsTransferMutation::create($data);
+
+            $savings_transfer_mutation_id = AcctSavingsTransferMutation::where('created_id', $data['created_id'])
+                ->orderBy('savings_transfer_mutation_id', 'DESC')
+                ->first()->savings_transfer_mutation_id;
+
+            $preferencecompany = PreferenceCompany::first();
+
+            // Data FROM (Rekening sumber)
+            $datafrom = [
+                'savings_transfer_mutation_id' => $savings_transfer_mutation_id,
+                'savings_account_id' => $savingsaccountfrom['savings_account_id'],
+                'savings_id' => $savingsaccountfrom['savings_id'],
+                'member_id' => $savingsaccountfrom['member_id'],
+                'branch_id' => auth()->user()->branch_id,
+                'mutation_id' => $preferencecompany['account_savings_transfer_from_id'],
+                'savings_account_opening_balance' => $request->savings_account_from_opening_balance,
+                'savings_transfer_mutation_from_amount' => $request->savings_transfer_mutation_amount,
+                'savings_account_last_balance' => $request->savings_account_from_last_balance,
+            ];
+
+            $member_name = CoreMember::where('member_id', $datafrom['member_id'])->first()->member_name;
+
+            if (AcctSavingsTransferMutationFrom::create($datafrom)) {
+                $acctsavingstr_last = AcctSavingsTransferMutation::select(
+                    'acct_savings_transfer_mutation.savings_transfer_mutation_id',
+                    'acct_savings_transfer_mutation_from.savings_account_id',
+                    'acct_savings_account.savings_account_no',
+                    'acct_savings_transfer_mutation_from.member_id',
+                    'core_member.member_name'
+                )
+                    ->join('acct_savings_transfer_mutation_from', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_from.savings_transfer_mutation_id')
+                    ->join('acct_savings_account', 'acct_savings_transfer_mutation_from.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+                    ->join('core_member', 'acct_savings_transfer_mutation_from.member_id', '=', 'core_member.member_id')
+                    ->where('acct_savings_transfer_mutation.created_id', $data['created_id'])
+                    ->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')
+                    ->first();
+
+                $journal_voucher_period = now()->format('Ym');
+                $data_journal = [
+                    'branch_id' => auth()->user()->branch_id,
+                    'journal_voucher_period' => $journal_voucher_period,
+                    'journal_voucher_date' => now(),
+                    'journal_voucher_title' => 'TRANSFER ANTAR REKENING ' . $acctsavingstr_last->member_name,
+                    'journal_voucher_description' => 'TRANSFER ANTAR REKENING ' . $acctsavingstr_last->member_name,
+                    'transaction_module_id' => PreferenceTransactionModule::where('transaction_module_code', 'TRTAB')->first()->transaction_module_id,
+                    'transaction_module_code' => 'TRTAB',
+                    'transaction_journal_id' => $acctsavingstr_last->savings_transfer_mutation_id,
+                    'transaction_journal_no' => $acctsavingstr_last->savings_account_no,
+                    'created_id' => $data['created_id'],
+                ];
+
+                AcctJournalVoucher::create($data_journal);
+                $journal_voucher_id = AcctJournalVoucher::where('created_id', $data['created_id'])
+                    ->orderBy('journal_voucher_id', 'DESC')
+                    ->first()->journal_voucher_id;
+
+                // Jurnal Debet
+                $account_id_from = AcctSavings::where('savings_id', $datafrom['savings_id'])->first()->account_id;
+                AcctJournalVoucherItem::create([
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $account_id_from,
+                    'journal_voucher_description' => 'TRANSFER ANTAR REKENING ' . $member_name,
+                    'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
+                    'journal_voucher_debit_amount' => $data['savings_transfer_mutation_amount'],
+                    'account_id_status' => 1,
+                    'created_id' => $data['created_id'],
+                ]);
+
+                // Data TO (Rekening tujuan)
+                $datato = [
+                    'savings_transfer_mutation_id' => $savings_transfer_mutation_id,
+                    'savings_account_id' => $savingsaccountto['savings_account_id'],
+                    'savings_id' => $savingsaccountto['savings_id'],
+                    'member_id' => $savingsaccountto['member_id'],
+                    'branch_id' => auth()->user()->branch_id,
+                    'mutation_id' => $preferencecompany['account_savings_transfer_to_id'],
+                    'savings_account_opening_balance' => $request->savings_account_to_opening_balance,
+                    'savings_transfer_mutation_to_amount' => $request->savings_transfer_mutation_amount,
+                    'savings_account_last_balance' => $request->savings_account_to_last_balance,
+                ];
+
+                AcctSavingsTransferMutationTo::create($datato);
+
+                // Jurnal Kredit
+                $account_id_to = AcctSavings::where('savings_id', $datato['savings_id'])->first()->account_id;
+                AcctJournalVoucherItem::create([
+                    'journal_voucher_id' => $journal_voucher_id,
+                    'account_id' => $account_id_to,
+                    'journal_voucher_description' => 'TRANSFER ANTAR REKENING ' . $member_name,
+                    'journal_voucher_amount' => $data['savings_transfer_mutation_amount'],
+                    'journal_voucher_credit_amount' => $data['savings_transfer_mutation_amount'],
+                    'account_id_status' => 0,
+                    'created_id' => $data['created_id'],
+                ]);
+            }
+
+            DB::commit();
+            return redirect('savings-transfer-mutation')->with(['pesan' => 'Transfer Antar Rekening berhasil ditambah', 'alert' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('savings-transfer-mutation')->with(['pesan' => 'Transfer Antar Rekening gagal ditambah', 'alert' => 'error']);
+        }
     }
 
     public function validation($savings_transfer_mutation_id)
@@ -345,7 +320,7 @@ class SavingsTransferMutationController extends Controller
 
     public function printValidation($savings_transfer_mutation_id)
     {
-        $acctsavingstransfermutation = AcctSavingsTransferMutation::select('updated_at', 'validation_id', 'savings_transfer_mutation_amount')
+        $acctsavingstransfermutation = AcctSavingsTransferMutation::select('updated_at', 'validation_id', 'created_at', 'created_id', 'savings_transfer_mutation_amount')
             ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
             ->where('data_state', 0)
             ->first();
@@ -354,66 +329,68 @@ class SavingsTransferMutationController extends Controller
             ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
             ->first();
 
+        $acctsavingstransfermutationto = AcctSavingsTransferMutationTo::select('savings_account_id', 'member_id')
+            ->where('savings_transfer_mutation_id', $savings_transfer_mutation_id)
+            ->first();
+
         $preferencecompany = PreferenceCompany::first();
         $path = public_path('storage/' . $preferencecompany['logo_koperasi']);
 
-        $pdf = new tcpdf('P', PDF_UNIT, 'F4', true, 'UTF-8', false);
-
+        $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
-
-        $pdf::SetMargins(7, 7, 7, 7);
-
+        $pdf::SetMargins(10, 10, 10);
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
-            require_once dirname(__FILE__) . '/lang/eng.php';
-            $pdf::setLanguageArray($l);
-        }
-        $pdf::SetFont('helvetica', 'B', 20);
-
+        $pdf::SetFont('helvetica', '', 10);
         $pdf::AddPage();
 
-        $pdf::SetFont('helveticaI', '', 7);
-
-        $tbl =
-            "
-        <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
+        $tbl = "
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
             <tr>
-                <td rowspan=\"2\" width=\"10%\"><img src=\"" .
-            $path .
-            "\" alt=\"\" width=\"700%\" height=\"300%\"/></td>
+                <td width='20%'><img src='" . $path . "' width='80' height='80'/></td>
+                <td width='80%' style='text-align: center; font-size: 16px; font-weight: bold;'>
+                    KWITANSI TRANSFER TABUNGAN
+                </td>
+            </tr>
+        </table>
+        <hr/>
+        <br/>
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
+            <tr>
+                <td width='50%'><b>Transfer Dari:</b></td>
+                <td width='50%'><b>Transfer Ke:</b></td>
+            </tr>
+            <tr>
+                <td>Rekening: " . $this->getSavingsAccountNo($acctsavingstransfermutationfrom['savings_account_id']) . "</td>
+                <td>Rekening: " . $this->getSavingsAccountNo($acctsavingstransfermutationto['savings_account_id']) . "</td>
+            </tr>
+            <tr>
+                <td>Nama: " . $this->getMemberName($acctsavingstransfermutationfrom['member_id']) . "</td>
+                <td>Nama: " . $this->getMemberName($acctsavingstransfermutationto['member_id']) . "</td>
             </tr>
         </table>
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
             <tr>
-                <td width=\"55%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getSavingsAccountNo($acctsavingstransfermutationfrom['savings_account_id']) .
-            "</div></td>
-                <td width=\"45%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getMemberName($acctsavingstransfermutationfrom['member_id']) .
-            "</div></td>
+                <td width='50%'>Tanggal: " . date('d-m-Y', strtotime($acctsavingstransfermutation['created_at'])) . "</td>
+                <td width='50%' style='text-align: right;'>Jumlah: <b>IDR " . number_format($acctsavingstransfermutation['savings_transfer_mutation_amount'], 2) . "</b></td>
             </tr>
             <tr>
-                <td width=\"52%\"><div style=\"text-align: right; font-size:14px\">" .
-            $acctsavingstransfermutation['validation_on'] .
-            "</div></td>
-                <td width=\"18%\"><div style=\"text-align: right; font-size:14px\">" .
-            $this->getUsername($acctsavingstransfermutation['validation_id']) .
-            "</div></td>
-                <td width=\"30%\"><div style=\"text-align: right; font-size:14px\"> IDR &nbsp; " .
-            number_format($acctsavingstransfermutation['savings_transfer_mutation_amount'], 2) .
-            "</div></td>
+                <td>Dibuat oleh: " . $this->getUsername($acctsavingstransfermutation['created_id']) . "</td>
+                <td></td>
             </tr>
-        </table>";
+        </table>
+        <br/><br/><br/>
+        <table cellspacing='0' cellpadding='5' border='0' width='100%'>
+            <tr>
+                <td width='50%' style='text-align: center;'>_________________________<br/>Penerima</td>
+                <td width='50%' style='text-align: center;'>_________________________<br/>Petugas</td>
+            </tr>
+        </table>
+        ";
 
         $pdf::writeHTML($tbl, true, false, false, false, '');
-
-        $filename = 'Validasi.pdf';
-        $pdf::Output($filename, 'I');
+        $pdf::Output('kwitansi_transfer.pdf', 'I');
     }
 
     public function getSavingsAccountNo($savings_account_id)

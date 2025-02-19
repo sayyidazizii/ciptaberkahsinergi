@@ -21,9 +21,9 @@
                             <input name="end_date" id="end_date" class="date form-control form-control-solid form-select-lg" placeholder="Pilih tanggal"/>
                         </div>
                         <div class="col-lg-3 fv-row">
-                            <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('BO') }}</label>
-                            <select name="office_id" id="office_id" aria-label="{{ __('BO') }}" data-control="select2" data-placeholder="{{ __('Pilih BO..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
-                                <option value="">{{ __('Pilih BO..') }}</option>
+                            <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('AO') }}</label>
+                            <select name="office_id" id="office_id" aria-label="{{ __('AO') }}" data-control="select2" data-placeholder="{{ __('Pilih AO..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                <option value="">{{ __('Pilih AO..') }}</option>
                                 @foreach($coreoffice as $key => $value)
                                     <option data-kt-flag="{{ $key }}" value="{{ $key }}" {{ $key === old('office_id', '' ?? '') ? 'selected' :'' }}>{{ $value }}</option>
                                 @endforeach

@@ -62,14 +62,15 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->join('core_office','core_office.office_id', '=', 'acct_credits_account.office_id')
         ->where('acct_credits_payment.credits_payment_type', 0)
         ->where('acct_credits_payment.credits_branch_status', 0)
-        // ->where('acct_credits_payment.credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-        // ->where('acct_credits_payment.credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+        ->where('acct_credits_payment.pickup_date', '!=',null)
+        ->where('acct_credits_payment.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+        ->where('acct_credits_payment.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('acct_credits_payment.branch_id',auth()->user()->branch_id);
         if(isset($sessiondata['office_id'])){
             $querydata1->where('acct_credits_account.office_id', $sessiondata['office_id']);
         }
-        $querydata1->where('acct_credits_payment.pickup_state', 0)
-        ->where('acct_credits_payment.data_state', 0);
+        // $querydata1->where('acct_credits_payment.pickup_state', 0)
+        // ->where('acct_credits_payment.data_state', 0);
 
 
 //------Setor Tunai Simpanan Biasa
@@ -91,14 +92,15 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
         ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
         ->where('acct_savings_cash_mutation.mutation_id', 1)
-        // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-        // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+        ->where('acct_savings_cash_mutation.pickup_date', '!=',null)
+        ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+        ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id);
         if(isset($sessiondata['office_id'])){
             $querydata2->where('acct_savings_account.office_id', $sessiondata['office_id']);
         }
-        $querydata2->where('acct_savings_cash_mutation.pickup_state', 0)
-        ->where('acct_savings_cash_mutation.data_state', 0);
+        // $querydata2->where('acct_savings_cash_mutation.pickup_state', 0)
+        // ->where('acct_savings_cash_mutation.data_state', 0);
 
 
 //------Tarik Tunai Simpanan Biasa
@@ -119,14 +121,15 @@ class NominativeSavingsPickupDataTable extends DataTable
         ->join('core_member', 'acct_savings_cash_mutation.member_id', '=', 'core_member.member_id')
         ->join('acct_savings', 'acct_savings_cash_mutation.savings_id', '=', 'acct_savings.savings_id')
         ->where('acct_savings_cash_mutation.mutation_id', 2)
-        // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-        // ->where('acct_savings_cash_mutation.savings_cash_mutation_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+        ->where('acct_savings_cash_mutation.pickup_date', '!=',null)
+        ->where('acct_savings_cash_mutation.pickup_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+        ->where('acct_savings_cash_mutation.pickup_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id);
         if(isset($sessiondata['office_id'])){
             $querydata3->where('acct_savings_account.office_id', $sessiondata['office_id']);
         }
-        $querydata3->where('acct_savings_cash_mutation.pickup_state', 0)
-        ->where('acct_savings_cash_mutation.data_state', 0);
+        // $querydata3->where('acct_savings_cash_mutation.pickup_state', 0)
+        // ->where('acct_savings_cash_mutation.data_state', 0);
 
 
 //------Setor Tunai Simpanan Wajib
@@ -142,9 +145,10 @@ class NominativeSavingsPickupDataTable extends DataTable
             core_member.pickup_state AS pickup_state')
         ->withoutGlobalScopes()
         ->join('system_user','system_user.user_id', '=', 'core_member.created_id')
-        // ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
-        // ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
+        ->where('core_member.updated_at', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
+        ->where('core_member.updated_at', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
         ->where('core_member.branch_id', auth()->user()->branch_id)
+        ->where('core_member.created_id', auth()->user()->user_id)
         ->where('core_member.pickup_state', 0)
         ->where('core_member.data_state', 0);
 
@@ -168,10 +172,12 @@ class NominativeSavingsPickupDataTable extends DataTable
                     ->autoWidth(true)
                     ->parameters([
                         'scrollX' => true,
-                        'searching' => false, // Nonaktifkan fitur pencarian
+                        'searching' => false,
                     ])
                     ->addTableClass('align-middle table-row-dashed fs-6 gy-5');
     }
+
+
 
     protected function getColumns()
     {
@@ -182,7 +188,7 @@ class NominativeSavingsPickupDataTable extends DataTable
                     ->addClass('text-right')
                     ->width(200)
                     ->title(__('Tanggal')),
-            Column::make('operator')->title(__('BO')),
+            Column::make('operator')->title(__('AO')),
             Column::make('anggota')
                     ->addClass('text-right')
                     ->width(200)
@@ -204,7 +210,7 @@ class NominativeSavingsPickupDataTable extends DataTable
         ];
     }
 
-    protected function filename()
+    protected function filename(): string
     {
         return 'pickup_' . date('YmdHis');
     }

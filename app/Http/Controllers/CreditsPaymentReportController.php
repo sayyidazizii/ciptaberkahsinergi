@@ -32,7 +32,7 @@ class CreditsPaymentReportController extends Controller
             ->where('branch_id', $branch_id)
             ->get()->pluck('office_name','office_id');
         }
-        
+
 
         return view('content.CreditsPaymentReport.index', compact('corebranch','coreoffice'));
     }
@@ -54,74 +54,77 @@ class CreditsPaymentReportController extends Controller
         }
     }
 
-    public function processPrinting($sesi){
-        $branch_id          = auth()->user()->branch_id;
-        $branch_status      = auth()->user()->branch_status;
-        $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
-        $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
+    public function processPrinting($sesi) {
+        $branch_id = auth()->user()->branch_id;
+        $branch_status = auth()->user()->branch_status;
+        $preferencecompany = PreferenceCompany::select('logo_koperasi', 'company_name')->first();
+        $path = public_path('storage/'.$preferencecompany['logo_koperasi']);
 
-        if($branch_status == 1){
-            if($sesi['branch_id'] == '' || $sesi['branch_id'] == 0){
-                $branch_id = '';
-            } else {
-                $branch_id = $sesi['branch_id'];
-            }
+        if ($branch_status == 1) {
+            $branch_id = $sesi['branch_id'] ?? '';
         }
-        $creditacc = AcctCreditsAccount::with('member','office')
-        ->where('data_state',0)
-        ->where('credits_approve_status', 1)
-        ->where('credits_account_status', 0)
-        ->where('credits_account_last_balance','>', 0)
-        ->where('credits_account_payment_date','>=', Carbon::parse($sesi['start_date'])->format('Y-m-d'))
-        ->where('credits_account_payment_date','<=', Carbon::parse($sesi['end_date'])->format('Y-m-d'))
-        ->orderBy('credits_account_serial');
-        if(!empty($sesi['office_id'])){
+
+        $creditacc = AcctCreditsAccount::with('member', 'office')
+            ->where('data_state', 0)
+            ->where('credits_approve_status', 1)
+            ->where('credits_account_status', 0)
+            ->where('credits_account_last_balance', '>', 0);
+
+        if (!empty($sesi['office_id'])) {
             $creditacc = $creditacc->where('office_id', $sesi['office_id']);
         }
-        if(!empty($branch_id)){
+        if (!empty($branch_id)) {
             $creditacc = $creditacc->where('branch_id', $branch_id);
         }
-        $creditacc = $creditacc->get();
-        // dd($creditacc);
+
+        $creditacc = $creditacc->orderBy('credits_account_serial')->get();
+
+        $filteredAccounts = [];
+        $start_date = Carbon::parse($sesi['start_date']);
+        $end_date = Carbon::parse($sesi['end_date']);
+
+        foreach ($creditacc as $credistaccount) {
+            $tanggal_angsurans = [];
+            for ($i = 1; $i <= $credistaccount['credits_account_period']; $i++) {
+                $tanggal_angsuran = $credistaccount['credits_payment_period'] == 2
+                    ? Carbon::parse($credistaccount['credits_account_date'])->addDays($i * 7)
+                    : Carbon::parse($credistaccount['credits_account_date'])->addMonths($i);
+
+                if ($tanggal_angsuran->between($start_date, $end_date)) {
+                    $tanggal_angsurans[] = $tanggal_angsuran->format('d-m-Y');
+                }
+            }
+
+            if (!empty($tanggal_angsurans)) {
+                $credistaccount->filtered_dates = $tanggal_angsurans;
+                $filteredAccounts[] = $credistaccount;
+            }
+        }
+
         $pdf = new TCPDF(['L', PDF_UNIT, 'A4', true, 'UTF-8', false]);
 
         $pdf::SetPrintHeader(false);
         $pdf::SetPrintFooter(false);
-
         $pdf::SetMargins(6, 6, 6, 6);
-
         $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
-            $pdf::setLanguageArray($l);
-        }
 
         $pdf::SetFont('helvetica', 'B', 20);
-
         $pdf::AddPage('L');
-
         $pdf::SetFont('helvetica', '', 8);
 
-        $pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-            require_once(dirname(__FILE__).'/lang/eng.php');
-            $pdf::setLanguageArray($l);
-        }
-
         $head = "<table cellspacing=\"0\" cellpadding=\"1\" border=\"0\">
-                        <tr>
-                            <td><div style=\"text-align: center; font-size:14px\">DAFTAR TAGIHAN ANGSURAN PINJAMAN</div></td>
-                        </tr>
-                        <tr>
-				        <td><div style=\"text-align: center; font-size:10px\">Periode ".date('d-m-Y',strtotime($sesi['start_date']))." S.D. ".date('d-m-Y',strtotime($sesi['end_date']))."</div></td>
-				        </tr>
-                    </table>
-        ";
+                    <tr>
+                        <td><div style=\"text-align: center; font-size:14px\">DAFTAR TAGIHAN ANGSURAN PINJAMAN</div></td>
+                    </tr>
+                    <tr>
+                        <td><div style=\"text-align: center; font-size:10px\">Periode " . $start_date->format('d-m-Y') . " S.D. " . $end_date->format('d-m-Y') . "</div></td>
+                    </tr>
+                 </table>";
         $pdf::writeHTML($head, true, false, false, false, '');
+
         $export = "
-        <br><table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\"><tr>
+            <br><table cellspacing=\"0\" cellpadding=\"1\" border=\"0\" width=\"100%\">
+            <tr>
                 <td width=\"3%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: left;font-size:9;\">No.</div></td>
                 <td width=\"7%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">No. Kredit</div></td>
                 <td width=\"10%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Nama</div></td>
@@ -130,66 +133,60 @@ class CreditsPaymentReportController extends Controller
                 <td width=\"8%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Plafon</div></td>
                 <td width=\"10%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Sisa Pokok</div></td>
                 <td width=\"8%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Angs Pokok</div></td>
-                <td width=\"8%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Angs Bunga</div></td>
-                <td width=\"8%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Total Angs</div></td>
-                <td width=\"5%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tgl Angsuran</div></td>
-                <td width=\"8%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Denda</div></td>
-                <td width=\"5%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tenor</div></td>
-                <td width=\"7%\"style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tgl Terakhir Angsur</div></td>
+                <td width=\"8%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Angs Bunga</div></td>
+                <td width=\"8%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Total Angs</div></td>
+                <td width=\"8%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tgl Angsuran</div></td>
+                <td width=\"5%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Denda</div></td>
+                <td width=\"5%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tenor</div></td>
+                <td width=\"7%\" style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"text-align: center;font-size:9;\">Tgl Terakhir Angsur</div></td>
             </tr>";
 
-        $no                 = 1;
-        $totalplafon = 0;
-        $totalangspokok = 0;
-        $totalangsmargin = 0;
-        $totaltotal = 0;
-        $totalsisa = 0;
-        foreach ($creditacc as $key => $val) {
+            $no = 1;
+            $totalplafon = 0;
+            $totalangspokok = 0;
+            $totalangsmargin = 0;
+            $totaltotal = 0;
+            $totalsisa = 0;
+            foreach ($filteredAccounts as $account) {
+                $tenor_total = $account['credits_account_period'];
+                $last_payment_date = !empty($account['credits_account_last_payment_date'])
+                    ? Carbon::parse($account['credits_account_last_payment_date'])->format('d-m-Y')
+                    : '-';
 
-            $last_payment_date = $val['credits_account_last_payment_date'];
-            if(empty($last_payment_date) || $last_payment_date == null){
-                $last_payment_date = '-';
-            }else{
-                $last_payment_date = date('d-m-Y',strtotime($last_payment_date));
+                $angsuran_ke = 1; // Counter untuk angsuran ke berapa
+
+                foreach ($account->filtered_dates as $tanggal) {
+                    $export .= "<tr>
+                        <td>{$no}</td>
+                        <td>{$account['credits_account_serial']}</td>
+                        <td>{$account->member->member_name}</td>
+                        <td>{$account->member->member_address}</td>
+                        <td>" . (is_null($account->office) ? '' : $account->office->office_name) . "</td>
+                        <td width=\"8%\"><div style=\"text-align: right;\">".number_format($account['credits_account_amount'], 2)."</div></td>
+                        <td width=\"10%\"><div style=\"text-align: right;\">".number_format($account['credits_account_last_balance'], 2)."</div></td>
+                        <td width=\"8%\"><div style=\"text-align: right;\">".number_format($account['credits_account_principal_amount'], 2)."</div></td>
+                        <td width=\"8%\"><div style=\"text-align: right;\">".number_format($account['credits_account_interest_amount'], 2)."</div></td>
+                        <td width=\"8%\"><div style=\"text-align: right;\">".number_format($account['credits_account_payment_amount'], 2)."</div></td>
+                        <td style=\"text-align: right;\">{$tanggal}</td>
+                        <td style=\"text-align: right;\">" . number_format($account['credits_account_penalty'], 2) . "</td>
+                        <td style=\"text-align: center;\">".$account['credits_account_payment_to']." / ".$account['credits_account_period']."</td>
+                        <td>{$last_payment_date}</td>
+                    </tr>";
+                    $angsuran_ke++; // Increment untuk angsuran ke berapa
+                    $totalplafon += $account['credits_account_amount'];
+                    $totalangspokok += $account['credits_account_principal_amount'];
+                    $totalangsmargin += $account['credits_account_interest_amount'];
+                    $totalsisa += $account['credits_account_last_balance'];
+                    $totaltotal	+= $account['credits_account_payment_amount'];
+                    $no++;
+                }
             }
-                $export .= "
-                <tr>
-                <td width=\"3%\"><div style=\"text-align: left;\">".$no."</div></td>
-                <td width=\"7%\"><div style=\"text-align: left;\">".$val['credits_account_serial']."</div></td>
-                <td width=\"10%\"><div style=\"text-align: left;\">".$val->member->member_name."</div></td>
-                <td width=\"10%\"><div style=\"text-align: left;\">".$val->member->member_address."</div></td>
-                <td width=\"5%\"><div style=\"text-align: left;\">".(is_null($val->office)?'':$val->office->office_name)."</div></td>
-                <td width=\"8%\"><div style=\"text-align: right;\">".number_format($val['credits_account_amount'], 2)."</div></td>
-                <td width=\"10%\"><div style=\"text-align: right;\">".number_format($val['credits_account_last_balance'], 2)."</div></td>
-                <td width=\"8%\"><div style=\"text-align: right;\">".number_format($val['credits_account_principal_amount'], 2)."</div></td>
-                <td width=\"8%\"><div style=\"text-align: right;\">".number_format($val['credits_account_interest_amount'], 2)."</div></td>
-                <td width=\"8%\"><div style=\"text-align: right;\">".number_format($val['credits_account_payment_amount'], 2)."</div></td>
-                <td width=\"6%\"><div style=\"text-align: right;\">".date('d-m-Y',strtotime($val['credits_account_payment_date']))."</div></td>
-                <td width=\"6%\"><div style=\"text-align: right;\">".number_format($val['credits_account_accumulated_fines'], 2)."</div></td>
-                <td width=\"5%\"><div style=\"text-align: right;\">".$val['credits_account_payment_to']." / ".$val['credits_account_period']."</div></td>
-                <td width=\"7%\"><div style=\"text-align: right;\">".$last_payment_date."</div></td>
-                </tr>";
-                
-                $totalplafon += $val['credits_account_amount'];
-                $totalangspokok += $val['credits_account_principal_amount'];
-                $totalangsmargin += $val['credits_account_interest_amount'];
-                $totalsisa += $val['credits_account_last_balance'];
-                $totaltotal	+= $val['credits_account_payment_amount'];
-				$no++;
-		}
-        $export .="<tr>
-                        <td colspan =\"4\"><div style=\"font-size:9;text-align:left;font-style:italic\">Printed : ".date('d-m-Y H:i:s')."  ".Auth::user()->username."</div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;font-weight:bold;text-align:center\">Total </div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;text-align:right\">".number_format($totalplafon, 2)."</div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;text-align:right\">".number_format($totalsisa, 2)."</div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;text-align:right\">".number_format($totalangspokok, 2)."</div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;text-align:right\">".number_format($totalangsmargin, 2)."</div></td>
-                        <td style=\"border-bottom: 1px solid black;border-top: 1px solid black\"><div style=\"font-size:9;text-align:right\">".number_format($totaltotal, 2)."</div></td>
-                    </tr></table>";
-        //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
+
+
+        $export .= "</table>";
         $pdf::writeHTML($export, true, false, false, false, '');
 
-        $filename = 'DAFTAR TAGIHAN ANGSURAN PINJAMAN - '.Carbon::now()->format('Y-m-d-Hisu').'.pdf';
+        $filename = 'DAFTAR_TAGIHAN_ANGSURAN_' . Carbon::now()->format('Y-m-d-Hisu') . '.pdf';
         $pdf::Output($filename, 'I');
     }
 

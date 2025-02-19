@@ -35,11 +35,11 @@
                                 value="{{ old('end_date', $sessiondata['end_date'] ?? '') }}" />
                         </div>
                         <div class="col-lg-4 fv-row">
-                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('BO') }}</label>
-                            <select name="office_id" id="office_id" aria-label="{{ __('BO') }}"
-                                data-control="select2" data-placeholder="{{ __('Pilih bo..') }}" data-allow-clear="true"
-                                class="form-select form-select-solid form-select-lg">
-                                <option value="">{{ __('Pilih bo..') }}</option>
+                            <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('AO') }}</label>
+                            <select name="office_id" id="office_id" aria-label="{{ __('AO') }}"
+                                data-control="select2" data-placeholder="{{ __('Pilih AO..') }}" data-allow-clear="true"
+                                class="form-select form-select-solid form-select-lg" required>
+                                <option value="">{{ __('Pilih AO..') }}</option>
                                 @foreach ($coreoffice as $key => $value)
                                     <option value="{{ $value['office_id'] }}"
                                         {{ $value['office_id'] == old('office_id', Session::get('pickup-data.office_id', '')) ? 'selected' : '' }}>
@@ -99,6 +99,12 @@
                     data-bs-target="#confirmModal">
                     Proses semua
                 </button>
+                <form  class="form ms-2" action="{{ route('nomv-sv-pickup.print') }}" method="post"  enctype="multipart/form-data">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-success btn-active-light-success">
+                    Cetak</button>
+                </form>
+
             </div>
 
             <!-- Modal konfirmasi -->

@@ -90,7 +90,7 @@ class AcctDepositoDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'AcctDeposito_' . date('YmdHis');
     }

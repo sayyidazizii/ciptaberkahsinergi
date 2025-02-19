@@ -534,6 +534,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('/process-add', [AcctSavingsProfitSharingController::class, 'processAdd'])->name('process-add');
         Route::get('/process-update', [AcctSavingsProfitSharingController::class, 'processUpdate'])->name('process-update');
         Route::put('/recalculate', [AcctSavingsProfitSharingController::class, 'recalculate'])->name('recalculate');
+        Route::post('/export', [AcctSavingsProfitSharingController::class, 'export'])->name('export');
     });
 
     // BalanceSheet pages
@@ -979,6 +980,7 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/add/{type}/{id}', [AcctNominativeSavingsPickupController::class, 'add'])->name('add');
         Route::post('/process-add', [AcctNominativeSavingsPickupController::class, 'processAdd'])->name('process-add');
         Route::post('/process-all', [AcctNominativeSavingsPickupController::class, 'processAll'])->name('process-all');
+        Route::post('/print', [AcctNominativeSavingsPickupController::class, 'print'])->name('print');
     });
     Route::prefix('nominative-savings-pickup-report')->name('nomv-sv-pickup-r.')->group(function () {
         Route::get('/', [AcctNominativeSavingsReportPickupController::class, 'index'])->name('index');
@@ -1096,10 +1098,19 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::post('save', [BackupDataController::class, 'store'])->name('save');
     });
 
+    Route::prefix('wa')->name('wa.')->group(function () {
+        Route::get('/', [WhatsappController::class, 'index'])->name('index');
+        Route::post('/reload', [WhatsappController::class, 'reload'])->name('reload');
+        Route::get('/broadcast', [WhatsappController::class, 'broadcast'])->name('broadcast');
+        Route::post('/broadcast', [WhatsappController::class, 'processAdd'])->name('process-add');
+    });
+
 });
 
 // Route::resource('users', UsersController::class);
 
 Route::get('/auth/redirect/{provider}', [SocialiteLoginController::class, 'redirect']);
-
+Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/ciptaberkahsinergi/livewire/update', $handle);
+});
 require __DIR__.'/auth.php';

@@ -68,6 +68,8 @@ class AcctCreditsDailyMutationController extends Controller
       return response($data);
     }
     protected function pritCreditPayment($sesi) {
+      $start_date = date('Y-m-d', strtotime($sesi['start_date']));
+      $end_date = date('Y-m-d', strtotime($sesi['end_date']));
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
       if(Auth::user()->branch_id!=0&&empty($sesi['branch_id'])){
@@ -76,13 +78,12 @@ class AcctCreditsDailyMutationController extends Controller
       $acctcreditspayment = AcctCreditsPayment::with('member','account')
       ->join('acct_credits_account','acct_credits_account.credits_account_id','acct_credits_payment.credits_account_id')
       ->where('acct_credits_account.credits_approve_status',1)
-      ->where('acct_credits_account.credits_account_date',">=",$sesi['start_date'])
-      ->where('acct_credits_account.credits_account_date',"<=",$sesi['end_date']);
+      ->where('acct_credits_payment.credits_account_payment_date',">=",$start_date)
+      ->where('acct_credits_payment.credits_account_payment_date',"<=",$end_date);
       if(!empty($branch_id)){$acctcreditspayment->where('acct_credits_account.branch_id', $branch_id);}
       if(!empty($sesi['office_id'])){$acctcreditspayment->where('acct_credits_account.office_id', $sesi['office_id']);}
       $acctcreditspayment = $acctcreditspayment->orderBy('acct_credits_account.credits_account_serial', 'ASC')
       ->get();
-      // dd($acctcreditspayment);
       $pdf = new TCPDF(['L', PDF_UNIT, 'F4', true, 'UTF-8', false]);
       $pdf::SetPrintHeader(false);
       $pdf::SetPrintFooter(false);
@@ -163,6 +164,8 @@ class AcctCreditsDailyMutationController extends Controller
     }
 
     protected function exportCreditsPayment($sesi) {
+      $start_date = date('Y-m-d', strtotime($sesi['start_date']));
+      $end_date = date('Y-m-d', strtotime($sesi['end_date']));
       $spreadsheet        = new Spreadsheet();
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
@@ -170,12 +173,13 @@ class AcctCreditsDailyMutationController extends Controller
             $branch_id = Auth::user()->branch_id;
       }else{$branch_id = $sesi['branch_id'];}
       $acctcreditspayment = AcctCreditsPayment::with('member','account')
-      ->where('credits_approve_status',1)
-      ->where('credits_account_date',">=",$sesi['start_date'])
-      ->where('credits_account_date',"<=",$sesi['end_date']);
-      if(!empty($branch_id)){$acctcreditspayment->where('branch_id', $branch_id);}
-      if(!empty($sesi['office_id'])){$acctcreditspayment->where('office_id', $sesi['office_id']);}
-      $acctcreditspayment = $acctcreditspayment->orderBy('credits_account_serial', 'ASC')
+      ->join('acct_credits_account','acct_credits_account.credits_account_id','acct_credits_payment.credits_account_id')
+      ->where('acct_credits_account.credits_approve_status',1)
+      ->where('acct_credits_payment.credits_account_payment_date',">=",$start_date)
+      ->where('acct_credits_payment.credits_account_payment_date',"<=",$end_date);
+      if(!empty($branch_id)){$acctcreditspayment->where('acct_credits_account.branch_id', $branch_id);}
+      if(!empty($sesi['office_id'])){$acctcreditspayment->where('acct_credits_account.office_id', $sesi['office_id']);}
+      $acctcreditspayment = $acctcreditspayment->orderBy('acct_credits_account.credits_account_serial', 'ASC')
       ->get();
       if($acctcreditspayment->count()){
           $spreadsheet->getProperties()->setCreator($preferencecompany['company_name'])
@@ -285,20 +289,21 @@ class AcctCreditsDailyMutationController extends Controller
     }
 
     protected function printCreditsAccount($sesi) {
-      // dd($sesi['start_date']);
+      $start_date = date('Y-m-d', strtotime($sesi['start_date']));
+      $end_date = date('Y-m-d', strtotime($sesi['end_date']));
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
       if(Auth::user()->branch_id!=0&&empty($sesi['branch_id'])){
             $branch_id = Auth::user()->branch_id;
       }else{$branch_id = $sesi['branch_id'];}
       $acctcreditspayment = AcctCreditsAccount::with('member')
-      ->where('credits_approve_status',1);
-      // ->where('credits_account_date',">=",'09-08-2024')
-      // ->where('credits_account_date',"<=",'09-08-2024');
+      ->where('credits_approve_status',1)
+      ->where('data_state',0)
+      ->where('credits_account_date',">=",$start_date)
+      ->where('credits_account_date',"<=",$end_date);
       if(!empty($branch_id)){$acctcreditspayment->where('branch_id', $branch_id);}
       $acctcreditspayment = $acctcreditspayment->orderBy('credits_account_serial', 'ASC')
       ->get();
-      // dd($acctcreditspayment);
       $pdf = new TCPDF(['L', PDF_UNIT, 'F4', true, 'UTF-8', false]);
       $pdf::SetPrintHeader(false);
       $pdf::SetPrintFooter(false);
@@ -362,17 +367,19 @@ class AcctCreditsDailyMutationController extends Controller
 
     protected function exportCreditsAccount($sesi) {
       $spreadsheet        = new Spreadsheet();
+      $start_date = date('Y-m-d', strtotime($sesi['start_date']));
+      $end_date = date('Y-m-d', strtotime($sesi['end_date']));
       $preferencecompany	= PreferenceCompany::select('logo_koperasi', 'company_name')->first();
       $path               = public_path('storage/'.$preferencecompany['logo_koperasi']);
       if(Auth::user()->branch_id!=0&&empty($sesi['branch_id'])){
             $branch_id = Auth::user()->branch_id;
       }else{$branch_id = $sesi['branch_id'];}
-      $acctcreditspayment = AcctCreditsPayment::with('member','account')
+      $acctcreditspayment = AcctCreditsAccount::with('member')
       ->where('credits_approve_status',1)
-      ->where('credits_account_date',">=",$sesi['start_date'])
-      ->where('credits_account_date',"<=",$sesi['end_date']);
+      ->where('data_state',0)
+      ->where('credits_account_date',">=",$start_date)
+      ->where('credits_account_date',"<=",$end_date);
       if(!empty($branch_id)){$acctcreditspayment->where('branch_id', $branch_id);}
-      if(!empty($sesi['office_id'])){$acctcreditspayment->where('office_id', $sesi['office_id']);}
       $acctcreditspayment = $acctcreditspayment->orderBy('credits_account_serial', 'ASC')
       ->get();
       if($acctcreditspayment->count()){

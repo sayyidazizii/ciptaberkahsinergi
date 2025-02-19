@@ -88,7 +88,7 @@ class CoreMemberDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'AcctSavingsAccountBlockir/CoreMember_' . date('YmdHis');
     }
