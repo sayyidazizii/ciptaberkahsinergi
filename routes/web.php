@@ -111,6 +111,7 @@ use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
 use App\Http\Controllers\AcctProfitLossReportConsolidationController;
+use App\Http\Controllers\AndroidController;
 use App\Http\Controllers\SavingsDailyCashWithdrawalMutationController;
 use App\Http\Controllers\DepositoDailyCashWithdrawalMutationController;
 
@@ -1104,6 +1105,10 @@ Route::middleware(['auth','loged'])->group(function () {
         Route::get('/broadcast', [WhatsappController::class, 'broadcast'])->name('broadcast');
         Route::post('/broadcast', [WhatsappController::class, 'processAdd'])->name('process-add');
     });
+    Route::prefix('android')->name('android.')->group(function () {
+        Route::resource('anouncement', AndroidController::class);
+    });
+
 
 });
 

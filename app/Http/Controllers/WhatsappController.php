@@ -17,13 +17,13 @@ class WhatsappController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the Broadcast Index.
      *
-     * @return \Illuminate\Http\Response
+    * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function create()
+    public function broadcast()
     {
-        //
+        return view('content.WhatsApp.broadcast');
     }
 
     /**
