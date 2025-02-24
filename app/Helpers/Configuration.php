@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Models\AcctBankAccount;
+
 class Configuration
 {
 
@@ -710,6 +712,14 @@ class Configuration
 			if($a==''){$a=0;}
 			return number_format($a);
 		}
+	}
+
+    public static function bank(){
+		$acctbankaccount        = AcctBankAccount::select('bank_account_id','account_id','bank_account_name')
+        ->where('data_state', 0)
+        ->get();
+
+		return $acctbankaccount;
 	}
 }
 
