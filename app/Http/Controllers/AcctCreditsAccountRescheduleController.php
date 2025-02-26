@@ -70,7 +70,7 @@ class AcctCreditsAccountRescheduleController extends Controller
             $sessiondata['credits_id']                              = null;
             $sessiondata['start_date']                              = 0;
             $sessiondata['end_date']                                = 0;
-            $sessiondata['credits_account_id']             = 0;
+            $sessiondata['credits_account_id']                      = 0;
             $sessiondata['credits_acquittance_amount']              = 0;
             $sessiondata['penalty']                                 = 0;
         }
@@ -101,22 +101,14 @@ class AcctCreditsAccountRescheduleController extends Controller
 
     public function add()
     {
-        $sessiondata            = session()->get('data_creditsaccountreschedulladd');
-        $period=Configuration::CreditsPaymentPeriod();
-        $acctcreditsaccount     = array();
-        // $acctcreditspayment     = array();
+        $sessiondata    =   session()->get('data_creditsaccountreschedulladd');
+        $period         =   Configuration::CreditsPaymentPeriod();
+        $acctcreditsaccount = null;
         $credits_account_interest_last_balance = 0;
         if(isset($sessiondata['credits_account_id'])){
             $acctcreditsaccount = AcctCreditsAccount::with('member','credit')->find($sessiondata['credits_account_id']);
-
-            // $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
-            // ->where('credits_account_id', $sessiondata['credits_account_id'])
-            // ->get();
-
             $credits_account_interest_last_balance = ($acctcreditsaccount['credits_account_interest_amount'] * $acctcreditsaccount['credits_account_period']) - ($acctcreditsaccount['credits_account_payment_to'] * $acctcreditsaccount['credits_account_interest_amount']);
         }
-
-        // dd($credits_account_interest_last_balance);
         return view('content.AcctCreditsAccountReschedule.Add.index', compact('sessiondata', 'period', 'acctcreditsaccount'));
     }
 
