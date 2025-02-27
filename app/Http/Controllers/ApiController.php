@@ -2,41 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Str;
+use Auth;
+use DateTime;
+use Exception;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\PPOBTopUp;
+use App\Models\CoreBranch;
+use App\Models\CoreMember;
 use App\Models\AcctAccount;
-use App\Models\AcctAccountSetting;
 use App\Models\AcctCredits;
+use App\Models\AcctSavings;
+use App\Models\AcctDeposito;
+use App\Models\CoreEmployee;
+use Illuminate\Http\Request;
+use App\Models\Documentation;
+use App\Models\SystemLoginLog;
+use App\Models\CloseCashierLog;
+use App\Models\PreferenceCompany;
+use App\Models\AcctAccountSetting;
 use App\Models\AcctCreditsAccount;
 use App\Models\AcctCreditsPayment;
-use App\Models\AcctDeposito;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
 use App\Models\AcctDepositoAccount;
 use App\Models\AcctDepositoAccrual;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
+use App\Http\Controllers\Controller;
 use App\Models\AcctProfitLossReport;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\Hash;
+use App\Models\AcctJournalVoucherItem;
 use App\Models\AcctSavingsCashMutation;
 use App\Models\AcctSavingsMemberDetail;
-use App\Models\CloseCashierLog;
-use App\Models\CoreEmployee;
-use App\Models\CoreMember;
-use App\Models\CoreBranch;
-use App\Models\Documentation;
-use App\Models\PPOBTopUp;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\Models\SystemLoginLog;
-use App\Models\User;
-use Auth;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Str;
+use App\Models\PreferenceTransactionModule;
 
 class ApiController extends Controller
 {
