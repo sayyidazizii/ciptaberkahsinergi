@@ -2,41 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Str;
+use Auth;
+use DateTime;
+use Exception;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\PPOBTopUp;
+use App\Models\CoreBranch;
+use App\Models\CoreMember;
 use App\Models\AcctAccount;
-use App\Models\AcctAccountSetting;
 use App\Models\AcctCredits;
+use App\Models\AcctSavings;
+use App\Models\AcctDeposito;
+use App\Models\CoreEmployee;
+use Illuminate\Http\Request;
+use App\Models\Documentation;
+use App\Models\SystemLoginLog;
+use App\Models\CloseCashierLog;
+use App\Models\PreferenceCompany;
+use App\Models\AcctAccountSetting;
 use App\Models\AcctCreditsAccount;
 use App\Models\AcctCreditsPayment;
-use App\Models\AcctDeposito;
+use App\Models\AcctJournalVoucher;
+use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\DB;
 use App\Models\AcctDepositoAccount;
 use App\Models\AcctDepositoAccrual;
-use App\Models\AcctJournalVoucher;
-use App\Models\AcctJournalVoucherItem;
+use App\Http\Controllers\Controller;
 use App\Models\AcctProfitLossReport;
-use App\Models\AcctSavings;
-use App\Models\AcctSavingsAccount;
+use Illuminate\Support\Facades\Hash;
+use App\Models\AcctJournalVoucherItem;
 use App\Models\AcctSavingsCashMutation;
 use App\Models\AcctSavingsMemberDetail;
-use App\Models\CloseCashierLog;
-use App\Models\CoreEmployee;
-use App\Models\CoreMember;
-use App\Models\CoreBranch;
-use App\Models\Documentation;
-use App\Models\PPOBTopUp;
-use App\Models\PreferenceCompany;
-use App\Models\PreferenceTransactionModule;
-use App\Models\SystemLoginLog;
-use App\Models\User;
-use Auth;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Str;
+use App\Models\PreferenceTransactionModule;
 
 class ApiController extends Controller
 {
@@ -728,8 +729,26 @@ class ApiController extends Controller
                 $angsuranpokok 		= $slidingrate[$angsuranke]['angsuran_pokok'];
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
-                $angsuranpokok		= 0;
-                $angsuranbunga		= $angsuran_bunga_menurunharian;
+                $last_payment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+                ->where('credits_account_id', $sessiondata['credits_account_id'])
+                ->latest('credits_payment_date')
+                ->first();
+
+                if($last_payment){
+                    $last_payment_date = new DateTime($last_payment['credits_payment_date']);
+                } else {
+                    $last_payment_date = new DateTime($acctcreditsaccount['credits_account_date']);
+                }
+
+                $today_date = new DateTime(date('Y-m-d'));
+                $interval_days = $last_payment_date->diff($today_date)->days;
+
+                $interest_month = $acctcreditsaccount['credits_account_last_balance'] * ($acctcreditsaccount['credits_account_interest'] / 100);
+                $daily_interest = $interest_month / 30; // Bunga harian
+                $angsuran_bunga = $daily_interest * $interval_days; // Total bunga sesuai jumlah hari
+
+                $angsuranpokok = $acctcreditsaccount['credits_account_principal_amount'];
+                $angsuranbunga = $angsuran_bunga;
             }
 
 

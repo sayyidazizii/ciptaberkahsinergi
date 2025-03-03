@@ -1,4 +1,4 @@
-{{-- @section('scripts') --}}
+@section('scripts')
 <script>
 const form = document.getElementById('kt_savings_add_view_form');
 
@@ -104,12 +104,12 @@ submitButton.addEventListener('click', function (e) {
 
 function check_all(){
     $(':checkbox').each(function() {
-        this.checked = true;                        
+        this.checked = true;
     });
 }
 function uncheck_all(){
     $(':checkbox').each(function() {
-        this.checked = false;                        
+        this.checked = false;
     });
 }
 $(document).ready(function(){
@@ -197,11 +197,11 @@ $("#min_saving_view").change(function(){
                             <input type="text" name="min_saving_view" id="min_saving_view" class="form-control form-control-lg form-control-solid" placeholder="Minimal Setoran Awal" value="{{ old('min_saving_view','' ?? '') }}" autocomplete="off"/>
                             <input type="hidden" name="min_saving" id="min_saving" class="form-control form-control-lg form-control-solid" placeholder="Minimal Setoran Awal" value="{{ old('min_saving', '' ?? '') }}" autocomplete="off"/>
                         </div>
-                    </div>  
+                    </div>
                 </div>
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <button type="reset" class="btn btn-white btn-active-light-primary me-2">{{ __('Batal') }}</button>
-    
+
                     <button type="submit" class="btn btn-primary" id="kt_savings_add_submit">
                         @include('partials.general._button-indicator', ['label' => __('Simpan')])
                     </button>

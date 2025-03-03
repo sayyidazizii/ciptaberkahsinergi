@@ -99,6 +99,7 @@ class AcctDepositoAccountClosingController extends Controller
         session()->put('data_depositoaccountclosingadd', $sessiondata);
 
         $acctdepositoaccount    = AcctDepositoAccount::select('acct_deposito_account.*', 'core_member.member_no', 'core_member.member_name', 'core_member.member_address', 'core_member.member_phone', 'acct_deposito.deposito_name')
+        ->withoutGlobalScopes()
         ->join('core_member', 'core_member.member_id', 'acct_deposito_account.member_id')
         ->join('acct_deposito', 'acct_deposito.deposito_id', 'acct_deposito_account.deposito_id')
         ->where('acct_deposito_account.deposito_account_id', $deposito_account_id)
@@ -107,11 +108,13 @@ class AcctDepositoAccountClosingController extends Controller
         $acctsavingsaccount     = array();
         if(isset($sessiondata['savings_account_id'])){
             $acctsavingsaccount = AcctSavingsAccount::select('acct_savings_account.*', 'acct_savings_account.savings_id', 'acct_savings_account.member_id', 'acct_savings_account.savings_account_last_balance', DB::raw('CONCAT(acct_savings_account.savings_account_no," - ",core_member.member_name) AS full_no'))
+            ->withoutGlobalScopes()
             ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
             ->where('acct_savings_account.savings_account_id', $sessiondata['savings_account_id'])
             ->first();
         }else{
             $acctsavingsaccount = AcctSavingsAccount::select('acct_savings_account.savings_account_id', 'acct_savings_account.savings_id', 'acct_savings_account.member_id', 'acct_savings_account.savings_account_last_balance', DB::raw('CONCAT(acct_savings_account.savings_account_no," - ",core_member.member_name) AS full_no'))
+            ->withoutGlobalScopes()
             ->join('core_member', 'core_member.member_id', '=', 'acct_savings_account.member_id')
             ->where('acct_savings_account.savings_account_id', $acctdepositoaccount['savings_account_id'])
             ->first();
@@ -171,7 +174,7 @@ class AcctDepositoAccountClosingController extends Controller
 				'member_id'						    => $request->member_id_savings,
 				'savings_account_opening_balance'	=> $request->savings_account_last_balance,
 				'savings_account_last_balance'		=> $request->savings_account_last_balance + $request->deposito_account_amount,
-			);	
+			);
 
 			$total_amount				   			            = $request->deposito_account_amount;
 			$amount_administration                              = $request->deposito_account_amount_adm;
@@ -216,7 +219,7 @@ class AcctDepositoAccountClosingController extends Controller
             ->where('transaction_module_code', $transaction_module_code)
             ->first()
             ->transaction_module_id;
-            
+
             $acctdepositoaccount_last 	= AcctDepositoAccount::select('acct_deposito_account.deposito_account_id', 'acct_deposito_account.member_id', 'core_member.member_name', 'core_member.member_no', 'core_member.member_gender', 'core_member.member_address', 'core_member.member_phone', 'core_member.member_date_of_birth', 'core_member.member_identity_no', 'core_member.city_id', 'core_member.kecamatan_id', 'core_member.identity_id', 'core_member.member_job', 'acct_deposito_account.deposito_id', 'acct_deposito.deposito_code', 'acct_deposito.deposito_name', 'acct_deposito.deposito_interest_rate', 'acct_deposito_account.deposito_account_no', 'acct_deposito_account.deposito_account_serial_no', 'acct_deposito_account.deposito_account_date', 'acct_deposito_account.deposito_account_amount', 'acct_deposito_account.deposito_account_period', 'acct_deposito_account.deposito_account_due_date', 'acct_deposito_account.voided_remark', 'acct_deposito_account.savings_account_id', 'acct_deposito_account.office_id', 'acct_deposito_account.deposito_account_interest_amount', 'acct_deposito_account.validation', 'acct_deposito_account.validation_id', 'acct_deposito_account.validation_at', 'acct_deposito_account.office_id', 'acct_deposito_account.deposito_account_blockir_type', 'acct_deposito_account.deposito_account_blockir_status')
 			->join('core_member', 'acct_deposito_account.member_id', '=', 'core_member.member_id')
 			->join('acct_deposito', 'acct_deposito_account.deposito_id', '=', 'acct_deposito.deposito_id')
@@ -225,7 +228,7 @@ class AcctDepositoAccountClosingController extends Controller
             ->first();
 
             $journal_voucher_period = date("Ym", strtotime($data['deposito_account_closed_date']));
-            
+
             $data_journal = array(
                 'branch_id'						=> auth()->user()->branch_id,
                 'journal_voucher_period' 		=> $journal_voucher_period,
@@ -290,7 +293,7 @@ class AcctDepositoAccountClosingController extends Controller
                 'created_id' 					=> auth()->user()->user_id,
             );
             AcctJournalVoucherItem::create($data_credit);
-            
+
             if($amount_administration > 0){
                 $data_debet = array (
                     'journal_voucher_id'			=> $journal_voucher_id,
@@ -335,7 +338,7 @@ class AcctDepositoAccountClosingController extends Controller
                 'alert' => 'error'
             );
         }
-        
+
         return redirect('deposito-account-closing')->with($message);
     }
 }

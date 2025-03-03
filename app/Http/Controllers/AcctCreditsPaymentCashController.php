@@ -147,46 +147,26 @@ class AcctCreditsPaymentCashController extends Controller
                 $angsuranpokok 		= $slidingrate[$angsuranke]['angsuran_pokok'];
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
-                $last_pokok		= AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
-                                ->where('credits_account_id', $sessiondata['credits_account_id'])
-                                ->first();
-				$last_payment	= AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
-                                ->where('credits_account_id', $sessiondata['credits_account_id'])
-                                ->first();
-				if($last_pokok){
-					$start_date 		= $last_pokok['credits_payment_date'];
-					$end_date 			= date('Y-m-d', strtotime("+1 months", strtotime($start_date)));
-					$date1				= new DateTime($last_pokok['credits_payment_date']);
-					$date2				= new DateTime($end_date);
-					$date3				= new DateTime(date('Y-m-d'));
-					$interval_month		= $date1->diff($date2);
-					$interval_payments	= $date1->diff($date3);
-					if($last_payment){
-						$date4 				= new DateTime($last_payment['credits_payment_date']);
-						$interval_payments	= $date4->diff($date3);
-					}
-					$interest_month 	= $acctcreditsaccount['credits_account_last_balance'] * $acctcreditsaccount['credits_account_interest']/100;
-					// $angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
-					$angsuran_bunga 	= $interest_month;
+                $last_payment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+                ->where('credits_account_id', $sessiondata['credits_account_id'])
+                ->latest('credits_payment_date')
+                ->first();
 
-				}else{
-					$start_date 		= $acctcreditsaccount['credits_account_date'];
-					$end_date 			= date('Y-m-d', strtotime("+1 months", strtotime($start_date)));
-					$date1				= new DateTime($acctcreditsaccount['credits_account_date']);
-					$date2				= new DateTime($end_date);
-					$date3				= new DateTime(date('Y-m-d'));
-					$interval_month		= $date1->diff($date2);
-					$interval_payments	= $date1->diff($date3);
-					if($last_payment){
-						$date4 				= new DateTime($last_payment['credits_payment_date']);
-						$interval_payments	= $date4->diff($date3);
-					}
-					$interest_month 	= $acctcreditsaccount['credits_account_last_balance'] * $acctcreditsaccount['credits_account_interest']/100;
-					// $angsuran_bunga 	= $interest_month / $interval_month->days * $interval_payments->days;
-					$angsuran_bunga 	= $interest_month;
-				}
-                $angsuranpokok		= $acctcreditsaccount['credits_account_principal_amount'];
-                $angsuranbunga		= $angsuran_bunga;
+                if($last_payment){
+                    $last_payment_date = new DateTime($last_payment['credits_payment_date']);
+                } else {
+                    $last_payment_date = new DateTime($acctcreditsaccount['credits_account_date']);
+                }
+
+                $today_date = new DateTime(date('Y-m-d'));
+                $interval_days = $last_payment_date->diff($today_date)->days;
+
+                $interest_month = $acctcreditsaccount['credits_account_last_balance'] * ($acctcreditsaccount['credits_account_interest'] / 100);
+                $daily_interest = $interest_month / 30; // Bunga harian
+                $angsuran_bunga = $daily_interest * $interval_days; // Total bunga sesuai jumlah hari
+
+                $angsuranpokok = $acctcreditsaccount['credits_account_principal_amount'];
+                $angsuranbunga = $angsuran_bunga;
             }
         }else{
             $credits_payment_day_of_delay       = 0;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Models\User;
 use App\Models\CoreBranch;
 use App\Models\CoreMember;
@@ -160,8 +161,26 @@ class AcctCreditsPaymentDebetController extends Controller
                 $angsuranpokok 		= $slidingrate[$angsuranke]['angsuran_pokok'];
                 $angsuranbunga 	 	= $acctcreditsaccount['credits_account_payment_amount'] - $angsuranpokok;
             } else if($acctcreditsaccount['payment_type_id'] == 4){
-                $angsuranpokok		= 0;
-                $angsuranbunga		= $creditspaymentlast['credits_principal_last_balance'];
+                $last_payment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
+                ->where('credits_account_id', $sessiondata['credits_account_id'])
+                ->latest('credits_payment_date')
+                ->first();
+
+                if($last_payment){
+                    $last_payment_date = new DateTime($last_payment['credits_payment_date']);
+                } else {
+                    $last_payment_date = new DateTime($acctcreditsaccount['credits_account_date']);
+                }
+
+                $today_date = new DateTime(date('Y-m-d'));
+                $interval_days = $last_payment_date->diff($today_date)->days;
+
+                $interest_month = $acctcreditsaccount['credits_account_last_balance'] * ($acctcreditsaccount['credits_account_interest'] / 100);
+                $daily_interest = $interest_month / 30; // Bunga harian
+                $angsuran_bunga = $daily_interest * $interval_days; // Total bunga sesuai jumlah hari
+
+                $angsuranpokok = $acctcreditsaccount['credits_account_principal_amount'];
+                $angsuranbunga = $angsuran_bunga;
             }
         }else{
             $credits_payment_day_of_delay       = 0;

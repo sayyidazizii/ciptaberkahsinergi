@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AndroidController;
 use App\Http\Controllers\WhatsappController;
 use App\Http\Controllers\CoreDusunController;
 use App\Http\Controllers\MigrationController;
@@ -47,6 +48,7 @@ use App\Http\Controllers\AcctSavingsAccountController;
 use App\Http\Controllers\AcctDepositoAccountController;
 use App\Http\Controllers\Auth\SocialiteLoginController;
 use App\Http\Controllers\CoreMemberPrintBookController;
+use App\Http\Controllers\DailyBankFlowReportController;
 use App\Http\Controllers\DailyCashFlowReportController;
 use App\Http\Controllers\AcctProfitLossReportController;
 use App\Http\Controllers\AcctSavingsCloseBookController;
@@ -102,16 +104,15 @@ use App\Http\Controllers\AcctDepositoAccountInsentiveController;
 use App\Http\Controllers\OfficerDepositoAccountReportController;
 use App\Http\Controllers\SavingsDailyTransferMutationController;
 use App\Http\Controllers\MemberSavingsTransferMutationController;
+
+
 use App\Http\Controllers\AcctCreditsAccountPaidOffReportController;
 use App\Http\Controllers\AcctDepositoAccountClosedReportController;
-
-
 use App\Http\Controllers\SavingsDailyCashDepositMutationController;
 use App\Http\Controllers\SavingsMandatoryHasntPaidReportController;
 use App\Http\Controllers\DepositoDailyCashDepositMutationController;
 use App\Http\Controllers\AcctNominativeSavingsReportPickupController;
 use App\Http\Controllers\AcctProfitLossReportConsolidationController;
-use App\Http\Controllers\AndroidController;
 use App\Http\Controllers\SavingsDailyCashWithdrawalMutationController;
 use App\Http\Controllers\DepositoDailyCashWithdrawalMutationController;
 
@@ -681,6 +682,12 @@ Route::middleware(['auth','loged'])->group(function () {
     Route::prefix('daily-cash-flow-report')->name('daily-cash-flow-report.')->group(function () {
         Route::get('/', [DailyCashFlowReportController::class, 'index'])->name('index');
         Route::post('/print', [DailyCashFlowReportController::class, 'print'])->name('print');
+    });
+
+    //DailyBankFlowReport pages
+    Route::prefix('daily-bank-flow-report')->name('daily-bank-flow-report.')->group(function () {
+        Route::get('/', [DailyBankFlowReportController::class, 'index'])->name('index');
+        Route::post('/print', [DailyBankFlowReportController::class, 'print'])->name('print');
     });
 
     //DepositoAccountExtension pages
