@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 
     /*
@@ -134,7 +136,4 @@ return [
     |
     */
 
-    'aliases' =>Facade::defaultAliases()->merge([
-        'PDF' => Elibyy\TCPDF\Facades\TCPDF::class,
-    ])->toArray(),
 ];
