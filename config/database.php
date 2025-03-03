@@ -76,7 +76,6 @@ return [
             'engine'    => null,
         ],
 
-
         'mysql3' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_3', '127.0.0.1'),
