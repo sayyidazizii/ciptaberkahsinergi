@@ -64,7 +64,8 @@ class AcctCreditsAccountHistoryDataTable extends DataTable
 
         $querydata = $model->newQuery()->with('member','credit','account')->where('credits_payment_date', '>=', date('Y-m-d', strtotime($sessiondata['start_date'])))
 		->where('credits_payment_date', '<=', date('Y-m-d', strtotime($sessiondata['end_date'])))
-		->where('branch_id',auth()->user()->branch_id);
+		->where('branch_id',auth()->user()->branch_id)
+        ->where('data_state',0);
         // ->whereHas('member',function (Builder $query) use($sessiondata) {
         //     $query->where('branch_id',  $sessiondata['branch_id']??Auth::user()->branch_id);
         // });
