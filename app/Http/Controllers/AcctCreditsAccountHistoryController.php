@@ -84,7 +84,7 @@ class AcctCreditsAccountHistoryController extends Controller
         ->get();
 
         return view('content.AcctCreditsAccountHistory.Detail.index', compact('memberidentity', 'paymenttype', 'acctcreditsaccount', 'acctcreditspayment'));
-    
+
     }
 
     public function printPaymentHistory($credits_account_id){
@@ -106,7 +106,7 @@ class AcctCreditsAccountHistoryController extends Controller
         ->where('acct_credits_payment.data_state', 0)
         ->where('acct_credits_payment.credits_account_id', $credits_account_id)
         ->get();
-        
+
         $pdf = new TCPDF(['P', PDF_UNIT, 'A4', true, 'UTF-8', false]);
 
         $pdf::SetPrintHeader(false);
@@ -135,15 +135,15 @@ class AcctCreditsAccountHistoryController extends Controller
         }
 
         $export = "
-        
+
         <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
             <tr>
                 <td style=\"text-align:center;\" width=\"100%\">
                     <div style=\"font-size:14px\";><b>HISTORI ANGSURAN PINJAMAN</b></div>
-                </td>			
+                </td>
              </tr>
          </table>
-         <br><br>";		
+         <br><br>";
 
         $export .= "
         <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\" border=\"0\">
@@ -316,7 +316,7 @@ class AcctCreditsAccountHistoryController extends Controller
         $totalmargin            = 0;
         $total                  = 0;
         $datapola               = array();
-        
+
         $acctcreditsaccount     = AcctCreditsAccount::withoutGlobalScopes()
         ->select('acct_credits_account.*', 'core_member.member_name', 'core_member.member_no', 'core_member.member_address', 'acct_credits.credits_id', 'core_member.member_identity', 'core_member.member_identity_no', 'acct_credits.credits_name', 'core_member.member_phone', 'core_member.member_mandatory_savings_last_balance', 'core_member.member_principal_savings_last_balance')
         ->join('acct_credits', 'acct_credits_account.credits_id', '=', 'acct_credits.credits_id')
@@ -331,7 +331,7 @@ class AcctCreditsAccountHistoryController extends Controller
         }else if ($acctcreditsaccount['payment_type_id'] == 2){
             $datapola = $this->anuitas($credits_account_id);
         }
-        
+
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
 
         $pdf::SetPrintHeader(false);
@@ -360,12 +360,12 @@ class AcctCreditsAccountHistoryController extends Controller
         }
 
         $export = "
-        
+
         <table id=\"items\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
             <tr>
                 <td style=\"text-align:center;\" width=\"100%\">
                     <div style=\"font-size:14px\";><b>JADWAL ANGSURAN</b></div>
-                </td>			
+                </td>
              </tr>
          </table>
          <br><br>";
@@ -385,7 +385,7 @@ class AcctCreditsAccountHistoryController extends Controller
                 </td>
                 <td style=\"text-align:left;\" width=\"50%\">
                     <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_name']."</b></div>
-                </td>		
+                </td>
             </tr>
             <tr>
                 <td style=\"text-align:left;\" width=\"20%\">
@@ -399,7 +399,7 @@ class AcctCreditsAccountHistoryController extends Controller
                 </td>
                 <td style=\"text-align:left;\" width=\"50%\">
                     <div style=\"font-size:12px\";><b>: ".$acctcreditsaccount['credits_account_period']." ".$paymentperiod[$acctcreditsaccount['credits_payment_period']]."</b></div>
-                </td>			
+                </td>
             </tr>
             <tr>
                 <td style=\"text-align:left;\" width=\"20%\">
@@ -407,17 +407,17 @@ class AcctCreditsAccountHistoryController extends Controller
                 </td>
                 <td style=\"text-align:left;\" width=\"45%\">
                     <div style=\"font-size:12px\";><b>: ".$paymenttype[$acctcreditsaccount['payment_type_id']]."</b></div>
-                </td>	
+                </td>
                 <td style=\"text-align:left;\" width=\"20%\">
                     <div style=\"font-size:12px\";><b>Plafon</b></div>
                 </td>
                 <td style=\"text-align:left;\" width=\"50%\">
                     <div style=\"font-size:12px\";><b>: Rp.".number_format($acctcreditsaccount['credits_account_amount'])."</b></div>
-                </td>			
+                </td>
             </tr>
         </table>
         <br><br>";
-             
+
         $export .= "
         <br>
         <table cellspacing=\"0\" cellpadding=\"1\" border=\"1\" width=\"100%\">
@@ -429,7 +429,7 @@ class AcctCreditsAccountHistoryController extends Controller
                 <td width=\"15%\"><div style=\"text-align: center;font-size:10;font-weight:bold\">Angsuran Bunga</div></td>
                 <td width=\"18%\"><div style=\"text-align: center;font-size:10;font-weight:bold\">Total Angsuran</div></td>
                 <td width=\"18%\"><div style=\"text-align: center;font-size:10;font-weight:bold\">Sisa Pokok</div></td>
-            </tr>				
+            </tr>
         </table>";
 
          $no        = 1;
@@ -459,7 +459,7 @@ class AcctCreditsAccountHistoryController extends Controller
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalpokok, 2)."</div></td>
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($totalmargin, 2)."</div></td>
                 <td><div style=\"text-align: right;font-weight:bold\">".number_format($total, 2)."</div></td>
-            </tr>							
+            </tr>
         </table>";
 
         //$pdf::Image( $path, 4, 4, 40, 20, 'PNG', '', 'LT', false, 300, 'L', false, false, 1, false, false, false);
@@ -468,14 +468,14 @@ class AcctCreditsAccountHistoryController extends Controller
         $filename = 'Jadwal Angsuran Pinjaman.pdf';
         $pdf::Output($filename, 'I');
     }
-    
+
     public const EPSILON = 1e-6;
 
     private static function checkZero(float $value, float $epsilon = self::EPSILON): float
     {
         return \abs($value) < $epsilon ? 0.0 : $value;
     }
-		
+
     public static function fv(float $rate, int $periods, float $payment, float $present_value, bool $beginning = false): float
     {
         $when = $beginning ? 1 : 0;
@@ -490,7 +490,7 @@ class AcctCreditsAccountHistoryController extends Controller
 
         return self::checkZero($fv);
     }
-		
+
     public static function pmt(float $rate, int $periods, float $present_value, float $future_value = 0.0, bool $beginning = false): float
     {
         $when = $beginning ? 1 : 0;
@@ -502,7 +502,7 @@ class AcctCreditsAccountHistoryController extends Controller
             /
             ((1 + $rate * $when) / $rate * (\pow(1 + $rate, $periods) - 1));
     }
-		
+
     public static function ipmt(float $rate, int $period, int $periods, float $present_value, float $future_value = 0.0, bool $beginning = false): float
     {
         if ($period < 1 || $period > $periods) {
@@ -549,9 +549,9 @@ class AcctCreditsAccountHistoryController extends Controller
             } else {
                 $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$i." months", strtotime($credistaccount['credits_account_date'])));
             }
-            
-            $angsuran_pokok									= $credistaccount['credits_account_principal_amount'];				
-            $angsuran_margin								= $credistaccount['credits_account_interest_amount'];				
+
+            $angsuran_pokok									= $credistaccount['credits_account_principal_amount'];
+            $angsuran_margin								= $credistaccount['credits_account_interest_amount'];
             $angsuran 										= $angsuran_pokok + $angsuran_margin;
             $last_balance 									= $opening_balance - $angsuran_pokok;
             $installment_pattern[$i]['opening_balance']		= $opening_balance;
@@ -563,7 +563,7 @@ class AcctCreditsAccountHistoryController extends Controller
             $installment_pattern[$i]['last_balance'] 		= $last_balance;
             $opening_balance 								= $last_balance;
         }
-        
+
         return $installment_pattern;
     }
 
@@ -581,9 +581,9 @@ class AcctCreditsAccountHistoryController extends Controller
             } else {
                 $tanggal_angsuran 								= date('d-m-Y', strtotime("+".$i." months", strtotime($credistaccount['credits_account_date'])));
             }
-            
-            $angsuran_pokok									= $credistaccount['credits_account_amount']/$credits_account_period;				
-            $angsuran_margin								= $opening_balance*$credits_account_interest/100;				
+
+            $angsuran_pokok									= $credistaccount['credits_account_amount']/$credits_account_period;
+            $angsuran_margin								= $opening_balance*$credits_account_interest/100;
             $angsuran 										= $angsuran_pokok + $angsuran_margin;
             $last_balance 									= $opening_balance - $angsuran_pokok;
             $installment_pattern[$i]['opening_balance']		= $opening_balance;
@@ -595,7 +595,7 @@ class AcctCreditsAccountHistoryController extends Controller
             $installment_pattern[$i]['last_balance'] 		= $last_balance;
             $opening_balance 								= $last_balance;
         }
-        
+
         return $installment_pattern;
     }
 
@@ -606,10 +606,10 @@ class AcctCreditsAccountHistoryController extends Controller
         $credits_account_period 		= $credistaccount['credits_account_period'];
         $installment_pattern			= array();
         $opening_balance				= $total_credits_account;
-        
+
         return $installment_pattern;
     }
-		
+
     public function rate1($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1) {
         $rate = $guess;
         if (abs($rate) < FINANCIAL_PRECISION) {
@@ -682,7 +682,7 @@ class AcctCreditsAccountHistoryController extends Controller
         }
         return null;
     }
-		
+
     public function anuitas($id){
         $creditsaccount 	= AcctCreditsAccount::findOrFail($id);
         $pinjaman 	        = $creditsaccount['credits_account_amount'];
@@ -697,13 +697,13 @@ class AcctCreditsAccountHistoryController extends Controller
         $sisapinjaman = $pinjaman;
         for ($i=1; $i <= $period ; $i++) {
             if($creditsaccount['credits_payment_period'] == 1){
-                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$i." months", strtotime($creditsaccount['credits_account_date']))); 
+                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$i." months", strtotime($creditsaccount['credits_account_date'])));
             } else {
                 $a = $i * 7;
 
-                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$a." days", strtotime($creditsaccount['credits_account_date']))); 
+                $tanggal_angsuran 	= date('d-m-Y', strtotime("+".$a." days", strtotime($creditsaccount['credits_account_date'])));
             }
-            
+
             $angsuranbunga 		= $sisapinjaman * $rate;
             $angsuranpokok 		= $totalangsuran - $angsuranbunga;
             $sisapokok 			= $sisapinjaman - $angsuranpokok;
@@ -719,7 +719,7 @@ class AcctCreditsAccountHistoryController extends Controller
         }
         return $pola;
     }
-		
+
     function rate2($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1) {
         $rate = $guess;
         if (abs($rate) < $this->FINANCIAL_PRECISION) {
