@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\AcctCreditsAccountReschedule\AcctCreditsAccountRescheduleDataTable;
+use App\Models\AcctCredits;
+use Illuminate\Http\Request;
+use App\Helpers\CreditHelper;
+use App\Helpers\Configuration;
+use Illuminate\Support\Carbon;
+use Elibyy\TCPDF\Facades\TCPDF;
+use App\Models\PreferenceCompany;
+use App\Models\AcctCreditsAccount;
+use App\Models\AcctCreditsPayment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Models\AcctCreditsPaymentSuspend;
+use App\Models\AcctCreditsAccountReschedule;
 use App\DataTables\AcctCreditsAccountReschedule\AcctCreditsAccountDataTable;
 use App\DataTables\AcctCreditsPaymentSuspend\AcctCreditsPaymentSuspendDataTable;
-use App\Helpers\Configuration;
-use App\Helpers\CreditHelper;
-use App\Models\AcctCredits;
-use App\Models\AcctCreditsAccount;
-use App\Models\AcctCreditsAccountReschedule;
-use App\Models\AcctCreditsPayment;
-use App\Models\AcctCreditsPaymentSuspend;
-use App\Models\PreferenceCompany;
-use Elibyy\TCPDF\Facades\TCPDF;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\DataTables\AcctCreditsAccountReschedule\AcctCreditsAccountRescheduleDataTable;
 
 class AcctCreditsAccountRescheduleController extends Controller
 {
@@ -115,75 +116,76 @@ class AcctCreditsAccountRescheduleController extends Controller
             $acctcreditsaccount = AcctCreditsAccount::with('member','credit')->find($sessiondata['credits_account_id']);
             $credits_account_interest_last_balance = ($acctcreditsaccount['credits_account_interest_amount'] * $acctcreditsaccount['credits_account_period']) - ($acctcreditsaccount['credits_account_payment_to'] * $acctcreditsaccount['credits_account_interest_amount']);
         }
-        // dd($acctcreditsaccount);
         return view('content.AcctCreditsAccountReschedule.Add.index', compact('sessiondata', 'period', 'acctcreditsaccount'));
     }
 
     public function processAdd(Request $request)
     {
-        // *FIXME - debug insert data, unfinished
-        $token = CreditHelper::generateToken();
-        echo "<b>Debugging Aplikasi , Silahkan kembali ke halaman sebelumnya.<b>";
-        echo "<br>";
-        echo "<a href='".url('credits-account-reschedule/add')."'>Kembali</a>";
-        echo "<br>";
-        echo "<br>";
-        dd($request->all());
-        exit();
-
-        $data = array(
-            "credits_account_date" => date('Y-m-d', strtotime($request->credit_account_date)),
-            "member_id" => $request->member_id,
-            "office_id" => $request->office_id,
-            "source_fund_id" => $request->sumberdana,
-            "credits_id" => $request->credits_id,
-            "branch_id" => auth()->user()->branch_id,
-            "payment_preference_id" => $request->payment_preference_id,
-            "payment_type_id" => $request->payment_type_id,
-            "credits_payment_period" => $request->payment_period,
-            "credits_account_period" => $request->credit_account_period,
-            "credits_account_due_date" => date('Y-m-d', strtotime($request->credit_account_due_date)),
-            "credits_account_amount" => $request->credits_account_last_balance_principal,
-            "credits_account_interest" => $request->credit_account_interest,
-            "credits_account_provisi" => empty($request->credit_account_provisi) ? 0 : $request->credit_account_provisi,
-            "credits_account_komisi" => empty($request->credit_account_komisi) ? 0 : $request->credit_account_komisi,
-            "credits_account_adm_cost" => empty($request->credit_account_adm_cost) ? 0 : $request->credit_account_adm_cost,
-            "credits_account_insurance" => empty($request->credit_account_insurance) ? 0 : $request->credit_account_insurance,
-            "credits_account_materai" => empty($request->credit_account_materai) ? 0 : $request->credit_account_materai,
-            "credits_account_risk_reserve" => empty($request->credit_account_risk_reserve) ? 0 : $request->credit_account_risk_reserve,
-            "credits_account_stash" => empty($request->credit_account_stash) ? 0 : $request->credit_account_stash,
-            "credits_account_principal" => empty($request->credit_account_principal) ? 0 : $request->credit_account_principal,
-            "credits_account_amount_received" => $request->credit_account_amount_received,
-            "credits_account_principal_amount" => $request->credits_account_principal_amount,
-            "credits_account_interest_amount" => $request->credits_account_interest_amount,
-            "credits_account_payment_amount" => $request->credit_account_payment_amount,
-            "credits_account_last_balance" => $request->credits_account_last_balance_principal,
-            "credits_account_payment_date" => date('Y-m-d', strtotime($request->credit_account_payment_to)),
-            "savings_account_id" => $request->savings_account_id,
-            "created_id" => auth()->user()->user_id,
-            "credits_token" => $token
-        );
-
         DB::beginTransaction();
         try {
-            AcctCreditsAccount::create($data);
-            $acctcreditsaccount_last = AcctCreditsAccount::with('member')->where('credits_token', $token)
-                ->orderBy('acct_credits_account.credits_account_id', 'DESC')->first();
+
+            $credits_account_date 	= date('Y-m-d');
+            $credits_account_payment_date = date('Y-m-d', strtotime("+1 months", strtotime($credits_account_date)));
+
+            $acctcreditsaccount = AcctCreditsAccount::with('member', 'credit')->find($request->credits_account_id);
+            if (!$acctcreditsaccount) {
+                Log::error('Credits account tidak ditemukan', ['credits_account_id' => $request->credits_account_id]);
+                throw new \Exception("Credits account tidak ditemukan.");
+            }
+
+            $datareschedule = [
+                'credits_account_id'                => $acctcreditsaccount->credits_account_id,
+                'branch_id'                         => $acctcreditsaccount->branch_id,
+                'member_id'                         => $acctcreditsaccount->member_id,
+                'savings_account_id'                => $acctcreditsaccount->savings_account_id,
+                'credits_id'                        => $acctcreditsaccount->credits_id,
+                'credits_account_last_balance_old'  => $acctcreditsaccount->credits_account_last_balance,
+                'credits_account_interest_old'      => $acctcreditsaccount->credits_account_interest,
+                'credits_account_period_old'        => $acctcreditsaccount->credits_account_period,
+                'credits_account_date_old'          => $acctcreditsaccount->credits_account_date,
+                'credits_account_due_date_old'      => $acctcreditsaccount->credits_account_due_date,
+                'credits_account_payment_to_old'    => $acctcreditsaccount->credits_account_payment_to,
+                'credits_account_last_balance_new'  => $request->credits_account_last_balance_principal,
+                'credits_account_interest_new'      => $request->credits_account_interest,
+                'credits_account_period_new'        => $request->credits_account_period,
+                'credits_account_date_new'          => date('Y-m-d', strtotime($request->credits_account_date)),
+                'credits_account_due_date_new'      => date('Y-m-d', strtotime($request->credits_account_due_date)),
+            ];
+            //*REVIEW -  Log::info('Data reschedule akan disimpan', ['datareschedule' => $datareschedule]);
+            AcctCreditsAccountReschedule::create($datareschedule);
+
+            $acctcreditsaccount->credits_account_last_balance = $request->credits_account_last_balance_principal;
+            $acctcreditsaccount->credits_account_principal_amount = $request->credits_account_principal_amount;
+            $acctcreditsaccount->credits_account_interest_amount = $request->credits_account_interest_amount;
+            $acctcreditsaccount->credits_account_payment_amount = $request->credits_account_payment_amount;
+            $acctcreditsaccount->credits_account_date = date('Y-m-d', strtotime($request->credits_account_date));
+            $acctcreditsaccount->credits_account_period = $request->credits_account_period;
+            $acctcreditsaccount->credits_account_due_date = date('Y-m-d', strtotime($request->credits_account_due_date));
+            $acctcreditsaccount->credits_account_interest = $request->credits_account_interest;
+            $acctcreditsaccount->credits_account_last_balance = $request->credits_account_last_balance_principal;
+            $acctcreditsaccount->credits_account_payment_date = $credits_account_payment_date;
+            $acctcreditsaccount->credits_reschedule_status = 1;
+            $acctcreditsaccount->credits_account_payment_to = 0;
+            $acctcreditsaccount->credits_account_accumulated_fines = 0;
+
+            //*REVIEW -  Log::info('Data credits account akan diperbarui', ['acctcreditsaccount' => $acctcreditsaccount]);
+            $acctcreditsaccount->save();
             DB::commit();
-            $message = array(
+            return redirect('credits-account-reschedule')->with([
                 'pesan' => 'Reschedule Pinjaman berhasil ditambah',
                 'alert' => 'success',
-            );
-            return redirect('credits-account-reschedule')->with($message);
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e);
+            Log::error('Terjadi kesalahan saat reschedule pinjaman', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             report($e);
-            $message = array(
+            return redirect('credits-account-reschedule/add')->with([
                 'pesan' => 'Reschedule Pinjaman gagal ditambah',
                 'alert' => 'error'
-            );
-            return redirect('credits-account-reschedule/add')->with($message);
+            ]);
         }
     }
 

@@ -78,6 +78,28 @@ $('#credits_account_period').change(function(){
     duedatecalc();
 });
 
+$('#credits_account_last_balance_principal_view').change(function(){
+        var credits_account_last_balance_principal  = $('#credits_account_last_balance_principal_view').val();
+        var payment_type_id                         = $("#payment_type_id").val();
+
+            $('#credits_account_last_balance_principal').val(credits_account_last_balance_principal);
+            $('#credits_account_last_balance_principal_view').val(toRp(credits_account_last_balance_principal));
+
+            function_elements_add('credits_account_last_balance_principal', credits_account_last_balance_principal);
+
+            if (payment_type_id == 1) {
+                angsuranflat();
+            } else if (payment_type_id == 2) {
+                angsurananuitas();
+            } else if (payment_type_id == 3) {
+                angsuranflat();
+            } else if (payment_type_id == 4) {
+                angsuranflat();
+            }
+
+            receivedamount();
+});
+
 $('#credits_account_interest').change(function(){
     var credits_account_interest = $('#credits_account_interest').val();
     var payment_type_id         = $("#payment_type_id").val();
@@ -466,16 +488,11 @@ function function_elements_add(name, value){
                                 <input type="hidden" name="payment_period" id="payment_period" class="form-control form-control-lg form-control-solid" value="{{ old('payment_period', $acctcreditsaccount['credits_payment_period'] ?? '') }}" autocomplete="off" readonly/>
                             </div>
                         </div>
-                        <div class="row mb-4">
-                            <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tanggal Angsuran Baru') }}</label>
-                            <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_payment_date" id="credits_account_payment_date" class="form-control form-control-lg form-control-solid" placeholder="Tanggal Angsuran" autocomplete="off" readonly/>
-                            </div>
-                        </div>
                         <div class="row mb-3">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Plafon') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_last_balance_principal" id="credits_account_last_balance_principal" class="form-control form-control-lg form-control-solid" placeholder="Rupiah" value="{{ old('credits_account_last_balance', $acctcreditsaccount->credits_account_last_balance ?? '') }}" autocomplete="off"/>
+                                <input type="text" name="credits_account_last_balance_principal_view" id="credits_account_last_balance_principal_view" class="form-control form-control-lg form-control-solid" placeholder="Plafon Pinjaman" value="{{ old('credits_account_last_balance_principal_view', empty($acctcreditsaccount->credits_account_last_balance) ? '' : number_format($acctcreditsaccount->credits_account_last_balance ,2) ?? '') }}" autocomplete="off"/>
+                                <input type="hidden" name="credits_account_last_balance_principal" id="credits_account_last_balance_principal" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_last_balance_principal', $acctcreditsaccount->credits_account_last_balance ?? '') }}"/>
                             </div>
                         </div>
                         <div class="row mb-4">
