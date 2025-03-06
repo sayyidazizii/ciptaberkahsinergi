@@ -27,7 +27,7 @@ var validator = FormValidation.formValidation(
     }
 );
 
-const submitButton = document.getElementById('kt_credits_acquittance_add_submit');
+const submitButton = document.getElementById('kt_credits_reschedule_add_submit');
 submitButton.addEventListener('click', function (e) {
     e.preventDefault();
 
@@ -62,10 +62,9 @@ $(document).ready(function(){
 });
 
 $('#credits_account_period').change(function(){
-        var credits_account_period   = $('#credits_account_period').val();
-        var credits_id              = $("#credits_id").val();
-        var payment_type_id         = $("#payment_type_id").val();
-
+    var credits_account_period   = $('#credits_account_period').val();
+    var credits_id              = $("#credits_id").val();
+    var payment_type_id         = $("#payment_type_id").val();
         if (payment_type_id == 1) {
             angsuranflat();
         } else if (payment_type_id == 2) {
@@ -75,7 +74,6 @@ $('#credits_account_period').change(function(){
         } else if (payment_type_id == 4) {
             angsuranflat();
         }
-
     function_elements_add('credits_account_period', credits_account_period);
     duedatecalc();
 });
@@ -83,11 +81,8 @@ $('#credits_account_period').change(function(){
 $('#credits_account_interest').change(function(){
     var credits_account_interest = $('#credits_account_interest').val();
     var payment_type_id         = $("#payment_type_id").val();
-
         $('#credits_account_interest').val(credits_account_interest);
-
         function_elements_add('credits_account_interest', credits_account_interest);
-
         if (payment_type_id == 1) {
             angsuranflat();
         } else if (payment_type_id == 2) {
@@ -168,14 +163,6 @@ function angsurananuitas() {
     var angsuranpokok = totalangsuran - angsuranbunga2;
     var totangsuran = Math.round((pembiayaan * persbunga) + (pembiayaan / jangka));
 
-    console.log("Bunga:", bunga);
-    console.log("Jangka:", jangka);
-    console.log("Pembiayaan:", pembiayaan);
-    console.log("Persentase Bunga:", persbunga);
-    console.log("Total Angsuran:", totalangsuran);
-    console.log("Angsuran Pokok:", angsuranpokok);
-    console.log("Angsuran Bunga:", angsuranbunga2);
-
     if (!isNaN(totangsuran) && totangsuran > 0) {
         $.ajax({
                 type: "POST",
@@ -217,7 +204,6 @@ function angsurananuitas() {
 
 function duedatecalc() {
     var angsuran = $("#payment_period").val();
-    console.log("Angsuran:", angsuran);
     var date2 = $("#credits_account_date").val();
     if (!date2) {
         console.error("Tanggal kosong!");
@@ -234,9 +220,9 @@ function duedatecalc() {
         return;
     }
     var value;
-    if (angsuran == "1") { // Per bulan
+    if (angsuran == "1") { //*NOTE - Per bulan
         value = date1.add(period, 'months').format('YYYY-MM-DD');
-    } else { // Per minggu
+    } else { //*NOTE - Per minggu
         value = date1.add(period * 7, 'days').format('YYYY-MM-DD');
     }
     // Set nilai jatuh tempo ke input field
@@ -267,8 +253,6 @@ function receivedamount() {
         by_insurance = 0;
     }
 
-
-
     var terima_bersih = parseInt(pinjaman) - (parseInt(by_admin) + parseInt(by_provisi) + parseInt(by_notary) + parseInt(by_insurance) );
 
     $('#credit_account_amount_received').val(terima_bersih);
@@ -280,35 +264,33 @@ function receivedamount() {
 }
 
 function hitungbungaflat() {
-                    var jumlah_angsuran = $("#credit_account_payment_amount").val();
-                    var angsuranpokok   = $("#credits_account_principal_amount").val();
-                    var pinjaman        = $("#credits_account_last_balance_principal").val();
-                    var period          = $("#credits_account_period").val();
-                    var interest        = $("#credits_account_interest_amount_view").val();
-                    var angsuranbunga   = parseInt(jumlah_angsuran) - parseInt(angsuranpokok);
-                    var bunga           = (parseInt(angsuranbunga) * 12) / parseInt(pinjaman);
-                    var bunga_perbulan  = (parseInt(bunga) * 100) / 12;
-                    var bungafix        = bunga_perbulan.toFixed(3);
+    var jumlah_angsuran = $("#credit_account_payment_amount").val();
+    var angsuranpokok   = $("#credits_account_principal_amount").val();
+    var pinjaman        = $("#credits_account_last_balance_principal").val();
+    var period          = $("#credits_account_period").val();
+    var interest        = $("#credits_account_interest_amount_view").val();
+    var angsuranbunga   = parseInt(jumlah_angsuran) - parseInt(angsuranpokok);
+    var bunga           = (parseInt(angsuranbunga) * 12) / parseInt(pinjaman);
+    var bunga_perbulan  = (parseInt(bunga) * 100) / 12;
+    var bungafix        = bunga_perbulan.toFixed(3);
 
+    var jumlah_angsuran2 = $("#credit_account_payment_amount_view").val();
+    var angsuranpokok2   = $("#credits_account_principal_amount_view").val();
+    var pinjaman2        = $("#credits_account_last_balance_principal_view").val();
+    var period2          = $("#credits_account_period").val();
+    var interest2        = $("#credits_account_interest_amount_view").val();
+    var angsuranbunga2   = parseInt(jumlah_angsuran2) - parseInt(angsuranpokok2);
+    var bunga2           = (parseInt(angsuranbunga2) * 12) / 100;
 
-                    var jumlah_angsuran2 = $("#credit_account_payment_amount_view").val();
-                    var angsuranpokok2   = $("#credits_account_principal_amount_view").val();
-                    var pinjaman2        = $("#credits_account_last_balance_principal_view").val();
-                    var period2          = $("#credits_account_period").val();
-                    var interest2        = $("#credits_account_interest_amount_view").val();
-                    var angsuranbunga2   = parseInt(jumlah_angsuran2) - parseInt(angsuranpokok2);
-                    var bunga2           = (parseInt(angsuranbunga2) * 12) / 100;
+    $("#credits_account_interest").val(bunga2);
+    $("#credits_account_interest_amount_view").val(toRp(angsuranbunga));
+    $("#credits_account_interest_amount").val(angsuranbunga);
 
-                    console.log(bunga2);
-                    $("#credits_account_interest").val(bunga2);
-                    $("#credits_account_interest_amount_view").val(toRp(angsuranbunga));
-                     $("#credits_account_interest_amount").val(angsuranbunga);
+    var name    = 'credits_account_interest';
+    var name3   = 'credits_account_interest_amount';
 
-                    var name    = 'credits_account_interest';
-                    var name3   = 'credits_account_interest_amount';
-
-                    function_elements_add(name, bunga2);
-                    function_elements_add(name3, angsuranbunga);
+    function_elements_add(name, bunga2);
+    function_elements_add(name3, angsuranbunga);
 }
 
 function hitungbungaflatanuitas() {
@@ -335,7 +317,6 @@ function hitungbungaflatanuitas() {
 }
 
 function change_payment_type_id(value) {
-
     if (value == 1) {
         $('#credit_account_payment_amount_view').prop('readonly', false);
     } else if (value == 2) {
@@ -345,7 +326,6 @@ function change_payment_type_id(value) {
     } else if (value == 4) {
         $('#credit_account_payment_amount_view').prop('readonly', true);
     }
-
     function_elements_add('payment_type_id', value);
 }
 
@@ -390,11 +370,9 @@ function function_elements_add(name, value){
                             <div class="row mb-4">
                                 <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('No. Perjanjian Kredit') }}</label>
                                 <div class="col-lg-5 fv-row">
-                                    <input type="text" name="credits_account_serial" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_serial', $acctcreditsaccount['credits_account_serial'] ?? '') }}" autocomplete="off" readonly/>
+                                    <input type="text" name="credits_account_serial" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_serial', $acctcreditsaccount['credits_account_serial'] ?? '') }}" autocomplete="off" placeholder="No. Perjanjian Kredit" readonly/>
                                     <input type="hidden" name="credits_account_id" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_id', $acctcreditsaccount['credits_account_id'] ?? '') }}" autocomplete="off" readonly/>
                                     <input type="hidden" name="credits_id" class="form-control form-control-lg form-control-solid" value="{{ old('credits_id', $acctcreditsaccount['credits_id'] ?? '') }}" autocomplete="off" readonly/>
-                                    <input type="hidden" name="credits_account_interest_amount" id="credits_account_interest_amount" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_interest_amount', $acctcreditsaccount['credits_account_interest_amount'] ?? '') }}" autocomplete="off" readonly/>
-                                    <input type="hidden" name="credits_account_payment_amount" id="credits_account_payment_amount" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_payment_amount', $acctcreditsaccount['credits_account_payment_amount'] ?? '') }}" autocomplete="off" readonly/>
                                     <input type="hidden" name="payment_type_id" id="payment_type_id" class="form-control form-control-lg form-control-solid" value="{{ old('payment_type_id', $acctcreditsaccount['payment_type_id'] ?? '') }}" autocomplete="off" readonly/>
                                 </div>
                                 <div class="col-lg-3 fv-row">
@@ -497,7 +475,7 @@ function function_elements_add(name, value){
                         <div class="row mb-3">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Plafon') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_last_balance" id="credits_account_last_balance" class="form-control form-control-lg form-control-solid" placeholder="Rupiah" value="{{ old('credits_account_last_balance', $acctcreditsaccount->credits_account_last_balance ?? '') }}" autocomplete="off"/>
+                                <input type="text" name="credits_account_last_balance_principal" id="credits_account_last_balance_principal" class="form-control form-control-lg form-control-solid" placeholder="Rupiah" value="{{ old('credits_account_last_balance', $acctcreditsaccount->credits_account_last_balance ?? '') }}" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="row mb-4">
@@ -510,25 +488,29 @@ function function_elements_add(name, value){
                         <div class="row mb-4">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Bunga Baru') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_interest" id="credits_account_interest" class="form-control form-control-lg form-control-solid" placeholder="%" autocomplete="off"/>
+                                <input name="credits_account_interest" id="credits_account_interest" onchange="function_elements_add(this.name, this.value)" class="form-control form-control-lg form-control-solid" placeholder="%" autocomplete="off">
+                                <input type="hidden" name="credits_account_interest_old" id="credits_account_interest_old" onchange="function_elements_add(this.name, this.value)" class="form-control form-control-lg form-control-solid" placeholder="%" autocomplete="off" value="{{ old('credits_account_interest', $acctcreditsaccount->credits_account_interest ?? '') }}">
                             </div>
                         </div>
                         <div class="row mb-4">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Angsuran Pokok') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_principal_amount" id="credits_account_principal_amount" class="form-control form-control-lg form-control-solid" placeholder="Angsuran Pokok" autocomplete="off" readonly/>
+                                <input type="text" name="credits_account_principal_amount_view" id="credits_account_principal_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Angsuran Pokok" autocomplete="off" value="{{ old('credits_account_principal_amount_view', empty($sessiondata['credits_account_principal_amount']) ? '' : number_format(floatval($sessiondata['credits_account_principal_amount']), 2)) }}" readonly/>
+                                <input type="hidden" name="credits_account_principal_amount" id="credits_account_principal_amount" class="form-control form-control-lg form-control-solid" placeholder="Angsuran Pokok" autocomplete="off" value="{{ old('credits_account_principal_amount_view', empty($sessiondata['credits_account_principal_amount']) ? '' : $sessiondata['credits_account_principal_amount']) }}" readonly/>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Angsuran Bunga') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credits_account_interest_amount" id="credits_account_interest_amount" class="form-control form-control-lg form-control-solid" placeholder="Angsuran bunga" autocomplete="off" readonly/>
+                                <input name="credits_account_interest_amount_view" id="credits_account_interest_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Angsuran Bunga" autocomplete="off" value="{{ old('credits_account_interest_amount_view', empty($sessiondata['credits_account_interest_amount']) ? '' : number_format(floatval($sessiondata['credits_account_interest_amount']), 2)) }}" readonly>
+                                <input type="hidden" name="credits_account_interest_amount" id="credits_account_interest_amount" class="form-control form-control-lg form-control-solid" value="{{ old('credits_account_interest_amount', $sessiondata['credits_account_interest_amount'] ?? '') }}" readonly>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Total Angsuran') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="credit_account_payment_amount" id="credit_account_payment_amount" class="form-control form-control-lg form-control-solid" placeholder="Total Angsuran" autocomplete="off" readonly/>
+                                <input type="text" name="credit_account_payment_amount_view" id="credit_account_payment_amount_view" class="form-control form-control-lg form-control-solid" placeholder="Total Angsuran" autocomplete="off" value="{{ old('credit_account_payment_amount_view', empty($sessiondata['credit_account_payment_amount']) ? '' : number_format(floatval($sessiondata['credit_account_payment_amount']), 2)) }}" readonly/>
+                                <input type="hidden" name="credit_account_payment_amount" id="credit_account_payment_amount" class="form-control form-control-lg form-control-solid" placeholder="Total Angsuran" autocomplete="off" value="{{ old('credit_account_payment_amount', empty($sessiondata['credit_account_payment_amount']) ? '' : $sessiondata['credit_account_payment_amount'])}}" readonly/>
                             </div>
                         </div>
                     </div>
@@ -536,7 +518,7 @@ function function_elements_add(name, value){
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <button type="reset" class="btn btn-white btn-active-light-primary me-2">{{ __('Batal') }}</button>
 
-                    <button type="submit" class="btn btn-primary" id="kt_credits_acquittance_add_submit">
+                    <button type="submit" class="btn btn-primary" id="kt_credits_reschedule_add_submit">
                         @include('partials.general._button-indicator', ['label' => __('Simpan')])
                     </button>
                 </div>

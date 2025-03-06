@@ -36,6 +36,15 @@
                             <form action="{{ route('migration.saveExcelBalanceSheet') }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center">
                                 @csrf
                                 <div class="me-3">
+                                    <label class="col-lg-5 col-form-label fw-bold fs-6">{{ __('Cabang') }}</label>
+                                    <select name="branch_id" id="branch_id" aria-label="{{ __('Cabang') }}" data-control="select2" data-placeholder="{{ __('Pilih cabang..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
+                                        <option value="">{{ __('Pilih cabang..') }}</option>
+                                        @foreach($corebranch as $key => $value)
+                                            <option data-kt-flag="{{ $value['branch_id'] }}" value="{{ $value['branch_id'] }}">{{ $value['branch_name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="me-3">
                                     <label class="col-form-label fw-bold fs-6">{{ __('Bulan') }}</label>
                                     <select name="month_period" id="month_period" aria-label="{{ __('Bulan') }}" data-control="select2" data-placeholder="{{ __('Pilih periode..') }}" data-allow-clear="true" class="form-select form-select-solid form-select-lg">
                                         <option value="">{{ __('Pilih periode..') }}</option>

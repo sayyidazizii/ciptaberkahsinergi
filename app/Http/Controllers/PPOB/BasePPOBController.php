@@ -12,6 +12,8 @@ class BasePPOBController extends Controller
     protected $minSaldo = 25000;
     protected $maxTransaction = 500000;
     protected $maxTotalTransaction = 500000;
+    public $globalMaintenance=0;
+    public $maintenanceReg=0;
     /**
      * Minimal saldo yang diperlukan di simpanan
      * @return int
@@ -51,5 +53,14 @@ class BasePPOBController extends Controller
     public function isPPOBmaintenance()
     {
         return $this->PPOBmaintenance;
+    }
+    protected function isSandbox() {
+        return request()->hasHeader('sandbox')||request()->has('sandbox');
+    }
+    protected function isGlobalMaintenace() {
+        return $this->globalMaintenance;
+    }
+    protected function isMaintenaceRegister() {
+        return $this->maintenanceReg;
     }
 }
