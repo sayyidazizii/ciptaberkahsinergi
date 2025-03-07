@@ -18,12 +18,13 @@ use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\PreferenceCompany;
 use App\Models\PreferenceCompanyScr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use App\Http\Controllers\WhatsappOTPController;
+
 
 /* require_once "../vendor/autoload.php";
 require_once "constants.php"; */
@@ -174,7 +175,7 @@ class AuthController extends Controller
                 "log_login_remark"    => $message
             ]);
             DB::commit();
-            $version = SystemSetting::select('system_version')->first();
+            $version = PreferenceCompany::select('system_version')->first();
             $userData = collect($user->only([
                 "user_id",
                 "member_id",

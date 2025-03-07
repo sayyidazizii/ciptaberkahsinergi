@@ -115,6 +115,7 @@ class AcctCreditsPaymentCashController extends Controller
 
             $acctcreditspayment = AcctCreditsPayment::select('credits_payment_date', 'credits_payment_principal', 'credits_payment_interest', 'credits_principal_last_balance', 'credits_interest_last_balance')
             ->where('credits_account_id', $sessiondata['credits_account_id'])
+            ->where('data_state', 0)
             ->get();
 
             $credits_payment_date   = date('Y-m-d');

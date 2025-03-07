@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (empty($sessiondata)){
     $sessiondata['start_date']  = date('d-m-Y');
     $sessiondata['end_date']    = date('d-m-Y');

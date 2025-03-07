@@ -40,7 +40,7 @@ class AcctSavingsAccountDataTable extends DataTable
         ->join('acct_savings', 'acct_savings.savings_id', '=', 'acct_savings_account.savings_id')
         ->where('acct_savings_account.savings_account_status', 0)
         ->where('acct_savings_account.data_state', 0)
-        ->where('acct_savings_account.savings_account_last_balance','!=' ,0)
+        // ->where('acct_savings_account.savings_account_last_balance','!=' ,0)
         ->where('acct_savings_account.branch_id', auth()->user()->branch_id);
     }
     /**
@@ -75,7 +75,7 @@ class AcctSavingsAccountDataTable extends DataTable
             Column::make('acct_savings.savings_name')->title(__('Jenis Simpanan'))->data('savings_name'),
             Column::make('core_member.member_name')->title(__('Nama Anggota'))->data('member_name'),
             Column::make('core_member.member_address')->title(__('Alamat'))->data('member_address'),
-            Column::computed('action') 
+            Column::computed('action')
                     ->title(__('Aksi'))
                     ->exportable(false)
                     ->printable(false)

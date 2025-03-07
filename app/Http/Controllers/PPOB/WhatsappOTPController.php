@@ -14,6 +14,7 @@ use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Http\Controllers\Controller;
+use App\Models\PreferenceCompany;
 
 class WhatsappOTPController extends Controller
 {
@@ -93,7 +94,7 @@ class WhatsappOTPController extends Controller
                 ], 400);
             }
 
-            $version = SystemSetting::select('system_version')->first();
+            $version = PreferenceCompany::select('system_version')->first();
             $token = $user->createToken('token-name')->plainTextToken;
             $user->member_imei = $fields['imei'];
             $user->log_state = 1;
