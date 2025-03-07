@@ -9,7 +9,7 @@
         "sizes": "any"
       },
       {
-        "src": "https://117.53.144.51/ciptaberkahsinergi/img/logo/logo_cbs_v2_250x250.png",
+        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo_cbs_v1_250x250.png",
         "type": "image/png",
         "sizes": "250x250"
       },
@@ -37,7 +37,7 @@
         "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-12x12.png",
         "type": "image/png",
         "sizes": "12x12"
-      }  
+      }
     ],
     "id": ".",
     "start_url": ".",
