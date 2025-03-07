@@ -33,7 +33,7 @@ use App\Http\Controllers\JournalVoucherController;
 use App\Http\Controllers\Logs\AuditLogsController;
 use App\Http\Controllers\AcctBankAccountController;
 use App\Http\Controllers\JournalMemorialController;
-use App\Http\Controllers\Logs\RequestLogController;
+// use App\Http\Controllers\Logs\RequestLogController;
 use App\Http\Controllers\Logs\SystemLogsController;
 use App\Http\Controllers\SystemUserGroupController;
 use App\Http\Controllers\Account\SettingsController;
@@ -152,10 +152,10 @@ Route::prefix('documentation')->group(function () {
     Route::get('getting-started/changelog', [PagesController::class, 'index']);
 });
 
-Route::middleware(['auth','loged'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Logs pages
     Route::prefix('log')->name('log.')->group(function () {
-        Route::get('request', [RequestLogController::class,'index']);
+        // Route::get('request', [RequestLogController::class,'index']);
         Route::resource('system', SystemLogsController::class)->only(['index', 'destroy']);
         Route::resource('audit', AuditLogsController::class)->only(['index', 'destroy']);
     });
