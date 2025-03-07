@@ -21,6 +21,11 @@ use Illuminate\Http\Request;
 
 class SampleDataController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Sample data calculation and formatting
      *
