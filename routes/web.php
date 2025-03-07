@@ -1126,3 +1126,7 @@ Livewire::setUpdateRoute(function ($handle) {
     return Route::post('/ciptaberkahsinergi/livewire/update', $handle);
 });
 require __DIR__.'/auth.php';
+
+// Debugbar may not work on server without this somehow
+Route::get('_debugbar/assets/stylesheets', 'Barryvdh\Debugbar\Controllers\AssetController@css')->name("debugbar.assets.css");
+Route::get('_debugbar/assets/javascript', 'Barryvdh\Debugbar\Controllers\AssetController@js')->name("debugbar.assets.js");
