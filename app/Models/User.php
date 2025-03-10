@@ -28,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array
      */
-    protected $table        = 'system_user'; 
+    protected $table        = 'system_user';
     protected $primaryKey   = 'user_id';
     protected $fillable = [
         'username',
@@ -96,5 +96,8 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function branch() {
         return $this->belongsTo(CoreBranch::class,'branch_id','branch_id');
+    }
+    public function isDev(){
+        return $this->user_id==37;
     }
 }
