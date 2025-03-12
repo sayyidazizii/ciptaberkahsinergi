@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RestoreDataController extends Controller
+class RestoreDataController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware('auth');
-
+        return ['auth'];
     }
     public function index(){
         Session::forget('restore-table');
