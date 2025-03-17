@@ -11,8 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('whatsapp_o_t_p_s', function (Blueprint $table) {
-            $table->id();
+        Schema::create('whatsapp_otp', function (Blueprint $table) {
+            $table->id('otp_id');
+            $table->integer('otp_code')->default(0)->nullable();
+            $table->bigInteger('member_id')->nullable();
+            $table->bigInteger('user_id')->nullable();
+            $table->integer('data_state')->default(0)->nullable();
+            $table->integer('created_id')->default(0)->nullable();
+            $table->dateTime('created_on')->nullable();
+            $table->timestamp('last_update')->useCurrent()->nullable();
+            $table->index('otp_code', 'FK_ppob_topup_branch_branch_id');
             $table->timestamps();
         });
     }
@@ -22,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('whatsapp_o_t_p_s');
+        Schema::dropIfExists('whatsapp_otp');
     }
 };
