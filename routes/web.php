@@ -1116,7 +1116,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('anouncement', AndroidController::class);
     });
 
-
+    // Debugbar may not work on server without this somehow
+    Route::get('_debugbar/assets/stylesheets', 'Barryvdh\Debugbar\Controllers\AssetController@css')->name("debugbar.assets.css");
+    Route::get('_debugbar/assets/javascript', 'Barryvdh\Debugbar\Controllers\AssetController@js')->name("debugbar.assets.js");
 });
 
 // Route::resource('users', UsersController::class);
@@ -1127,6 +1129,3 @@ Livewire::setUpdateRoute(function ($handle) {
 });
 require __DIR__.'/auth.php';
 
-// Debugbar may not work on server without this somehow
-Route::get('_debugbar/assets/stylesheets', 'Barryvdh\Debugbar\Controllers\AssetController@css')->name("debugbar.assets.css");
-Route::get('_debugbar/assets/javascript', 'Barryvdh\Debugbar\Controllers\AssetController@js')->name("debugbar.assets.js");
