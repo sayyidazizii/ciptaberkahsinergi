@@ -18,9 +18,17 @@ use App\Helpers\Configuration;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class SampleDataController extends Controller
+class SampleDataController extends Controller implements HasMiddleware
 {
+ /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return ['auth'];
+    }
     /**
      * Sample data calculation and formatting
      *

@@ -17,7 +17,6 @@ class ShowDebugbarForAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check() && auth()->user()->isDev()) {
-            // Log::info(auth()->user());
             \Debugbar::enable();
         }else{
             \Debugbar::disable();
