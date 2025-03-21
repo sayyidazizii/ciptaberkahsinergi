@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('member_no', 30)->nullable();
             $table->text('password')->nullable();
             $table->text('password_transaksi')->nullable();
-            $table->text('member_name')->default('');
+            $table->text('member_name')->nullable();
             $table->string('member_phone', 50)->default('081');
             $table->string('member_imei', 250)->default('');
             $table->tinyInteger('member_user_status')->default(0);
