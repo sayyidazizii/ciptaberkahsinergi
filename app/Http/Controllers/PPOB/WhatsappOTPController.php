@@ -73,7 +73,7 @@ class WhatsappOTPController extends Controller
             ->where('created_on', '>=', Carbon::now()->subMinutes(5)->format('Y-m-d H:i:s'))
             ->first();
         try {
-            $user = User::where('member_no', $fields['member_no'])
+            $user = MobileUser::where('member_no', $fields['member_no'])
                 ->first();
             DB::beginTransaction();
             if (empty($check_otp)) {

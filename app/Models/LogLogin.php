@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class LogLogin extends Model
 {
     use HasFactory;
+    protected $table = 'log_login';
 }

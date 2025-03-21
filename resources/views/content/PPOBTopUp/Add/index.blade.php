@@ -78,7 +78,7 @@ submitButton.addEventListener('click', function (e) {
                 <h3 class="fw-bolder m-0">{{ __('Form Tambah TopUp PPOB') }}</h3>
             </div>
 
-            <a href="{{ route('ppob-topup.index') }}" class="btn btn-light align-self-center">
+            <a href="{{ route('ppob-topupf.index') }}" class="btn btn-light align-self-center">
                 {!! theme()->getSvgIcon("icons/duotune/arrows/arr079.svg", "svg-icon-4 me-1") !!}
                 {{ __('Kembali') }}</a>
         </div>

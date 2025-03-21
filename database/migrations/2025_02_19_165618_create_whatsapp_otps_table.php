@@ -12,7 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('whatsapp_otps', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('otp_id')->primary();
+            $table->uuid('uuid')->nullable();
+            $table->integer('otp_code')->default(0)->nullable();
+            $table->bigInteger('member_id')->nullable();
+            $table->bigInteger('user_id')->nullable();
+            $table->integer('created_id')->default(0)->nullable();
+            $table->timestamp('expired_at')->nullable();
+            $table->index('otp_code');
             $table->timestamps();
         });
     }

@@ -7,10 +7,11 @@ use App\Models\LogTemp;
 use App\Models\LogLogin;
 use App\Models\CoreMember;
 use Illuminate\Http\Request;
-use App\Models\SystemSetting;
 use Illuminate\Http\Response;
+use App\Settings\SystemSetting;
 use App\Models\LogResetPassword;
 use App\Models\LogCreatePassword;
+use App\Models\PreferenceCompany;
 use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -18,23 +19,14 @@ use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\PreferenceCompany;
+use App\Models\MobileUser;
 use App\Models\PreferenceCompanyScr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
-
-/* require_once "../vendor/autoload.php";
-require_once "constants.php"; */
-
-// require_once __DIR__.'/../../../vendor/autoload.php';
-/* require '/home/ciptaprocpanel/public_html/-api/vendor/phpmailer/phpmailer/src/Exception.php';
-require '/home/ciptaprocpanel/public_html/sudama-api/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require '/home/ciptaprocpanel/public_html/sudama-api/vendor/phpmailer/phpmailer/src/SMTP.php'; */
-
-class AuthController extends Controller
+class AuthController extends PPOBController
 {
     public function register(Request $request)
     {
@@ -56,7 +48,7 @@ class AuthController extends Controller
             return response()->json($response, $status);
         }
         $ip = request()->ip();
-        $user = User::where('member_no', $fields['member_no'])
+        $user = MobileUser::where('member_no', $fields['member_no'])
             ->first();
         Log::info('Register');
         activity()->log("Register : {$fields['member_no']} | {$ip}");
@@ -71,7 +63,7 @@ class AuthController extends Controller
                     $user->password              = Hash::make($fields['password']);
                     $user->password_transaksi    = Hash::make($fields['password_transaksi']);
                     if ($user->member_no != '1010101010' || !$user->isDev()) {
-                        $mkopkar = $user->memberKopkar()->first();
+                        $mkopkar = $user->member()->first();
                         Log::info($mkopkar);
                         if (($mkopkar->member_phone ?? "") != ($request->member_phone ?? '')) {
                             $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
@@ -130,7 +122,7 @@ class AuthController extends Controller
                 ], 404);
             }
             $expired_on = date("Y-m-d H:i:s", strtotime('+1 hours'));
-            $user = User::create([
+            $user = MobileUser::create([
                 'member_no'             => $fields['member_no'],
                 'member_id'             => $coremember['member_id'],
                 'password'              => Hash::make($fields['password']),
@@ -142,7 +134,7 @@ class AuthController extends Controller
                 'expired_on'            => $expired_on,
             ]);
             if ($user->member_no != '1010101010' || !$user->isDev()) {
-                $mkopkar = $user->memberKopkar()->first();
+                $mkopkar = $user->member()->first();
                 Log::info($mkopkar->member_phone);
                 if ($mkopkar->member_phone != $request->member_phone) {
                     $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
@@ -160,10 +152,6 @@ class AuthController extends Controller
             $user_state_madani = CoreMember::findOrFail($coremember['member_id']);
             $user_state_madani->ppob_status = 1;
             $user_state_madani->save();
-
-            $last_logtemp = LogTemp::where('member_no', $fields['member_no'])
-                ->where('member_id', $coremember['member_id'])
-                ->first();
             (new WhatsappOTPController)->send($fields['member_no']);
             $token = $user->createToken('token-name')->plainTextToken;
             $user->member_token = $token;
@@ -175,7 +163,7 @@ class AuthController extends Controller
                 "log_login_remark"    => $message
             ]);
             DB::commit();
-            $version = PreferenceCompany::select('system_version')->first();
+            $version = SystemSetting::get('system_version');
             $userData = collect($user->only([
                 "user_id",
                 "member_id",
@@ -191,7 +179,7 @@ class AuthController extends Controller
                 "member_email",
                 "member_email_verivied_at",
                 "member_phone_verivied_at"
-            ]))->put('system_version', $version->system_version)
+            ]))->put('system_version', $version)
                 ->map(function ($value, $key) {
                     if ($key == "member_imei") {
                         $value = base64_encode($value);
@@ -245,7 +233,7 @@ class AuthController extends Controller
         ]);
         $ip = $request->ip();
 
-        $user = User::where('member_no', $request['member_no'])
+        $user = MobileUser::where('member_no', $request['member_no'])
             ->first();
         try {
             DB::beginTransaction();
@@ -415,9 +403,9 @@ class AuthController extends Controller
                 ], 400);
             } else {
                 // * check app (api) version
-                $version = SystemSetting::select('system_version')->first();
+                $version = SystemSetting::get('version');
                 // $user->system_version = $version['system_version'];
-                if ($request->system_version != $version['system_version'] &&  (!$this->isSandbox() && !env('SKIP_AUTH_VERIVICATION_ON_SANDBOX', true))) {
+                if ($request->system_version != $version &&  (!$this->isSandbox() && !env('SKIP_AUTH_VERIVICATION_ON_SANDBOX', true))) {
                     $message = "Harap Update Apllikasi";
                     $user->tokens()->delete();
                     LogLogin::create([
@@ -442,8 +430,8 @@ class AuthController extends Controller
                 //     $t = $user->createToken('token-name')->plainTextToken;
                 // }
                 // * update system version
-                if ($user->system_version != $version['system_version']) {
-                    $user->system_version = $version['system_version'];
+                if ($user->system_version != $version) {
+                    $user->system_version = $version;
                 }
                 $user->tokens()->delete();
                 $token = $user->createToken('token-name')->plainTextToken;
@@ -465,7 +453,7 @@ class AuthController extends Controller
                         $user['sandbox'] = true;
                     }
                     $user['token'] = $token;
-                    $user['system_version'] = $version->system_version;
+                    $user['system_version'] = $version;
                     if ($this->isSandbox()) {
                         Log::info($user);
                     }
@@ -486,7 +474,7 @@ class AuthController extends Controller
                     "member_email",
                     "member_email_verivied_at",
                     "member_phone_verivied_at"
-                ]))->put('system_version', $version->system_version)
+                ]))->put('system_version', $version)
                     ->map(function ($value, $key) use ($user) {
                         if ($key == "member_imei") {
                             $value = base64_encode($value);
@@ -508,7 +496,7 @@ class AuthController extends Controller
 
                 if ($this->isSandbox()) {
                     $sandboxData = [
-                        'system_version' => $version->system_version
+                        'system_version' => $version
                     ];
                     $response = [
                         'message' => $message,
@@ -539,23 +527,6 @@ class AuthController extends Controller
         }
     }
 
-    public function login_old(Request $request)
-    {
-        $user = User::where('username', $request->username)->first();
-
-        if (!$user || md5($request->password) != $user->password) {
-            return response()->json([
-                'message' => 'Password Tidak Sesuai'
-            ], 401);
-        }
-        $token = $user->createToken('token-name')->plainTextToken;
-        return response()->json([
-            'message'   => 'success',
-            'user'      => $user,
-            'token'     => $token,
-        ], 200);
-    }
-
     public function logout(Request $request)
     {
         if (!auth('sanctum')->check()) {
@@ -564,7 +535,7 @@ class AuthController extends Controller
             ];
         }
         $user = auth('sanctum')->user();
-        $user_state = User::findOrFail($user['user_id']);
+        $user_state = MobileUser::findOrFail($user['user_id']);
         $user_state->log_state = 0;
         $user_state->save();
 
@@ -587,7 +558,7 @@ class AuthController extends Controller
 
     public function logout_expired($member_id)
     {
-        $user_state = User::where('member_id', $member_id)->first();
+        $user_state = MobileUser::where('member_id', $member_id)->first();
         $user_state->log_state = 0;
         $user_state->save();
 
@@ -608,7 +579,7 @@ class AuthController extends Controller
 
     public function update_member_phone(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = MobileUser::findOrFail($id);
         $user->member_phone = $request->member_phone;
         if ($user->save()) {
             $response = [
@@ -622,7 +593,7 @@ class AuthController extends Controller
 
     public function update_password(Request $request, $id = null)
     {
-        $user = User::where('member_id', '=', $id ?? auth()->user()->member_id)->firstOrFail();
+        $user = MobileUser::where('member_id', '=', $id ?? auth()->user()->member_id)->firstOrFail();
         if (!$user || !Hash::check($request->old_password, $user->password)) {
             return response([
                 'message' => 'Password Tidak Sesuai'
@@ -644,7 +615,7 @@ class AuthController extends Controller
 
     public function update_password_transaction(Request $request, $id = null)
     {
-        $user = User::where('member_id', '=', $id ?? auth()->user()->member_id)->firstOrFail();
+        $user = MobileUser::where('member_id', '=', $id ?? auth()->user()->member_id)->firstOrFail();
         if (!$user || !Hash::check($request->old_password, $user->password_transaksi)) {
             return response([
                 'message' => 'Password Transaksi Tidak Sesuai'
@@ -700,11 +671,11 @@ class AuthController extends Controller
 
     public function reset_password($member_no, $member_id, $user_id)
     {
-        $user = User::where('member_no', '=', $member_no)
+        $user = MobileUser::where('member_no', '=', $member_no)
             ->where('member_id', '=', $member_id)
             ->firstOrFail();
 
-        $user_old = User::where('member_no', '=', $member_no)
+        $user_old = MobileUser::where('member_no', '=', $member_no)
             ->where('member_id', '=', $member_id)
             ->firstOrFail();
 
@@ -907,7 +878,7 @@ class AuthController extends Controller
                 // echo 'Message could not be sent. Mailer Error: '. $mail->ErrorInfo;
             }
 
-            $user_state_madani = User::where('member_no', '=', $member_no)
+            $user_state_madani = MobileUser::where('member_no', '=', $member_no)
                 ->where('member_id', '=', $member_id)
                 ->firstOrFail();
             $user_state_madani->otp_state = 0;
@@ -947,19 +918,19 @@ class AuthController extends Controller
     public function check_member($member_no)
     {
         if (Schema::hasColumn('system_user', 'system_version') && env('VERIFY_VERSION_FROM_DB', false)) {
-            $user = User::select(['member_no', 'system_version'])->where('member_no', '=', $member_no)->firstOrFail();
+            $user = MobileUser::select(['member_no', 'system_version'])->where('member_no', '=', $member_no)->firstOrFail();
         } else {
-            $user = User::where('member_no', '=', $member_no)->firstOrFail();
+            $user = MobileUser::where('member_no', '=', $member_no)->firstOrFail();
         }
         $response = [
             'data'  => $user
         ];
         if (App::environment('production')) {
             $version = Cache::remember('system_version', (60 * 60 * 60), function () {
-                return SystemSetting::select('system_version')->first()->system_version;
+                return SystemSetting::select('system_version');
             });
         } else {
-            $version = SystemSetting::select('system_version')->first()->system_version;
+            $version = SystemSetting::select('system_version');
         }
         if ($version != $user->system_version && env('VERIFY_VERSION_FROM_DB', false)) {
             $user->tokens()->delete();
@@ -974,8 +945,8 @@ class AuthController extends Controller
 
     public function open_block($member_id, $user_id)
     {
-        $user_old   = User::where('member_id', '=', $member_id)->firstOrFail();
-        $user       = User::where('member_id', '=', $member_id)->firstOrFail();
+        $user_old   = MobileUser::where('member_id', '=', $member_id)->firstOrFail();
+        $user       = MobileUser::where('member_id', '=', $member_id)->firstOrFail();
         $user->log_state = 0;
         $user->block_state = 0;
         if ($member_id == 53076) {
@@ -1011,8 +982,8 @@ class AuthController extends Controller
 
     public function block($member_id, $user_id)
     {
-        $user_old = User::where('member_id', '=', $member_id)->firstOrFail();
-        $user = User::where('member_id', '=', $member_id)->firstOrFail();
+        $user_old = MobileUser::where('member_id', '=', $member_id)->firstOrFail();
+        $user = MobileUser::where('member_id', '=', $member_id)->firstOrFail();
         $user->log_state = 1;
         $user->block_state = 1;
         if ($member_id == 53076) {
@@ -1048,7 +1019,7 @@ class AuthController extends Controller
             'member_no' => 'required|string'
         ]);
 
-        $user = User::select('member_no')->where('member_no', '=', $fields['member_no'])->firstOrFail();
+        $user = MobileUser::select('member_no')->where('member_no', '=', $fields['member_no'])->firstOrFail();
         $response = [
             'data'  => $user
         ];
@@ -1161,7 +1132,7 @@ class AuthController extends Controller
 
     public function otp_success($member_no)
     {
-        $user_state_madani = User::where('member_no', '=', $member_no)->firstOrFail();
+        $user_state_madani = MobileUser::where('member_no', '=', $member_no)->firstOrFail();
         $user_state_madani->otp_state = 1;
         $user_state_madani->save();
 

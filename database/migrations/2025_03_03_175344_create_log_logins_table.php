@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('log_logins', function (Blueprint $table) {
-            $table->primary('log_login_id');
+            $table->id();
             $table->integer('user_id')->nullable();
             $table->bigInteger('member_id')->nullable();
             $table->string('member_no', 50)->nullable();
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('imei', 50)->nullable();
             $table->integer('log_change_password_status')->nullable();
             $table->text('log_login_remark')->nullable();
+            $table->string('type', 50)->nullable();
             $table->timestamp('created_on')->nullable();
             $table->timestamp('last_update')->nullable();
             $table->timestamps();
