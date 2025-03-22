@@ -4,37 +4,37 @@
     "orientation": "any",
     "icons": [
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1.svg",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1.svg",
         "type": "image/svg",
         "sizes": "any"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo_cbs_v1_250x250.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo_cbs_v1_250x250.png",
         "type": "image/png",
         "sizes": "250x250"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
         "type": "image/png",
         "sizes": "96x96"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-64x64.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-64x64.png",
         "type": "image/png",
         "sizes": "64x64"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-32x32.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-32x32.png",
         "type": "image/png",
         "sizes": "32x32"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-16x16.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-16x16.png",
         "type": "image/png",
         "sizes": "16x16"
       },
       {
-        "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-12x12.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-12x12.png",
         "type": "image/png",
         "sizes": "12x12"
       }
@@ -52,7 +52,7 @@
         "url": "/savings-account/add",
         "icons" :[
           {
-            "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
+            "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
             "type": "image/png",
             "sizes": "96x96"
           }
@@ -63,7 +63,7 @@
         "url": "/deposito-account/add",
         "icons" :[
           {
-            "src": "http://117.53.144.51/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
+            "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
             "type": "image/png",
             "sizes": "96x96"
           }

@@ -8,13 +8,15 @@ use App\Models\User;
 use Cst\WALaravel\WA;
 use App\Models\LogLogin;
 use App\Models\CoreMember;
-use App\Models\WhatsappOTP;
+use App\Models\WhatsappOtp as WhatsappOTP;
 use Illuminate\Http\Request;
 use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Http\Controllers\Controller;
 use App\Models\PreferenceCompany;
+use Illuminate\Support\Facades\Log;
+use App\Models\MobileUser;
 
 class WhatsappOTPController extends Controller
 {
@@ -24,7 +26,7 @@ class WhatsappOTPController extends Controller
     }
     public function index() {}
 
-    public static function send($member_no)
+    public static function send($member_no,$phone=null)
     {
         if ($member_no != '1010101010' && (!self::isSB() || !env("FORCE_WA_TO_DEV", false))) {
             $member_id = CoreMember::select('member_id')
@@ -47,9 +49,9 @@ class WhatsappOTPController extends Controller
                 'otp_code'          => $otp_code,
                 'created_on'        => date('Y-m-d H:i:s'),
             ]);
-            $response = WA::to($member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi Sudama, Koperasi Konsumen Sumber Dana Makmur Jatim");
-            $response = $response->getBody()->getContents();
-
+            $response = WA::to($phone??$member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi Sudama, Koperasi Konsumen Sumber Dana Makmur Jatim");
+            // $response = $response->getBody()->getContents();
+            Log::info($phone??$member_phone);
             return response()->json([
                 'message'   => 'Kode OTP Sudah Dikirim ke Whatsapp',
             ], 200);
@@ -70,7 +72,7 @@ class WhatsappOTPController extends Controller
         ]);
         $check_otp = WhatsappOTP::select()
             ->where('otp_code', $fields['otp_code'])
-            ->where('created_on', '>=', Carbon::now()->subMinutes(5)->format('Y-m-d H:i:s'))
+            ->where('created_at', '>=', Carbon::now()->subMinutes(5)->format('Y-m-d H:i:s'))
             ->first();
         try {
             $user = MobileUser::where('member_no', $fields['member_no'])
@@ -193,7 +195,7 @@ class WhatsappOTPController extends Controller
 
         try {
             $response = WA::to($member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi Sudama, Koperasi Konsumen Sumber Dana Makmur Jatim");
-            $response = $response->getBody()->getContents();
+            // $response = $response->getBody()->getContents();
 
             return response()->json([
                 'message'   => 'Kode OTP Sudah Dikirim ke Whatsapp',

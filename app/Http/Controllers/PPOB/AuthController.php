@@ -65,7 +65,7 @@ class AuthController extends PPOBController
                     if ($user->member_no != '1010101010' || !$user->isDev()) {
                         $mkopkar = $user->member()->first();
                         Log::info($mkopkar);
-                        if (($mkopkar->member_phone ?? "") != ($request->member_phone ?? '')) {
+                        if (($mkopkar->member_phone ?? "") != ($request->member_phone ?? '')&&0) {
                             $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
                             LogLogin::create([
                                 "member_id" => $user->member_id,
@@ -90,7 +90,7 @@ class AuthController extends PPOBController
                         'data'  => $user,
                         'token' => $token
                     ];
-                    (new WhatsappOTPController)->send($fields['member_no']);
+                    (new WhatsappOTPController)->send($fields['member_no'],$request->member_phone);
                     activity()->causedBy($user)->log("Register : {$fields['member_no']} | update imei&password | {$ip}");
                 } else {
                     activity()->causedBy($user)->log("Register : {$fields['member_no']} | user exist | {$ip}");
@@ -136,7 +136,7 @@ class AuthController extends PPOBController
             if ($user->member_no != '1010101010' || !$user->isDev()) {
                 $mkopkar = $user->member()->first();
                 Log::info($mkopkar->member_phone);
-                if ($mkopkar->member_phone != $request->member_phone) {
+                if (($mkopkar->member_phone != $request->member_phone)&&0) {
                     $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
                     LogLogin::create([
                         "member_id" => $user->member_id,
@@ -152,7 +152,7 @@ class AuthController extends PPOBController
             $user_state_madani = CoreMember::findOrFail($coremember['member_id']);
             $user_state_madani->ppob_status = 1;
             $user_state_madani->save();
-            (new WhatsappOTPController)->send($fields['member_no']);
+            (new WhatsappOTPController)->send($fields['member_no'],$request->member_phone);
             $token = $user->createToken('token-name')->plainTextToken;
             $user->member_token = $token;
             $user->save();
@@ -163,7 +163,7 @@ class AuthController extends PPOBController
                 "log_login_remark"    => $message
             ]);
             DB::commit();
-            $version = SystemSetting::get('system_version');
+            $version = SystemSetting::get('version');
             $userData = collect($user->only([
                 "user_id",
                 "member_id",

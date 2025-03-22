@@ -106,6 +106,7 @@ Route::group(['middleware'=> ['auth:sanctum']], function(){
     Route::post('login', [ApiController::class, 'login']);
 
 Route::prefix("ppob")->group(function(){
+    Route::get('/',fn()=>response()->json('ok'));
     Route::group(['middleware' => ['auth:sanctum', RejectBlockedUser::class], 'throttle:70,10'], function () {
         Route::get('/ppob-transaction', [PPOBTransactionController::class, 'index']);
         Route::post('/ppob-transaction', [PPOBTransactionController::class, 'store']);
