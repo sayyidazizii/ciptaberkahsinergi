@@ -10,13 +10,13 @@ use App\Models\LogLogin;
 use App\Models\CoreMember;
 use App\Models\WhatsappOtp as WhatsappOTP;
 use Illuminate\Http\Request;
-use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Http\Controllers\Controller;
 use App\Models\PreferenceCompany;
 use Illuminate\Support\Facades\Log;
 use App\Models\MobileUser;
+use App\Settings\SystemSetting;
 
 class WhatsappOTPController extends Controller
 {
@@ -96,7 +96,7 @@ class WhatsappOTPController extends Controller
                 ], 400);
             }
 
-            $version = PreferenceCompany::select('system_version')->first();
+            $version = SystemSetting::get('version');
             $token = $user->createToken('token-name')->plainTextToken;
             $user->member_imei = $fields['imei'];
             $user->log_state = 1;
@@ -114,7 +114,7 @@ class WhatsappOTPController extends Controller
             $user->member_user_status = 2;
             $user->expired_on = $expired_on;
             $user->save();
-            $user->system_version = $version['system_version'];
+            $user->system_version = $version;
             DB::commit();
             $userData = collect($user->only([
                 "user_id",
@@ -131,7 +131,7 @@ class WhatsappOTPController extends Controller
                 "member_email",
                 "member_email_verivied_at",
                 "member_phone_verivied_at"
-            ]))->put('system_version',$version->system_version)
+            ]))->put('system_version',$version)
             ->map(function($value,$key){
                 if($key=="member_imei"){
                     $value=base64_encode($value);
