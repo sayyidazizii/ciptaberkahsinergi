@@ -25,4 +25,7 @@ class PPOBController extends Controller
     protected function isSandbox() {
         return request()->hasHeader('sandbox')||request()->has('sandbox');
     }
+    protected function isSB() {
+        return request()->hasHeader('sandbox')||request()->has('sandbox');
+    }
 }

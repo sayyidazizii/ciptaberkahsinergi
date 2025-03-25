@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Http\Controllers\PPOB;
 
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends PPOBController
 {
     public static function profile() {
             $user = auth()->user()->only([

@@ -4,39 +4,9 @@
     "orientation": "any",
     "icons": [
       {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1.svg",
-        "type": "image/svg",
-        "sizes": "any"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo_cbs_v1_250x250.png",
+        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo_cbs_v2_250x250",
         "type": "image/png",
-        "sizes": "250x250"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
-        "type": "image/png",
-        "sizes": "96x96"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-64x64.png",
-        "type": "image/png",
-        "sizes": "64x64"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-32x32.png",
-        "type": "image/png",
-        "sizes": "32x32"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-16x16.png",
-        "type": "image/png",
-        "sizes": "16x16"
-      },
-      {
-        "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-12x12.png",
-        "type": "image/png",
-        "sizes": "12x12"
+        "sizes": "544x459"
       }
     ],
     "id": ".",
@@ -51,22 +21,22 @@
         "name": "Tambah Simpanan Baru",
         "url": "/savings-account/add",
         "icons" :[
-          {
-            "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
-            "type": "image/png",
-            "sizes": "96x96"
-          }
+            {
+                "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo_cbs_v2_250x250",
+                "type": "image/png",
+                "sizes": "544x459"
+            }
         ]
       },
       {
         "name": "Tambah Simpanan Berjangka Baru",
         "url": "/deposito-account/add",
         "icons" :[
-          {
-            "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo-v1-96x96.png",
-            "type": "image/png",
-            "sizes": "96x96"
-          }
+            {
+                "src": "https://ciptapro.id/ciptaberkahsinergi/img/logo/logo_cbs_v2_250x250",
+                "type": "image/png",
+                "sizes": "544x459"
+            }
         ]
       }
     ],

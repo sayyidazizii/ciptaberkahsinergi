@@ -55,6 +55,7 @@ class MobileUser extends Authenticatable
         'last_update',
     ];
 
+    private $adminId = [1, 2];
     /**
      * The attributes that should be cast to native types.
      *
@@ -64,16 +65,16 @@ class MobileUser extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     public function isAdministrator() {
-        return $this->user_id===20;
+        return ($this->user_id===2||$this->user_id===1);
     }
     public function isDev() {
-        return $this->user_id===20;
+        return in_array($this->user_id, $this->adminId);
     }
     public function isDeveloper() {
-        return $this->user_id===20;
+        return ($this->user_id===2||$this->user_id===1);
     }
     public function isAdmin() {
-        return $this->user_id===20;
+        return ($this->user_id===2||$this->user_id===1);
     }
     public function isBlocked() {
         return $this->block_state!=0;

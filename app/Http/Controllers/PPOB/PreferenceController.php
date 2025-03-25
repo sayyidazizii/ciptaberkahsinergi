@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PreferenceCompany;
 use Illuminate\Support\Facades\Log;
 
-class PreferenceController extends Controller
+class PreferenceController extends PPOBController
 {
     public function getPreferenceCompany() {
        $preferencecompany = PreferenceCompany::first();
