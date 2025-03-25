@@ -82,4 +82,14 @@ class MobileUser extends Authenticatable
     public function member() {
        return $this->belongsTo(CoreMember::class,'member_id','member_id');
     }
+
+    /**
+     * Specifies the user's FCM token
+     *
+     * @return string|array
+     */
+    public function routeNotificationForFcm()
+    {
+        return $this->fcm_token;
+    }
 }

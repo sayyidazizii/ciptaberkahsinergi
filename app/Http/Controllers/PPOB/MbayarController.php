@@ -6,7 +6,7 @@ use App\Models\AcctSavingsTransferMutation;
 use App\Models\AcctSavingsTransferMutationFrom;
 use Illuminate\Http\Request;
 
-class MbayarController extends Controller
+class MbayarController extends PPOBController
 {
     public function processAddAcctSavingsTransferMutation(Request $request){
         $auth = auth()->user();
@@ -230,5 +230,14 @@ class MbayarController extends Controller
         }
 
         return response()->json($response);
+    }
+    public function dummy() {
+        return response()->json([
+            'title' => "Success",
+            'status' => "success",
+            'message' => "This is a dummy response",
+            'data' => [],
+            'url' => request()->fullUrl(),
+        ]);
     }
 }

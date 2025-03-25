@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\PPOB;
 
 use Illuminate\Http\Request;
@@ -21,5 +22,14 @@ class UserController extends PPOBController
     public function userManagement() {
         abort_unless(auth()->user()->isDeveloper(), 403);
         return view('userManagement');
+    }
+    public function dummy() {
+        return response()->json([
+            'title' => "Success",
+            'status' => "success",
+            'message' => "This is a dummy response",
+            'data' => [],
+            'url' => request()->fullUrl(),
+        ]);
     }
 }

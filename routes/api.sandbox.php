@@ -55,27 +55,28 @@ Route::prefix("mobile")->group(function(){
         Route::get('/member/{member_no}', [AuthController::class, 'check_member']);
         Route::get('/member/otp/{member_no}', [AuthController::class, 'otp_success']);
 
+        Route::prefix("ppob")->group(function(){
+            Route::post('pulsa/prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
+            Route::post('pulsa/prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
+            Route::post('pulsa/prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
 
-        Route::post('/ppob/pulsa/prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
-        Route::post('/ppob/pulsa/prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
-        Route::post('/ppob/pulsa/prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
+            Route::post('pln/postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
+            Route::post('pln/postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
+            Route::post('pln/postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
+            Route::post('pln/prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
+            Route::post('pln/prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
+            Route::post('pln/prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
 
-        Route::post('/ppob/pln/postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
-        Route::post('ppob/pln/postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
-        Route::post('/ppob/pln/postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
-        Route::post('/ppob/pln/prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
-        Route::post('ppob/pln/prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
-        Route::post('/ppob/pln/prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
+            Route::get('emoney/category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
+            Route::post('emoney/product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
+            Route::post('emoney/payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
+            Route::post('emoney/info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
 
-        Route::get('/ppob/emoney/category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
-        Route::post('/ppob/emoney/product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
-        Route::post('/ppob/emoney/payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
-        Route::post('ppob/emoney/info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
-
-        Route::post('/ppob/bpjs', [BPJSTransactionController::class, 'getPPOBBPJS']);
-        Route::post('/ppob/bpjs/payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
-        Route::post('/ppob/bpjs/info', [BPJSTransactionController::class, 'info']);
-
+            Route::post('bpjs', [BPJSTransactionController::class, 'getPPOBBPJS']);
+            Route::post('bpjs/payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
+            Route::post('bpjs/info', [BPJSTransactionController::class, 'info']);
+        });
+        Route::get('core-member-principal-history',[UserController::class,'dummy']);
         Route::get('/check-token', [AuthController::class, 'check_token']);
 
         // CORE PROGRAM

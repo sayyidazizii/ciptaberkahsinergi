@@ -17,6 +17,7 @@ use App\Http\Controllers\PPOB\EMoneyTransactionController;
 use App\Http\Controllers\PPOB\AcctSavingsAccountController;
 use App\Http\Controllers\PPOB\ListrikTransactionController;
 use App\Http\Controllers\PPOB\AcctDepositoAccountController;
+use App\Http\Controllers\PPOB\MbayarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +35,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Sample API route
-Route::group(['middleware'=> ['auth:sanctum']], function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/profits', [\App\Http\Controllers\SampleDataController::class, 'profits'])->name('profits');
     Route::post('test', [ApiController::class, 'tst']);
 
@@ -87,26 +88,24 @@ Route::group(['middleware'=> ['auth:sanctum']], function(){
 
     //save mutasi simpanan biasa
     Route::prefix('saving')->controller(ApiController::class)->group(function () {
-        Route::get('account','getDataSavings');
-        Route::post('deposit/{savings_account_id?}','deposit');
-        Route::post('withdraw/{savings_account_id?}','withdraw');
+        Route::get('account', 'getDataSavings');
+        Route::post('deposit/{savings_account_id?}', 'deposit');
+        Route::post('withdraw/{savings_account_id?}', 'withdraw');
     });
 
     Route::post('logout', [ApiController::class, 'logout']);
     Route::post('getLoginState', [ApiController::class, 'getLoginState']);
-
-
 });
 // route public
 
-    //ppob
-    Route::post('/ppob/topup', [ApiController::class, 'processTopUp']);
+//ppob
+Route::post('/ppob/topup', [ApiController::class, 'processTopUp']);
 
-    //login
-    Route::post('login', [ApiController::class, 'login']);
+//login
+Route::post('login', [ApiController::class, 'login']);
 
-Route::prefix("mobile")->group(function(){
-    Route::get('/',fn()=>response()->json('ok'));
+Route::prefix("mobile")->group(function () {
+    Route::get('/', fn() => response()->json('ok'));
     Route::group(['middleware' => ['auth:sanctum', RejectBlockedUser::class], 'throttle:70,10'], function () {
         Route::get('/ppob-transaction', [PPOBTransactionController::class, 'index']);
         Route::post('/ppob-transaction', [PPOBTransactionController::class, 'store']);
@@ -129,38 +128,64 @@ Route::prefix("mobile")->group(function(){
         Route::get('/member/otp/{member_no}', [AuthController::class, 'otp_success']);
 
 
-        Route::post('/ppob/pulsa/prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
-        Route::post('/ppob/pulsa/prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
-        Route::post('/ppob/pulsa/prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
-
-        Route::post('/ppob/pln/postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
-        Route::post('ppob/pln/postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
-        Route::post('/ppob/pln/postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
-        Route::post('/ppob/pln/prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
-        Route::post('ppob/pln/prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
-        Route::post('/ppob/pln/prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
-
-        Route::get('/ppob/emoney/category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
-        Route::post('/ppob/emoney/product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
-        Route::post('/ppob/emoney/payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
-        Route::post('ppob/emoney/info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
-
-        Route::post('/ppob/bpjs', [BPJSTransactionController::class, 'getPPOBBPJS']);
-        Route::post('/ppob/bpjs/payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
-        Route::post('/ppob/bpjs/info', [BPJSTransactionController::class, 'info']);
+        Route::prefix("ppob")->group(function () {
+            Route::prefix("pulsa")->group(function () {
+                Route::post('prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
+                Route::post('prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
+                Route::post('prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
+            });
+            Route::prefix("pln")->group(function () {
+                Route::post('postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
+                Route::post('postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
+                Route::post('postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
+                Route::post('prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
+                Route::post('prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
+                Route::post('prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
+            });
+            Route::prefix("emoney")->group(function () {
+                Route::get('category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
+                Route::post('product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
+                Route::post('payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
+                Route::post('info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
+            });
+            Route::prefix("bpjs")->group(function () {
+                Route::post('/', [BPJSTransactionController::class, 'getPPOBBPJS']);
+                Route::post('payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
+                Route::post('info', [BPJSTransactionController::class, 'info']);
+            });
+        });
+        Route::get('core-member-principal-history', [UserController::class, 'dummy']);
+        Route::get('core-member-mandatory-history', [UserController::class, 'dummy']);
+        Route::get('core-member-special-history', [UserController::class, 'dummy']);
+        // * tabungan
+        Route::get('acct-savings-account-history', [UserController::class, 'dummy']);
 
         Route::get('/check-token', [AuthController::class, 'check_token']);
 
         // CORE PROGRAM
         // Acct Savings Account
-        // * beranda
+        // * beranda saldo tabungan default
         Route::post('savings-account', [AcctSavingsAccountController::class, 'getAcctSavingsAccountBalance']);
         // * keanggotaan
         Route::post('get-core-member-saving', [AcctSavingsAccountController::class, 'getCoreMemberSavings']);
         // * deposito
         Route::post('get-acct-deposito-list', [AcctDepositoAccountController::class, 'getAcctDepositoAccountMemberList']);
-        // * simpanan
-        Route::post('get-acct-savings-account/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // * List Tabungan
+        Route::post('acct-savings-account/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // Route::post('acct-savings-account-member-list/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // Route::post('acct-savings-account-detail/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+
+
+        // * Mbayar
+        Route::get('acct-savings-account-mbayar-out-history', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-mbayar-in-history', [MbayarController::class, 'dummy']);
+        Route::get('print-acct-savings-transfer-mutation-from', [MbayarController::class, 'dummy']);
+        Route::get('print-acct-savings-transfer-mutation-to', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-from-detail', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-to-detail', [MbayarController::class, 'dummy']);
+        Route::get('process-add-acct-savings-transfer-mutation', [MbayarController::class, 'dummy']);
+        Route::post('process-add-acct-savings-transfer-mutation', [MbayarController::class, 'dummy']);
+
 
         // CORE PROGRAM
         // Route::get('bug-report', [reportBugController::class, 'post']);
@@ -174,7 +199,7 @@ Route::prefix("mobile")->group(function(){
                 200
             );
         });
-        Route::get("profile",[UserController::class,'profile']);
+        Route::get("profile", [UserController::class, 'profile']);
     });
     Route::post('token/refresh', function (Request $request) {
         $version = App\Models\PreferenceCompany::select('system_version')->first()->system_version;
@@ -185,57 +210,57 @@ Route::prefix("mobile")->group(function(){
                 $token = $user->block_state ? null : $user->createToken('token-name')->plainTextToken;
                 $user->member_token = $token;
                 $user->save();
-                Log::info("Tokebn refreshed",[
+                Log::info("Tokebn refreshed", [
                     'message' => 'Success',
                     'data' => $token,
-                    'system_version' => $version??'0',
+                    'system_version' => $version ?? '0',
                     'member_imei' => base64_encode($user->member_imei),
                     "block_state" => $user->block_state,
                 ]);
                 return response()->json([
                     'message' => 'Success',
                     'data' => $token,
-                    'system_version' => $version??'0',
+                    'system_version' => $version ?? '0',
                     'member_imei' => base64_encode($user->member_imei),
                     "block_state" => $user->block_state,
                 ], 200);
             } catch (\Exception $e) {
                 report($e);
-                Log::info("Terjadi kesalahan saat refresh Token",[
+                Log::info("Terjadi kesalahan saat refresh Token", [
                     'message' => 'Terjadi Kesalahan Sistem',
                     'data' => $e->getMessage(),
-                    'system_version' => $version??'0',
+                    'system_version' => $version ?? '0',
                     'member_imei' => base64_encode($user->member_imei),
                     "block_state" => $user->block_state,
                 ]);
                 return response()->json([
                     'message' => 'Terjadi Kesalahan Sistem',
                     'data' => $e->getMessage(),
-                    'system_version' => $version??'0',
+                    'system_version' => $version ?? '0',
                     'member_imei' => base64_encode($user->member_imei),
                     "block_state" => $user->block_state,
                 ], 200);
             }
         } else {
-            Log::info("token/refresh user Unauthenticated",[
+            Log::info("token/refresh user Unauthenticated", [
                 'message' => 'User Unauthenticated',
                 'data' => null,
                 'member_imei' => base64_encode(""),
-                'system_version' => $version??'0',
-                "block_state" => (App\Models\User::where("member_id",$request->member_id)->first()->block_state??1),
+                'system_version' => $version ?? '0',
+                "block_state" => (App\Models\User::where("member_id", $request->member_id)->first()->block_state ?? 1),
             ]);
             return response()->json([
                 'message' => 'User Unauthenticated',
                 'data' => null,
                 'member_imei' => base64_encode(""),
-                'system_version' => $version??'0',
-                "block_state" => (App\Models\User::where("member_id",$request->member_id)->first()->block_state??1),
+                'system_version' => $version ?? '0',
+                "block_state" => (App\Models\User::where("member_id", $request->member_id)->first()->block_state ?? 1),
             ], 200);
         }
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('preference-company',[PreferenceController::class,'getPreferenceCompany']);
+    Route::get('preference-company', [PreferenceController::class, 'getPreferenceCompany']);
     //Public Route
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);

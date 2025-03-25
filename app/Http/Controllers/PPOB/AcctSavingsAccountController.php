@@ -4,7 +4,6 @@ namespace App\Http\Controllers\PPOB;
 
 use Carbon\Carbon;
 use App\Models\CoreMember;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AcctSavingsAccount;
 use App\Models\CoreMemberKoperasi;
@@ -13,7 +12,7 @@ use App\Models\AcctSavingsMemberDetail;
 use App\Http\Resources\PPOBTransactionResource;
 use App\Models\AcctSavingsAccountDetail;
 
-class AcctSavingsAccountController extends Controller
+class AcctSavingsAccountController extends PPOBController
 {
     /**
      * Display a listing of the resource.
@@ -142,7 +141,7 @@ class AcctSavingsAccountController extends Controller
     {
         $savingAcc = AcctSavingsAccount::with('savingAcc:savings_id,savings_name,savings_code')
             ->where('member_id', auth()->user()->member_id)
-            ->when($request->has('test') && $this->isSanbox() && empty($saving_id), function ($query) {
+            ->when($request->has('test') && $this->isSandbox() && empty($saving_id), function ($query) {
                 return $query->limit(10);
             }, function ($query) {
                 return $query->where('member_id', auth()->user()->member_id);
