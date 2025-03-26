@@ -13,9 +13,9 @@ class AcctSavingsAccountDetail extends Model
      * @var string[]
      */
 
-    protected $table        = 'acct_savings_account_detail'; 
+    protected $table        = 'acct_savings_account_detail';
     protected $primaryKey   = 'savings_account_detail_id';
-    
+
     protected $guarded = [
         'savings_account_detail_id',
         'created_at',
@@ -29,5 +29,7 @@ class AcctSavingsAccountDetail extends Model
      */
     protected $hidden = [
     ];
-
+    public function mutation() {
+        return $this->belongsTo(AcctMutation::class,'mutation_id','mutation_id');
+     }
 }
