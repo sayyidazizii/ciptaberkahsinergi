@@ -7,6 +7,7 @@ use App\Http\Middleware\RejectBlockedUser;
 use App\Http\Controllers\PPOB\AuthController;
 use App\Http\Controllers\PPOB\UserController;
 use App\Http\Controllers\PPOBTopUpController;
+use App\Http\Controllers\PPOB\MbayarController;
 use App\Http\Controllers\PPOB\reportBugController;
 use App\Http\Controllers\PPOB\PreferenceController;
 use App\Http\Controllers\PPOBTransactionController;
@@ -55,40 +56,64 @@ Route::prefix("mobile")->group(function(){
         Route::get('/member/{member_no}', [AuthController::class, 'check_member']);
         Route::get('/member/otp/{member_no}', [AuthController::class, 'otp_success']);
 
-        Route::prefix("ppob")->group(function(){
-            Route::post('pulsa/prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
-            Route::post('pulsa/prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
-            Route::post('pulsa/prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
 
-            Route::post('pln/postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
-            Route::post('pln/postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
-            Route::post('pln/postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
-            Route::post('pln/prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
-            Route::post('pln/prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
-            Route::post('pln/prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
-
-            Route::get('emoney/category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
-            Route::post('emoney/product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
-            Route::post('emoney/payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
-            Route::post('emoney/info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
-
-            Route::post('bpjs', [BPJSTransactionController::class, 'getPPOBBPJS']);
-            Route::post('bpjs/payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
-            Route::post('bpjs/info', [BPJSTransactionController::class, 'info']);
+        Route::prefix("ppob")->group(function () {
+            Route::prefix("pulsa")->group(function () {
+                Route::post('prepaid', [PulsaTransactionController::class, 'getPPOBPulsaPrePaid']);
+                Route::post('prepaid/info', [PulsaTransactionController::class, 'infoPPOBPulsaPrePaid']);
+                Route::post('prepaid/payment', [PulsaTransactionController::class, 'paymentPPOBPulsaPrePaid']);
+            });
+            Route::prefix("pln")->group(function () {
+                Route::post('postpaid', [ListrikTransactionController::class, 'getPPOBPLNPostPaid']);
+                Route::post('postpaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPostPaid']);
+                Route::post('postpaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPostPaid']);
+                Route::post('prepaid', [ListrikTransactionController::class, 'getPPOBPLNPrePaid']);
+                Route::post('prepaid/info', [ListrikTransactionController::class, 'infoPPOBPLNPrePaid']);
+                Route::post('prepaid/payment', [ListrikTransactionController::class, 'paymentPPOBPLNPrePaid']);
+            });
+            Route::prefix("emoney")->group(function () {
+                Route::get('category', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyCategory']);
+                Route::post('product', [EMoneyTransactionController::class, 'getPPOBTopUpEmoneyProduct']);
+                Route::post('payment', [EMoneyTransactionController::class, 'paymentPPOBTopUpEmoney']);
+                Route::post('info', [EMoneyTransactionController::class, 'infoPPOBTopUpEMoney']);
+            });
+            Route::prefix("bpjs")->group(function () {
+                Route::post('/', [BPJSTransactionController::class, 'getPPOBBPJS']);
+                Route::post('payment', [BPJSTransactionController::class, 'paymentPPOBBPJS']);
+                Route::post('info', [BPJSTransactionController::class, 'info']);
+            });
         });
-        Route::get('core-member-principal-history',[UserController::class,'dummy']);
+        Route::get('core-member-principal-history', [UserController::class, 'dummy']);
+        Route::get('core-member-mandatory-history', [UserController::class, 'dummy']);
+        Route::get('core-member-special-history', [UserController::class, 'dummy']);
+        // * tabungan
+        Route::get('acct-savings-account-history', [UserController::class, 'dummy']);
+
         Route::get('/check-token', [AuthController::class, 'check_token']);
 
         // CORE PROGRAM
         // Acct Savings Account
-        // * beranda
+        // * beranda saldo tabungan default
         Route::post('savings-account', [AcctSavingsAccountController::class, 'getAcctSavingsAccountBalance']);
         // * keanggotaan
         Route::post('get-core-member-saving', [AcctSavingsAccountController::class, 'getCoreMemberSavings']);
         // * deposito
         Route::post('get-acct-deposito-list', [AcctDepositoAccountController::class, 'getAcctDepositoAccountMemberList']);
-        // * simpanan
-        Route::post('get-acct-savings-account/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // * List Tabungan
+        Route::post('acct-savings-account/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // Route::post('acct-savings-account-member-list/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+        // Route::post('acct-savings-account-detail/{saving_id?}', [AcctSavingsAccountController::class, 'getAcctSavingsAccount']);
+
+
+        // * Mbayar
+        Route::get('acct-savings-account-mbayar-out-history', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-mbayar-in-history', [MbayarController::class, 'dummy']);
+        Route::get('print-acct-savings-transfer-mutation-from', [MbayarController::class, 'dummy']);
+        Route::get('print-acct-savings-transfer-mutation-to', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-from-detail', [MbayarController::class, 'dummy']);
+        Route::get('acct-savings-account-to-detail', [MbayarController::class, 'dummy']);
+        Route::get('process-add-acct-savings-transfer-mutation', [MbayarController::class, 'dummy']);
+        Route::post('process-add-acct-savings-transfer-mutation', [MbayarController::class, 'dummy']);
 
         // CORE PROGRAM
         // Route::get('bug-report', [reportBugController::class, 'post']);
