@@ -56,7 +56,7 @@ class AuthController extends PPOBController
             DB::beginTransaction();
             if ($user) {
                 Log::info($user);
-                if (empty($user->member_imei) || $this->isSandbox()) {
+                if (empty($user->member_imei) || $this->isSandbox()||$user->isDev()) {
                     Log::info($user->member_imei);
                     $token = $user->createToken('token-name')->plainTextToken;
                     $user->member_token          = $token;
