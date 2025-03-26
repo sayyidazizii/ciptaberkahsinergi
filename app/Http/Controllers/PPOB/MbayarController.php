@@ -234,6 +234,7 @@ class MbayarController extends PPOBController
     public function dummy() {
         return response()->json([
             'title' => "Success",
+            'error' => false,
             'status' => "success",
             'message' => "This is a dummy response",
             'data' => [],

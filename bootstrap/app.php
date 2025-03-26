@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function(){
             Route::prefix('api/sandbox')
-            ->middleware(['api','sandbox'])
+            ->middleware(['api','sandbox','log-request'])
             ->group(base_path('routes/api.sandbox.php'));
         }
     )

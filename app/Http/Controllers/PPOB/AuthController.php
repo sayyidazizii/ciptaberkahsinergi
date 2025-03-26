@@ -62,7 +62,7 @@ class AuthController extends PPOBController
                     $user->member_token          = $token;
                     $user->password              = Hash::make($fields['password']);
                     $user->password_transaksi    = Hash::make($fields['password_transaksi']);
-                    if ($user->member_no != '1010101010' || !$user->isDev()) {
+                    if ($user->member_no != '1010101010' && !$user->isDev()) {
                         $mkopkar = $user->member()->first();
                         Log::info($mkopkar);
                         if (($mkopkar->member_phone ?? "") != ($request->member_phone ?? '')) {
@@ -137,7 +137,7 @@ class AuthController extends PPOBController
                 'member_user_status'    => 0,
                 'expired_on'            => $expired_on,
             ]);
-            if ($user->member_no != '1010101010' || !$user->isDev()) {
+            if ($user->member_no != '1010101010' && !$user->isDev()) {
                 $mkopkar = $user->member()->first();
                 Log::info($mkopkar->member_phone);
                 if (($mkopkar->member_phone != $request->member_phone)) {

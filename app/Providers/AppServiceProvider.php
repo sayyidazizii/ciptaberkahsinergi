@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Models\SystemMenu;
 use App\Core\Adapters\Theme;
+use Laravel\Pulse\Facades\Pulse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Models\SystemMenu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,7 +39,12 @@ class AppServiceProvider extends ServiceProvider
         $theme->setDemo('demo2');
 
         $theme->initConfig();
-
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isDev();
+        });
+        Pulse::user(fn ($user) => [
+            'name' => $user->username,
+        ]);
         bootstrap()->run();
 
         if (isRTL()) {

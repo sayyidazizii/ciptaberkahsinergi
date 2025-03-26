@@ -27,6 +27,7 @@ class UserController extends PPOBController
         return response()->json([
             'title' => "Success",
             'status' => "success",
+            'error' => false,
             'message' => "This is a dummy response",
             'data' => [],
             'url' => request()->fullUrl(),

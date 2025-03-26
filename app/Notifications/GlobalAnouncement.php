@@ -47,12 +47,7 @@ class GlobalAnouncement extends Notification
                     'fcm_options' => [
                         'analytics_label' => 'analytics',
                     ],
-                ],
-                'apns' => [
-                    'fcm_options' => [
-                        'analytics_label' => 'analytics',
-                    ],
-                ],
+                ]
             ]);
     }
 

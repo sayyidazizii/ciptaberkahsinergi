@@ -8,7 +8,7 @@ use App\Http\Controllers\PPOB\AuthController;
 use App\Http\Controllers\PPOB\UserController;
 use App\Http\Controllers\PPOBTopUpController;
 use App\Http\Controllers\PPOB\reportBugController;
-use App\Http\Controllers\PPOB\PreferenceController;
+use App\Http\Controllers\PPOB\AppController as PreferenceController;
 use App\Http\Controllers\PPOBTransactionController;
 use App\Http\Controllers\PPOB\WhatsappOTPController;
 use App\Http\Controllers\PPOB\BPJSTransactionController;

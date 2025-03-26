@@ -69,6 +69,7 @@ class WhatsappOTPController extends Controller
             'member_no'         => 'required|string',
             'system_version'    => 'required|string',
             'imei'              => 'required|string',
+            'fcm_token'         => 'required|string',
         ]);
         $check_otp = WhatsappOTP::select()
             ->where('otp_code', $fields['otp_code'])
@@ -99,6 +100,7 @@ class WhatsappOTPController extends Controller
             $version = SystemSetting::get('version');
             $token = $user->createToken('token-name')->plainTextToken;
             $user->member_imei = $fields['imei'];
+            $user->fcm_token = $fields['fcm_token'];
             $user->log_state = 1;
             $user->member_token = $token;
             $message            = "Login Berhasil";

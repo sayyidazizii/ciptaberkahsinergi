@@ -9,7 +9,7 @@ use App\Http\Controllers\PPOB\UserController;
 use App\Http\Controllers\PPOBTopUpController;
 use App\Http\Controllers\PPOB\MbayarController;
 use App\Http\Controllers\PPOB\reportBugController;
-use App\Http\Controllers\PPOB\PreferenceController;
+use App\Http\Controllers\PPOB\AppController as PreferenceController;
 use App\Http\Controllers\PPOBTransactionController;
 use App\Http\Controllers\PPOB\WhatsappOTPController;
 use App\Http\Controllers\PPOB\BPJSTransactionController;
@@ -18,6 +18,7 @@ use App\Http\Controllers\PPOB\EMoneyTransactionController;
 use App\Http\Controllers\PPOB\AcctSavingsAccountController;
 use App\Http\Controllers\PPOB\ListrikTransactionController;
 use App\Http\Controllers\PPOB\AcctDepositoAccountController;
+use App\Http\Controllers\PPOB\AppController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +93,8 @@ Route::prefix("mobile")->group(function(){
         Route::get('/check-token', [AuthController::class, 'check_token']);
 
         // CORE PROGRAM
+        // Pemngumuman
+        Route::post('anouncement', [AppController::class, 'anouncement']);
         // Acct Savings Account
         // * beranda saldo tabungan default
         Route::post('savings-account', [AcctSavingsAccountController::class, 'getAcctSavingsAccountBalance']);

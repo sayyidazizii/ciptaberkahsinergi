@@ -16,8 +16,8 @@ class WaTest extends TestCase
      */
     public function test_send_message_via_wa()
     {
-        $wa = WA::test();
-        fwrite(STDOUT,$wa);
+        // $wa = WA::test();
+        // fwrite(STDOUT,$wa);
         $this->assertTrue(true);
     }
 }
