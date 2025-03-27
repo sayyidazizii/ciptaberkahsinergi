@@ -19,7 +19,9 @@ class AppController extends PPOBController
     }
     public function anouncement(){
         $announcement = CoreAnouncement::select(["title","message","image","type","created_at","link"])->active()->latest()->get()->map(function($item){
-            $item->imageUrl = $item->image ? asset('storage/'.$item->image) : null;
+            $item->imageUrl = $item->image && filter_var($item->image, FILTER_VALIDATE_URL)
+                ? $item->image
+                : ($item->image ? asset('storage/'.$item->image) : null);
             $item->url =  $item->link;
             return $item;
         });
