@@ -2,7 +2,9 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
+use App\Models\CoreAnouncement;
 use Illuminate\Support\Facades\Log;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
@@ -11,16 +13,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
-class MobileNotification extends Notification
+class MobileAnouncement extends Notification
 {
     use Queueable;
-
+    public $anouncement;
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(CoreAnouncement $anouncement)
     {
-        //
+        $this->anouncement = $anouncement;
     }
 
     /**
@@ -35,21 +37,12 @@ class MobileNotification extends Notification
 
     public function toFcm($notifiable, $data): FcmMessage
     {
-        Log::info('notifiable',$notifiable);
-        Log::info('notification',$data);
-        if(is_null($notifiable)){
-        //    $notifiable = new FcmNotification(
-        //         title: 'Account Activated',
-        //         body: 'Your account has been activated.',
-        //         image: 'https://picsum.photos/200/300'
-        //    );
-        }
         return (new FcmMessage(notification:new FcmNotification(
-            title: 'Account Activated',
-            body: 'Your account has been activated.',
-            image: 'https://picsum.photos/200/300'
+            title: $this->anouncement->title,
+            body: Str::limit(strip_tags($this->anouncement->message)),
+            image: $this->anouncement->image
             )))
-            ->data($data)
+            ->data($this->anouncement->only( 'title', 'message', 'image'))
             ->custom([
                 'android' => [
                     'notification' => [

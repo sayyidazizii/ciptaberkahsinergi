@@ -3,7 +3,7 @@
 use App\Models\CoreAnouncement;
 use App\Models\MobileUser;
 use NotificationChannels\Fcm\FcmMessage;
-use App\Notifications\MobileNotification;
+use App\Notifications\MobileAnouncement;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
 test('Sending notification', function () {
@@ -12,6 +12,6 @@ test('Sending notification', function () {
     }
         $anouncement = CoreAnouncement::active()->first();
         $user = MobileUser::find(2);
-        $user->notify(new MobileNotification($anouncement));
+        $user->notify(new MobileAnouncement($anouncement));
         $this->assertTrue(true);
 });
