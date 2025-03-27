@@ -35,7 +35,7 @@ class MobileAnouncement extends Notification
         return [FcmChannel::class];
     }
 
-    public function toFcm($notifiable, $data): FcmMessage
+    public function toFcm($notifiable): FcmMessage
     {
         return (new FcmMessage(notification:new FcmNotification(
             title: $this->anouncement->title,
