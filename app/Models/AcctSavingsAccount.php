@@ -39,4 +39,7 @@ class AcctSavingsAccount extends Model
     {
         static::addGlobalScope(new NotDeletedScope);
     }
+    public function savingAcc() {
+        return $this->belongsTo(AcctSavings::class,'savings_id', 'savings_id');
+    }
 }
