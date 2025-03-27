@@ -108,6 +108,7 @@ Route::post('login', [ApiController::class, 'login']);
 Route::prefix("mobile")->group(function () {
     Route::get('/', fn() => response()->json('ok'));
     Route::group(['middleware' => ['auth:sanctum', RejectBlockedUser::class], 'throttle:70,10'], function () {
+        Route::get('acct-credits-history', [ApiController::class, 'GetAngsuran']);
         Route::get('/ppob-transaction', [PPOBTransactionController::class, 'index']);
         Route::post('/ppob-transaction', [PPOBTransactionController::class, 'store']);
         Route::get('/ppob-transaction/{id}', [PPOBTransactionController::class, 'show']);
