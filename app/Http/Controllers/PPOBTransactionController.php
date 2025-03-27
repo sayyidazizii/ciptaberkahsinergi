@@ -149,7 +149,7 @@ class PPOBTransactionController extends Controller
                 $response['error_msg_title'] 	= "No Data";
                 $response['error_msg'] 			= "Error Query Data";
             }else{
-                if (empty($ppobtransaction)){
+                if (!count($ppobtransaction)){
                     $response['error'] 				= TRUE;
                     $response['error_msg_title'] 	= "No Data";
                     $response['error_msg'] 			= "Data Does Not Exist";
@@ -212,7 +212,7 @@ class PPOBTransactionController extends Controller
                 $response['error_msg_title'] 	= "No Data";
                 $response['error_msg'] 			= "Error Query Data";
             }else{
-                if (empty($ppobtransaction)){
+                if (!count($ppobtransaction)){
                     $response['error'] 				= TRUE;
                     $response['error_msg_title'] 	= "No Data";
                     $response['error_msg'] 			= "Data Does Not Exist";
@@ -266,7 +266,7 @@ class PPOBTransactionController extends Controller
                 $response['error_msg_title'] 	= "No Data";
                 $response['error_msg'] 			= "Error Query Data";
             }else{
-                if (empty($acctsavingsaccountlist)){
+                if (!count($acctsavingsaccountlist)){
                     $response['error'] 				= TRUE;
                     $response['error_msg_title'] 	= "No Data";
                     $response['error_msg'] 			= "Data Does Not Exist";
@@ -312,7 +312,7 @@ class PPOBTransactionController extends Controller
                 $response['error_msg_title'] 	= "No Data";
                 $response['error_msg'] 			= "Error Query Data";
             }else{
-                if (empty($acctsavingsaccountlist)){
+                if (!count(($acctsavingsaccountlist)){
                     $response['error'] 				= TRUE;
                     $response['error_msg_title'] 	= "No Data";
                     $response['error_msg'] 			= "Data Does Not Exist";
