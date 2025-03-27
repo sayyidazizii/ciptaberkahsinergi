@@ -115,10 +115,10 @@ class PPOBTransactionController extends Controller
             return $ppob_transaction;
         }
     }
-    
+
     public function success_transaction($member_id)
     {
-        
+
 
         $response = array(
             'error'						=> FALSE,
@@ -127,16 +127,16 @@ class PPOBTransactionController extends Controller
             'ppobtransaction'				=> "",
         );
 
-        
+
         if($response["error"] == FALSE){
             $database 			        = env('DB_DATABASE3', 'forge');
-            $ppob_company_id_json	    = PPOBCompanyCipta::where('ppob_company_database', '=', $database)->where('data_state', '=', 0)->first();
-            $ppob_company_id            = $ppob_company_id_json['ppob_company_id'];
+            // $ppob_company_id_json	    = PPOBCompanyCipta::where('ppob_company_database', '=', $database)->where('data_state', '=', 0)->first();
+            // $ppob_company_id            = $ppob_company_id_json['ppob_company_id'];
 
             $ppobtransaction            = PPOBTransaction::select('ppob_transaction.ppob_transaction_id', 'ppob_transaction.ppob_transaction_no', 'ppob_transaction.ppob_transaction_date', 'ppob_transaction.created_on', 'ppob_transaction.ppob_transaction_amount', 'ppob_transaction.ppob_transaction_status', 'ppob_product.ppob_product_name', 'ppob_product_category.ppob_product_category_name', 'ppob_transaction.ppob_transaction_remark')
                 ->join('ppob_product', 'ppob_transaction.ppob_product_id', '=', 'ppob_product.ppob_product_id')
                 ->join('ppob_product_category', 'ppob_transaction.ppob_product_category_id', '=', 'ppob_product_category.ppob_product_category_id')
-                ->where('ppob_transaction.ppob_company_id', '=', $ppob_company_id)
+                // ->where('ppob_transaction.ppob_company_id', '=', $ppob_company_id)
                 ->where('ppob_transaction.member_id', '=', $member_id)
                 ->where('ppob_transaction.ppob_transaction_status', '=', 1)
                 ->orderBy('ppob_transaction.ppob_transaction_id', 'DESC')
@@ -167,9 +167,9 @@ class PPOBTransactionController extends Controller
                         $ppobtransaction[$key]['ppob_transaction_status_name']		= "Sukses";
 
                         $no++;
-                        
+
                     }
-                    
+
                     $response['error'] 					= FALSE;
                     $response['error_msg_title'] 		= "Success";
                     $response['error_msg'] 				= "Data Exist";
@@ -180,7 +180,7 @@ class PPOBTransactionController extends Controller
 
         return $response;
     }
-    
+
     public function fail_transaction($member_id)
     {
         $response = array(
@@ -190,16 +190,16 @@ class PPOBTransactionController extends Controller
             'ppobtransaction'				=> "",
         );
 
-        
+
         if($response["error"] == FALSE){
             $database 			        = env('DB_DATABASE3', 'forge');
-            $ppob_company_id_json	    = PPOBCompanyCipta::where('ppob_company_database', '=', $database)->where('data_state', '=', 0)->first();
-            $ppob_company_id            = $ppob_company_id_json['ppob_company_id'];
+            // $ppob_company_id_json	    = PPOBCompanyCipta::where('ppob_company_database', '=', $database)->where('data_state', '=', 0)->first();
+            // $ppob_company_id            = $ppob_company_id_json['ppob_company_id'];
 
             $ppobtransaction            = PPOBTransaction::select('ppob_transaction.ppob_transaction_id', 'ppob_transaction.ppob_transaction_no', 'ppob_transaction.ppob_transaction_date', 'ppob_transaction.created_on', 'ppob_transaction.ppob_transaction_amount', 'ppob_transaction.ppob_transaction_status', 'ppob_product.ppob_product_name', 'ppob_product_category.ppob_product_category_name', 'ppob_transaction.ppob_transaction_remark')
                 ->join('ppob_product', 'ppob_transaction.ppob_product_id', '=', 'ppob_product.ppob_product_id')
                 ->join('ppob_product_category', 'ppob_transaction.ppob_product_category_id', '=', 'ppob_product_category.ppob_product_category_id')
-                ->where('ppob_transaction.ppob_company_id', '=', $ppob_company_id)
+                // ->where('ppob_transaction.ppob_company_id', '=', $ppob_company_id)
                 ->where('ppob_transaction.member_id', '=', $member_id)
                 ->where('ppob_transaction.ppob_transaction_status', '=', 2)
                 ->orderBy('ppob_transaction.ppob_transaction_id', 'DESC')
@@ -230,9 +230,9 @@ class PPOBTransactionController extends Controller
                         $ppobtransaction[$key]['ppob_transaction_status_name']		= "Gagal";
 
                         $no++;
-                        
+
                     }
-                    
+
                     $response['error'] 					= FALSE;
                     $response['error_msg_title'] 		= "Success";
                     $response['error_msg'] 				= "Data Exist";
@@ -257,10 +257,10 @@ class PPOBTransactionController extends Controller
         );
 
         if($response["error"] == FALSE){
-            
+
             $acctsavingsaccountlist			= AcctSavingsTransferMutation::select('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'acct_savings_transfer_mutation.savings_transfer_mutation_date',  'acct_savings_transfer_mutation_to.mutation_id', 'acct_mutation.mutation_name', 'acct_savings_transfer_mutation_to.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_transfer_mutation_to.savings_id', 'acct_savings.savings_code', 'acct_savings.savings_name', 'acct_savings_transfer_mutation_to.member_id', 'core_member.member_name', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_to_amount', 'acct_savings_transfer_mutation.created_on')->join('acct_savings_transfer_mutation_to', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_id')->join('acct_mutation', 'acct_savings_transfer_mutation_to.mutation_id', '=', 'acct_mutation.mutation_id')->join('acct_savings_account', 'acct_savings_transfer_mutation_to.savings_account_id', '=', 'acct_savings_account.savings_account_id')->join('acct_savings', 'acct_savings_transfer_mutation_to.savings_id', '=', 'acct_savings.savings_id')->join('core_member', 'acct_savings_transfer_mutation_to.member_id', '=', 'core_member.member_id')->where('acct_savings_transfer_mutation.data_state', '=', 0)->where('acct_savings_transfer_mutation_to.member_id', '=', $data['member_id'])->where('acct_savings_transfer_mutation.savings_transfer_mutation_status', '=', 3)->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')->limit(10)->get();
 
-            
+
             if(!$acctsavingsaccountlist){
                 $response['error'] 				= TRUE;
                 $response['error_msg_title'] 	= "No Data";
@@ -278,7 +278,7 @@ class PPOBTransactionController extends Controller
                         $acctsavingsaccountppobinouthistory[$key]['ppob_transaction_description']	= 'Bagi Hasil PPOB Ke Rekening '.$val['savings_account_no'].' a/n '.$val['member_name'];
                         $acctsavingsaccountppobinouthistory[$key]['ppob_transaction_amount']		= $val['savings_transfer_mutation_to_amount'];
                     }
-                        
+
                     $response['error'] 								    = FALSE;
                     $response['error_msg_title'] 					    = "Success";
                     $response['error_msg'] 							    = "Data Exist";
@@ -289,7 +289,7 @@ class PPOBTransactionController extends Controller
 
         return $response;
     }
-    
+
     public function getAcctSavingsAccountPPOBOutHistory($member_id){
         $response = array(
             'error'									=> FALSE,
@@ -306,7 +306,7 @@ class PPOBTransactionController extends Controller
 
             $acctsavingsaccountlist			= AcctSavingsTransferMutation::select('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'acct_savings_transfer_mutation.savings_transfer_mutation_date',  'acct_savings_transfer_mutation_from.mutation_id', 'acct_mutation.mutation_name', 'acct_savings_transfer_mutation_from.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_transfer_mutation_from.savings_id', 'acct_savings.savings_code', 'acct_savings.savings_name', 'acct_savings_transfer_mutation_from.member_id', 'core_member.member_name', 'acct_savings_transfer_mutation_from.savings_transfer_mutation_from_amount', 'acct_savings_transfer_mutation.created_on')->join('acct_savings_transfer_mutation_from', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_from.savings_transfer_mutation_id')->join('acct_mutation', 'acct_savings_transfer_mutation_from.mutation_id', '=', 'acct_mutation.mutation_id')->join('acct_savings_account', 'acct_savings_transfer_mutation_from.savings_account_id', '=', 'acct_savings_account.savings_account_id')->join('acct_savings', 'acct_savings_transfer_mutation_from.savings_id', '=', 'acct_savings.savings_id')->join('core_member', 'acct_savings_transfer_mutation_from.member_id', '=', 'core_member.member_id')->where('acct_savings_transfer_mutation.data_state', '=', 0)->where('acct_savings_transfer_mutation_from.member_id', '=', $data['member_id'])->where('acct_savings_transfer_mutation.savings_transfer_mutation_status', '=', 3)->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')->limit(10)->get();
 
-            
+
             if(!$acctsavingsaccountlist){
                 $response['error'] 				= TRUE;
                 $response['error_msg_title'] 	= "No Data";
@@ -324,7 +324,7 @@ class PPOBTransactionController extends Controller
                         $acctsavingsaccountppobinouthistory[$key]['ppob_transaction_description']		= 'Transaksi PPOB Dari Rekening '.$val['savings_account_no'].' a/n '.$val['member_name'];
                         $acctsavingsaccountppobinouthistory[$key]['ppob_transaction_amount']			= $val['savings_transfer_mutation_from_amount'];
                     }
-                        
+
                     $response['error'] 									= FALSE;
                     $response['error_msg_title'] 						= "Success";
                     $response['error_msg'] 								= "Data Exist";
