@@ -258,7 +258,13 @@ class PPOBTransactionController extends Controller
 
         if($response["error"] == FALSE){
 
-            $acctsavingsaccountlist			= AcctSavingsTransferMutation::select('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'acct_savings_transfer_mutation.savings_transfer_mutation_date',  'acct_savings_transfer_mutation_to.mutation_id', 'acct_mutation.mutation_name', 'acct_savings_transfer_mutation_to.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_transfer_mutation_to.savings_id', 'acct_savings.savings_code', 'acct_savings.savings_name', 'acct_savings_transfer_mutation_to.member_id', 'core_member.member_name', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_to_amount', 'acct_savings_transfer_mutation.created_on')->join('acct_savings_transfer_mutation_to', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_id')->join('acct_mutation', 'acct_savings_transfer_mutation_to.mutation_id', '=', 'acct_mutation.mutation_id')->join('acct_savings_account', 'acct_savings_transfer_mutation_to.savings_account_id', '=', 'acct_savings_account.savings_account_id')->join('acct_savings', 'acct_savings_transfer_mutation_to.savings_id', '=', 'acct_savings.savings_id')->join('core_member', 'acct_savings_transfer_mutation_to.member_id', '=', 'core_member.member_id')->where('acct_savings_transfer_mutation.data_state', '=', 0)->where('acct_savings_transfer_mutation_to.member_id', '=', $data['member_id'])->where('acct_savings_transfer_mutation.savings_transfer_mutation_status', '=', 3)->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')->limit(10)->get();
+            $acctsavingsaccountlist			= AcctSavingsTransferMutation::select('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'acct_savings_transfer_mutation.savings_transfer_mutation_date',  'acct_savings_transfer_mutation_to.mutation_id', 'acct_mutation.mutation_name', 'acct_savings_transfer_mutation_to.savings_account_id', 'acct_savings_account.savings_account_no', 'acct_savings_transfer_mutation_to.savings_id', 'acct_savings.savings_code', 'acct_savings.savings_name', 'acct_savings_transfer_mutation_to.member_id', 'core_member.member_name', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_to_amount', 'acct_savings_transfer_mutation.created_on')
+            ->join('acct_savings_transfer_mutation_to', 'acct_savings_transfer_mutation.savings_transfer_mutation_id', '=', 'acct_savings_transfer_mutation_to.savings_transfer_mutation_id')
+            ->join('acct_mutation', 'acct_savings_transfer_mutation_to.mutation_id', '=', 'acct_mutation.mutation_id')
+            ->join('acct_savings_account', 'acct_savings_transfer_mutation_to.savings_account_id', '=', 'acct_savings_account.savings_account_id')
+            ->join('acct_savings', 'acct_savings_transfer_mutation_to.savings_id', '=', 'acct_savings.savings_id')
+            ->join('core_member', 'acct_savings_transfer_mutation_to.member_id', '=', 'core_member.member_id')->where('acct_savings_transfer_mutation.data_state', '=', 0)
+            ->where('acct_savings_transfer_mutation_to.member_id', '=', $data['member_id'])->where('acct_savings_transfer_mutation.savings_transfer_mutation_status', '=', 3)->orderBy('acct_savings_transfer_mutation.savings_transfer_mutation_id', 'DESC')->limit(10)->get();
 
 
             if(!$acctsavingsaccountlist){
@@ -312,7 +318,7 @@ class PPOBTransactionController extends Controller
                 $response['error_msg_title'] 	= "No Data";
                 $response['error_msg'] 			= "Error Query Data";
             }else{
-                if (!count(($acctsavingsaccountlist)){
+                if (!count($acctsavingsaccountlist)){
                     $response['error'] 				= TRUE;
                     $response['error_msg_title'] 	= "No Data";
                     $response['error_msg'] 			= "Data Does Not Exist";
