@@ -124,7 +124,7 @@ class PPOBTransactionController extends Controller
             'error'						=> FALSE,
             'error_msg'					=> "",
             'error_msg_title'			=> "",
-            'ppobtransaction'				=> "",
+            'data'				=> [],
         );
 
 
@@ -173,7 +173,7 @@ class PPOBTransactionController extends Controller
                     $response['error'] 					= FALSE;
                     $response['error_msg_title'] 		= "Success";
                     $response['error_msg'] 				= "Data Exist";
-                    $response['ppobtransaction'] 		= $ppobtransaction;
+                    $response['data'] 		= $ppobtransaction;
                 }
             }
         }
@@ -187,7 +187,7 @@ class PPOBTransactionController extends Controller
             'error'						=> FALSE,
             'error_msg'					=> "",
             'error_msg_title'			=> "",
-            'ppobtransaction'				=> "",
+            'data'				=> [],
         );
 
 
@@ -236,7 +236,7 @@ class PPOBTransactionController extends Controller
                     $response['error'] 					= FALSE;
                     $response['error_msg_title'] 		= "Success";
                     $response['error_msg'] 				= "Data Exist";
-                    $response['ppobtransaction'] 		= $ppobtransaction;
+                    $response['data'] 		= $ppobtransaction;
                 }
             }
         }
@@ -249,7 +249,7 @@ class PPOBTransactionController extends Controller
             'error'								    => FALSE,
             'error_msg'							    => "",
             'error_msg_title'					    => "",
-            'acctsavingsaccountppobinouthistory'	=> "",
+            'data'	=> [],
         );
 
         $data = array(
@@ -288,7 +288,7 @@ class PPOBTransactionController extends Controller
                     $response['error'] 								    = FALSE;
                     $response['error_msg_title'] 					    = "Success";
                     $response['error_msg'] 							    = "Data Exist";
-                    $response['acctsavingsaccountppobinouthistory'] 	= $acctsavingsaccountppobinouthistory;
+                    $response['data'] 	= $acctsavingsaccountppobinouthistory;
                 }
             }
         }
@@ -301,7 +301,7 @@ class PPOBTransactionController extends Controller
             'error'									=> FALSE,
             'error_msg'								=> "",
             'error_msg_title'						=> "",
-            'acctsavingsaccountppobinouthistory'	=> "",
+            'data'	=> [],
         );
 
         $data = array(
@@ -334,7 +334,7 @@ class PPOBTransactionController extends Controller
                     $response['error'] 									= FALSE;
                     $response['error_msg_title'] 						= "Success";
                     $response['error_msg'] 								= "Data Exist";
-                    $response['acctsavingsaccountppobinouthistory'] 	= $acctsavingsaccountppobinouthistory;
+                    $response['data'] 	= $acctsavingsaccountppobinouthistory;
                 }
             }
         }
