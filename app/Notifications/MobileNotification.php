@@ -3,13 +3,15 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use NotificationChannels\Fcm\FcmChannel;
 use NotificationChannels\Fcm\FcmMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
-class GlobalAnouncement extends Notification
+
+class MobileNotification extends Notification
 {
     use Queueable;
 
@@ -31,18 +33,28 @@ class GlobalAnouncement extends Notification
         return [FcmChannel::class];
     }
 
-    public function toFcm($notifiable): FcmMessage
+    public function toFcm($notifiable, $data): FcmMessage
     {
-        return (new FcmMessage(notification: new FcmNotification(
-                title: 'Account Activated',
-                body: 'Your account has been activated.',
-                image: 'https://picsum.photos/200/300'
+        Log::info('notifiable',$notifiable);
+        Log::info('notification',$data);
+        if(is_null($notifiable)){
+        //    $notifiable = new FcmNotification(
+        //         title: 'Account Activated',
+        //         body: 'Your account has been activated.',
+        //         image: 'https://picsum.photos/200/300'
+        //    );
+        }
+        return (new FcmMessage(notification:new FcmNotification(
+            title: 'Account Activated',
+            body: 'Your account has been activated.',
+            image: 'https://picsum.photos/200/300'
             )))
-            ->data(['data1' => 'value', 'data2' => 'value2'])
+            ->data($data)
             ->custom([
                 'android' => [
                     'notification' => [
                         'color' => '#0A0A0A',
+        		        'channel_id'=> "message"
                     ],
                     'fcm_options' => [
                         'analytics_label' => 'analytics',

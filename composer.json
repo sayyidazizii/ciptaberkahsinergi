@@ -20,7 +20,7 @@
         "cst/ppob-laravel": "^1.0@alpha",
         "cst/wa-laravel": "^1.3",
         "elibyy/tcpdf-laravel": "^11.3",
-        "laravel-notification-channels/fcm": "*",
+        "laravel-notification-channels/fcm": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/pulse": "^1.4",
         "laravel/sanctum": "^4.0",

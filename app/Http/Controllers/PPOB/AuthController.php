@@ -90,7 +90,7 @@ class AuthController extends PPOBController
                         'data'  => $user,
                         'token' => $token
                     ];
-                    if($this->isSandbox()){
+                    if($this->isSandbox()||$user->isDev()){
                         (new WhatsappOTPController)->send($fields['member_no'],$request->member_phone);
                     }else{
                         (new WhatsappOTPController)->send($fields['member_no']);
@@ -157,7 +157,7 @@ class AuthController extends PPOBController
             $user_state_madani->ppob_status = 1;
             $user_state_madani->save();
             $whatsappOtpController = new WhatsappOTPController();
-            if ($this->isSandbox()) {
+            if ($this->isSandbox()||$user->isDev()) {
                 $whatsappOtpController->send($fields['member_no'], $request->member_phone);
             } else {
                 $whatsappOtpController->send($fields['member_no']);
