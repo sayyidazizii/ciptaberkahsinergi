@@ -94,7 +94,7 @@ Route::prefix("mobile")->group(function(){
 
         // CORE PROGRAM
         // Pemngumuman
-        Route::post('anouncement', [AppController::class, 'anouncement']);
+        Route::post('announcement', [AppController::class, 'anouncement']);
         // Acct Savings Account
         // * beranda saldo tabungan default
         Route::post('savings-account', [AcctSavingsAccountController::class, 'getAcctSavingsAccountBalance']);
