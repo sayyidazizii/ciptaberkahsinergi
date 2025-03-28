@@ -61,6 +61,7 @@ License: {{ theme()->getOption('product', 'license') }}
 
     @yield('styles')
     @livewireStyles
+    @stack('styles')
 </head>
 {{-- end::Head --}}
 

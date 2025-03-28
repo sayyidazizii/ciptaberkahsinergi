@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\CoreAnouncementDataTable;
 use App\Models\CoreAnouncement;
 use Illuminate\Http\Request;
 
-class CoreAnouncementController extends Controller
+class CoreAnnouncementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(CoreAnouncementDataTable $table)
     {
-        //
+        // dd("DOO11");
+        return $table->render('content.CoreAnnouncement.index');
     }
 
     /**
@@ -20,7 +22,7 @@ class CoreAnouncementController extends Controller
      */
     public function create()
     {
-        //
+        return view('content.CoreAnnouncement.create');
     }
 
     /**

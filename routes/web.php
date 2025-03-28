@@ -32,8 +32,9 @@ use App\Http\Controllers\AcctSourceFundController;
 use App\Http\Controllers\JournalVoucherController;
 use App\Http\Controllers\Logs\AuditLogsController;
 use App\Http\Controllers\AcctBankAccountController;
-use App\Http\Controllers\JournalMemorialController;
+use App\Http\Controllers\CoreAnnouncementController;
 // use App\Http\Controllers\Logs\RequestLogController;
+use App\Http\Controllers\JournalMemorialController;
 use App\Http\Controllers\Logs\SystemLogsController;
 use App\Http\Controllers\SystemUserGroupController;
 use App\Http\Controllers\Account\SettingsController;
@@ -103,9 +104,9 @@ use App\Http\Controllers\AcctDepositoAccountExtensionController;
 use App\Http\Controllers\AcctDepositoAccountInsentiveController;
 use App\Http\Controllers\OfficerDepositoAccountReportController;
 use App\Http\Controllers\SavingsDailyTransferMutationController;
+
+
 use App\Http\Controllers\MemberSavingsTransferMutationController;
-
-
 use App\Http\Controllers\AcctCreditsAccountPaidOffReportController;
 use App\Http\Controllers\AcctDepositoAccountClosedReportController;
 use App\Http\Controllers\SavingsDailyCashDepositMutationController;
@@ -1113,7 +1114,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/broadcast', [WhatsappController::class, 'processAdd'])->name('process-add');
     });
     Route::prefix('android')->name('android.')->group(function () {
-        Route::resource('anouncement', AndroidController::class);
+        Route::post('anouncement/filter', [CoreAnnouncementController::class, 'filter'])->name('anouncement.filter');
+        Route::resource('anouncement', CoreAnnouncementController::class);
     });
 
     // Debugbar may not work on server without this somehow
