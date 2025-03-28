@@ -166,6 +166,17 @@ License: {{ theme()->getOption('product', 'license') }}
             format: 'DD-MM-YYYY',
         }
     });
+    $(".date-time").daterangepicker({
+        autoApply: true,
+        timePicker: true,
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1901,
+        maxYear: parseInt(moment().format("YYYY"),12),
+        locale: {
+            format: 'DD-MM-YYYY HH:MM:SS',
+        }
+    });
     function toRp(number) {
         var number = number.toString(),
         rupiah = number.split('.')[0],

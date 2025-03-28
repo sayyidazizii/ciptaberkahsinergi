@@ -9,6 +9,7 @@ use App\Models\CoreAnouncement;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\MobileAnouncement;
 use App\DataTables\CoreAnouncementDataTable;
+use Carbon\Carbon;
 
 class CoreAnnouncementController extends Controller
 {
@@ -47,8 +48,8 @@ class CoreAnnouncementController extends Controller
             $announcement = CoreAnouncement::create([
                 'title' => $request->title,
                 'message' => $request->message,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
+                'start_date' => Carbon::parse($request->start_date)->format("Y-m-d H:i:s"),
+                'end_date' => Carbon::parse($request->end_date)->format("Y-m-d H:i:s"),
                 'image' => $request->image->store('announcement/images'),
             ]);
             $mobileUser = MobileUser::all();

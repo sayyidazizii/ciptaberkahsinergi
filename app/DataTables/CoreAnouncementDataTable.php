@@ -24,8 +24,8 @@ class CoreAnouncementDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
-            ->addColumn('savings_account_last_balance', function (CoreAnouncement $model) {
-                return Str::limit(($model->message), 50, '...');
+            ->addColumn('message', function (CoreAnouncement $model) {
+                return Str::limit(str_replace("&nbsp;", '', strip_tags($model->message)), 100, '...');
             })
             ->addColumn('action', 'content.CoreAnnouncement._action');
     }

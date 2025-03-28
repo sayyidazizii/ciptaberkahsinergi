@@ -104,14 +104,14 @@
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-form-label fw-bold fs-6 required">{{ __('Tanggal Awal') }}</label>
                             <input type="text" required name="start_date" id="start_date"
-                                class="date form-control required form-control-lg form-control-solid" placeholder="No. Identitas"
-                                value="{{ old('start_date', date('d-m-Y')) }}" autocomplete="off" />
+                                class="date-time form-control required form-control-lg form-control-solid" placeholder="No. Identitas"
+                                value="{{ old('start_date', date('d-m-Y H:i:s')) }}" autocomplete="off" />
                         </div>
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-form-label fw-bold fs-6 required">{{ __('Tanggal Akhir') }}</label>
                             <input type="text" required name="end_date" id="end_date"
-                                class="date required form-control form-control-lg form-control-solid" placeholder="No. Identitas"
-                                value="{{ old('end_date', date('d-m-Y')) }}" autocomplete="off" />
+                                class="date-time required form-control form-control-lg form-control-solid" placeholder="No. Identitas"
+                                value="{{ old('end_date', date('d-m-Y H:i:s')) }}" autocomplete="off" />
                         </div>
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Judul') }}</label>

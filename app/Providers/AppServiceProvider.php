@@ -61,10 +61,10 @@ class AppServiceProvider extends ServiceProvider
             return $this->with(['pesan'=> $string,'alert'=>'success']);
         });
         RedirectResponse::macro('error',function($string){
-            return $this->with(['pesan'=> $string,'alert'=>'danger']);
+            return $this->with(['pesan'=> $string,'alert'=>'error']);
         });
         RedirectResponse::macro('danger',function($string){
-            return $this->with(['pesan'=> $string,'alert'=>'danger']);
+            return $this->with(['pesan'=> $string,'alert'=>'error']);
         });
         RedirectResponse::macro('warning',function($string){
             return $this->with(['pesan'=> $string,'alert'=>'warning']);
