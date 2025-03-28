@@ -49,7 +49,7 @@ class WhatsappOTPController extends Controller
                 'otp_code'          => $otp_code,
                 'created_on'        => date('Y-m-d H:i:s'),
             ]);
-            $response = WA::to($phone??$member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi Sudama, Koperasi Konsumen Sumber Dana Makmur Jatim");
+            $response = WA::to($phone??$member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi CBS, Koperasi Cipta Berkah Sinergi");
             // $response = $response->getBody()->getContents();
             Log::info($phone??$member_phone);
             return response()->json([
@@ -196,7 +196,7 @@ class WhatsappOTPController extends Controller
         ]);
 
         try {
-            $response = WA::to($member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi Sudama, Koperasi Konsumen Sumber Dana Makmur Jatim");
+            $response = WA::to($member_phone)->send("Kode OTP Anda " . $otp_code . " untuk Aplikasi CBS, Koperasi Cipta Berkah Sinergi");
             // $response = $response->getBody()->getContents();
 
             return response()->json([
