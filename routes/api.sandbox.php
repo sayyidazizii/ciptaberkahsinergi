@@ -199,9 +199,9 @@ Route::prefix("mobile")->group(function(){
     Route::get('preference-company',[PreferenceController::class,'getPreferenceCompany']);
     Route::get('test-notif/{memberno?}',function($memberno=null){
         $user = match (true) {
-            $memberno === 'all' => App\Models\User::all(),
-            $memberno !== null => App\Models\User::where('member_no', $memberno)->first(),
-            $memberno === null  => App\Models\User::find(3),
+            $memberno === 'all' => App\Models\MobileUser::all(),
+            $memberno !== null => App\Models\MobileUser::where('member_no', $memberno)->first(),
+            $memberno === null  => App\Models\MobileUser::find(3),
         };
         $anouncement = App\Models\CoreAnouncement::active()->inRandomOrder()->first();
         Illuminate\Support\Facades\Notification::send($user, new App\Notifications\MobileAnouncement($anouncement));
