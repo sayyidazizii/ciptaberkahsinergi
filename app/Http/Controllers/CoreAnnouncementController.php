@@ -35,6 +35,12 @@ class CoreAnnouncementController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+        $request->validate([
+            'title' => 'required',
+            'message' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
         try {
             DB::beginTransaction();
             // content

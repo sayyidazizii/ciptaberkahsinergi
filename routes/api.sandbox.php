@@ -141,8 +141,11 @@ Route::prefix("mobile")->group(function(){
         $version = App\Models\PreferenceCompany::select('system_version')->first()->system_version;
         if (auth("sanctum")->check()) {
             try {
-                $user = App\Models\User::find(auth("sanctum")->id());
+                $user = App\Models\MobileUser::find(auth("sanctum")->id());
                 auth("sanctum")->user()->tokens()->delete();
+                if($request->has("fcm_token")){
+                    $user->fcm_token = $request->fcm_token;
+                }
                 $token = $user->block_state ? null : $user->createToken('token-name')->plainTextToken;
                 $user->member_token = $token;
                 $user->save();
@@ -183,14 +186,14 @@ Route::prefix("mobile")->group(function(){
                 'data' => null,
                 'member_imei' => base64_encode(""),
                 'system_version' => $version??'0',
-                "block_state" => (App\Models\User::where("member_id",$request->member_id)->first()->block_state??1),
+                "block_state" => (App\Models\MobileUser::where("member_id",$request->member_id)->first()->block_state??1),
             ]);
             return response()->json([
                 'message' => 'User Unauthenticated',
                 'data' => null,
                 'member_imei' => base64_encode(""),
                 'system_version' => $version??'0',
-                "block_state" => (App\Models\User::where("member_id",$request->member_id)->first()->block_state??1),
+                "block_state" => (App\Models\MobileUser::where("member_id",$request->member_id)->first()->block_state??1),
             ], 200);
         }
     });

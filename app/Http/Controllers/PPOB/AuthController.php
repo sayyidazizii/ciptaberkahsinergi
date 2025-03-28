@@ -516,6 +516,9 @@ class AuthController extends PPOBController
                     'token' => $token
                 ];
                 $user->log_state = 1;
+                if($request->has("fcm_token")){
+                    $user->fcm_token = $request->fcm_token;
+                }
                 $user->save();
                 DB::commit();
 
