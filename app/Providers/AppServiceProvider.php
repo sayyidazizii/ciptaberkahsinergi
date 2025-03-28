@@ -8,6 +8,7 @@ use App\Core\Adapters\Theme;
 use Laravel\Pulse\Facades\Pulse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -53,6 +54,24 @@ class AppServiceProvider extends ServiceProvider
             Theme::addHtmlAttribute('html', 'direction', 'rtl');
             Theme::addHtmlAttribute('html', 'style', 'direction:rtl;');
         }
+        RedirectResponse::macro('msg',function($string){
+            return $this->with('pesan', $string);
+        });
+        RedirectResponse::macro('success',function($string){
+            return $this->with(['pesan'=> $string,'alert'=>'success']);
+        });
+        RedirectResponse::macro('error',function($string){
+            return $this->with(['pesan'=> $string,'alert'=>'danger']);
+        });
+        RedirectResponse::macro('danger',function($string){
+            return $this->with(['pesan'=> $string,'alert'=>'danger']);
+        });
+        RedirectResponse::macro('warning',function($string){
+            return $this->with(['pesan'=> $string,'alert'=>'warning']);
+        });
+        RedirectResponse::macro('info',function($string){
+            return $this->with(['pesan'=> $string,'alert'=>'info']);
+        });
 
     }
 }

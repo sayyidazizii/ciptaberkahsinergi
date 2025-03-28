@@ -8,9 +8,16 @@
             border-color: #ddd;
         }
         .note-btn.btn{
-            border: 1px solid #e6e6e6 !important;
+            border: 1px solid #adadad !important;
             color: #333;
             background-color: #fff;
+            background-image: none;
+            border-color: #adadad;
+        }
+        .note-btn.btn.active{
+            border: 1px solid #adadad !important;
+            color: #333;
+            background-color: #e6e6e6;
             background-image: none;
             border-color: #adadad;
         }
@@ -19,7 +26,10 @@
             padding-right: 0.6em !important;
         }
         .note-btn i{
-            border: 1px solid rgba(241, 241, 241, 0.49) !important;
+            color: #333 ;
+        }
+        .note-btn[data-bs-original-title="Background Color"] i{
+            border: 1px solid rgb(193 193 193 / 69%) !important;
             color: #333 ;
         }
         .note-current-color-button i {
@@ -49,6 +59,11 @@
                     ["table", ["table"]],
                     ["insert", ["picture"]],
                 ]
+            });
+            $("#kt_add_submit").on('click', function () {
+                unsaved = false;
+                $(window).off('beforeunload');
+                $('#anouncement-form').submit();
             });
         });
         var unsaved = false;
@@ -88,21 +103,21 @@
                     <div class="row">
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-form-label fw-bold fs-6 required">{{ __('Tanggal Awal') }}</label>
-                            <input type="text" name="start_date" id="start_date"
-                                class="date form-control form-control-lg form-control-solid" placeholder="No. Identitas"
+                            <input type="text" required name="start_date" id="start_date"
+                                class="date form-control required form-control-lg form-control-solid" placeholder="No. Identitas"
                                 value="{{ old('start_date', date('d-m-Y')) }}" autocomplete="off" />
                         </div>
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-form-label fw-bold fs-6 required">{{ __('Tanggal Akhir') }}</label>
-                            <input type="text" name="end_date" id="end_date"
-                                class="date form-control form-control-lg form-control-solid" placeholder="No. Identitas"
+                            <input type="text" required name="end_date" id="end_date"
+                                class="date required form-control form-control-lg form-control-solid" placeholder="No. Identitas"
                                 value="{{ old('end_date', date('d-m-Y')) }}" autocomplete="off" />
                         </div>
                         <div class="col-md-6 col-lg-6 col-sm-12 fv-row">
                             <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Judul') }}</label>
                             <div class="col-lg-12 fv-row">
-                                <input name="title" id="title" type="text"
-                                    class="form-control form-control-solid form-select-lg"
+                                <input name="title" required id="title" type="text"
+                                    class="form-control required form-control-solid form-select-lg"
                                     placeholder="Masukan Judul" />
                             </div>
                         </div>
@@ -119,8 +134,8 @@
                         <div class="col mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6 required">{{ __('Pesan') }}</label>
                             <div class="col-lg-12 fv-row">
-                                <textarea name="message" id="editor" type="text"
-                                    class="form-control form-control-solid form-select-lg" />
+                                <textarea name="message" required id="editor" type="text"
+                                    class="form-control required form-control-solid form-select-lg" />
                                 </textarea>
                             </div>
                         </div>
@@ -129,7 +144,7 @@
                 <div class="card-footer d-flex justify-content-end py-6 px-9">
                     <button type="reset" class="btn btn-white btn-active-light-primary me-2">{{ __('Batal') }}</button>
 
-                    <button type="submit" class="btn btn-primary" id="kt_member_add_submit">
+                    <button type="button" class="btn btn-primary" id="kt_add_submit">
                         @include('partials.general._button-indicator', ['label' => __('Simpan')])
                     </button>
                 </div>
