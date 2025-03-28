@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\PPOB;
 
 use App\Models\User;
+use Cst\WALaravel\WA;
 use App\Models\LogTemp;
 use App\Models\LogLogin;
 use App\Models\CoreMember;
+use App\Models\MobileUser;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Settings\SystemSetting;
@@ -19,7 +22,6 @@ use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\MobileUser;
 use App\Models\PreferenceCompanyScr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -34,6 +36,7 @@ class AuthController extends PPOBController
             'member_no'             => 'required',
             'password'              => 'required',
             'password_transaksi'    => 'required',
+            'member_phone'    => 'required',
         ]);
         if ($this->isMaintenaceRegister()) {
             $message  = "Sedang perbaikan server, mohon coba beberapa saat lagi";
@@ -65,7 +68,7 @@ class AuthController extends PPOBController
                     if ($user->member_no != '1010101010' && !$user->isDev()) {
                         $mkopkar = $user->member()->first();
                         Log::info($mkopkar);
-                        if (($mkopkar->member_phone ?? "") != ($request->member_phone ?? '')) {
+                        if ($this->formatPhone($mkopkar->member_phone ?? "") != $this->formatPhone($request->member_phone ?? '')) {
                             $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
                             LogLogin::create([
                                 "member_id" => $user->member_id,
@@ -140,7 +143,7 @@ class AuthController extends PPOBController
             if ($user->member_no != '1010101010' && !$user->isDev()) {
                 $mkopkar = $user->member()->first();
                 Log::info($mkopkar->member_phone);
-                if (($mkopkar->member_phone != $request->member_phone)) {
+                if ($this->formatPhone($mkopkar->member_phone) != $this->formatPhone($request->member_phone)) {
                     $message = "Nomor hp tidak sesuai dengan yang terdaftar di koperasi, harap hubungi admin untuk mengganti nomor hp";
                     LogLogin::create([
                         "member_id" => $user->member_id,
@@ -215,7 +218,20 @@ class AuthController extends PPOBController
             ], 401);
         }
     }
-
+    public function formatPhone($phones = null)
+    {
+        $phones = str_replace(['-', ' ', '/'], '', $phones);
+        if (Str::is('+*', $phones)) {
+            $phones = str_replace('+', '', $phones);
+        }
+        if (Str::is('08*', $phones)) {
+            $phones = Str::replaceFirst('0', '62', $phones);
+        }
+        if (!Str::is('62*', $phones) || !is_numeric($phones) || strlen($phones) < 10) {
+            throw new \Exception("Phone Number Invalid: {$phones}");
+        }
+        return $phones;
+    }
     public function login(Request $request)
     {
         /** * Alur Login

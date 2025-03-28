@@ -13,5 +13,10 @@ test('Sending notification', function () {
         $anouncement = CoreAnouncement::active()->first();
         $user = MobileUser::find(2);
         $user->notify(new MobileAnouncement($anouncement));
+
+
+        // $users = MobileUser::all();
+        // Notification::send($users, new MobileAnouncement($anouncement));
+
         $this->assertTrue(true);
 });

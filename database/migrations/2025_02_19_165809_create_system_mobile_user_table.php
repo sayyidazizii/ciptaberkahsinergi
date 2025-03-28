@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('system_mobile_user', function (Blueprint $table) {
-            $table->unsignedBigInteger( 'user_id')->primary();
+        if (!Schema::hasTable('system_mobile_user')) {
+            Schema::create('system_mobile_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->primary();
             $table->integer('member_id')->default(0);
             $table->integer('branch_id')->nullable();
             $table->uuid('uuid')->nullable();
@@ -45,7 +46,8 @@ return new class extends Migration
             $table->softDeletesTz();
             $table->unique('email', 'system_user_email_unique');
             $table->index('member_no');
-        });
+            });
+        }
     }
 
     /**
@@ -53,6 +55,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('system_user_android');
+        Schema::dropIfExists('system_mobile_user');
     }
 };

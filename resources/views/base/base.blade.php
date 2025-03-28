@@ -113,13 +113,13 @@ License: {{ theme()->getOption('product', 'license') }}
         border-width: 2px !important;
         border-style : solid !important;
     }
-    
+
     input[readonly], textarea[readonly] {
         cursor: not-allowed;
     }
 
     input[readonly], textarea[readonly] {
-        background-color : #e3e4e4 !important; 
+        background-color : #e3e4e4 !important;
     }
     /* #toast-container > .toast {
         background-image: none !important;
@@ -166,8 +166,8 @@ License: {{ theme()->getOption('product', 'license') }}
         }
     });
     function toRp(number) {
-        var number = number.toString(), 
-        rupiah = number.split('.')[0], 
+        var number = number.toString(),
+        rupiah = number.split('.')[0],
         cents = (number.split('.')[1] || '') +'00';
         rupiah = rupiah.split('').reverse().join('')
             .replace(/(\d{3}(?!$))/g, '$1,')
@@ -180,7 +180,7 @@ License: {{ theme()->getOption('product', 'license') }}
         if (document.getElementsByTagName("BODY")[0].hasAttribute('data-kt-scrollbottom') === true) {
             document.getElementsByTagName("BODY")[0].removeAttribute('data-kt-scrollbottom');
         }
-    } else { 
+    } else {
         if (document.getElementsByTagName("BODY")[0].hasAttribute('data-kt-scrollbottom') === false) {
             document.getElementsByTagName("BODY")[0].setAttribute('data-kt-scrollbottom', 'on');
         }
@@ -191,7 +191,7 @@ License: {{ theme()->getOption('product', 'license') }}
             if (document.getElementsByTagName("BODY")[0].hasAttribute('data-kt-scrollbottom') === true) {
                 document.getElementsByTagName("BODY")[0].removeAttribute('data-kt-scrollbottom');
             }
-        } else { 
+        } else {
             if (document.getElementsByTagName("BODY")[0].hasAttribute('data-kt-scrollbottom') === false) {
                 document.getElementsByTagName("BODY")[0].setAttribute('data-kt-scrollbottom', 'on');
             }
@@ -244,12 +244,13 @@ License: {{ theme()->getOption('product', 'license') }}
             //     value.click();
             // })
         })
-    }); 
+    });
 </script>
 
 <script type="text/javascript" charset="utf8" src="{{ asset(theme()->getDemo().'/plugins/custom/datatables/datatables.bundle.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @yield('scripts')
+@stack('scripts')
 @yield('bladeScripts')
 @livewireScripts
 

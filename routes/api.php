@@ -115,10 +115,14 @@ Route::prefix("mobile")->group(function () {
         Route::get('/ppob-transactions/{id}', [PPOBTransactionController::class, 'shows']);
         Route::put('/ppob-transaction/{id}', [PPOBTransactionController::class, 'update']);
         Route::delete('/ppob-transaction/{id}', [PPOBTransactionController::class, 'destroy']);
-        Route::get('/ppob-transaction/success/{member_id?}', [PPOBTransactionController::class, 'success_transaction']);
-        Route::get('/ppob-transaction/fail/{member_id?}', [PPOBTransactionController::class, 'fail_transaction']);
-        Route::get('/ppob-transaction/in-history/{member_id?}', [PPOBTransactionController::class, 'getAcctSavingsAccountPPOBInHistory']);
-        Route::get('/ppob-transaction/out-history/{member_id?}', [PPOBTransactionController::class, 'getAcctSavingsAccountPPOBOutHistory']);
+        Route::get('/ppob-transaction/success/{member_id?}', [PPOBTransactionController::class, 'dummy']);
+        Route::get('/ppob-transaction/fail/{member_id?}', [PPOBTransactionController::class, 'dummy']);
+        Route::get('/ppob-transaction/in-history/{member_id?}', [PPOBTransactionController::class, 'dummy']);
+        Route::get('/ppob-transaction/out-history/{member_id?}', [PPOBTransactionController::class, 'dummy']);
+        // Route::get('/ppob-transaction/success/{member_id?}', [PPOBTransactionController::class, 'success_transaction']);
+        // Route::get('/ppob-transaction/fail/{member_id?}', [PPOBTransactionController::class, 'fail_transaction']);
+        // Route::get('/ppob-transaction/in-history/{member_id?}', [PPOBTransactionController::class, 'getAcctSavingsAccountPPOBInHistory']);
+        // Route::get('/ppob-transaction/out-history/{member_id?}', [PPOBTransactionController::class, 'getAcctSavingsAccountPPOBOutHistory']);
 
         Route::get('/pulsa-transaction', [PulsaTransactionController::class, 'index']);
         Route::get('/pulsa-transaction/product', [PulsaTransactionController::class, 'product']);
