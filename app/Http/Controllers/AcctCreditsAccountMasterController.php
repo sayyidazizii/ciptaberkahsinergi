@@ -87,7 +87,7 @@ class AcctCreditsAccountMasterController extends Controller
 		$membergender 	                = Configuration::MemberGender();
 		$memberidentity                 = Configuration::MemberIdentity();
 		$memberjobtype 	                = Configuration::WorkingType();
-		$acctcreditsaccountmasterdata	= AcctCreditsAccount::with('member','member.working','credit')
+		$acctcreditsaccountmasterdata	= AcctCreditsAccount::with('member','office','member.working','credit')
         ->where('data_state',0);
 		if ($branch_id && $branch_id != '') {
 			$acctcreditsaccountmasterdata = $acctcreditsaccountmasterdata->where('acct_credits_account.branch_id', $branch_id);
@@ -103,13 +103,14 @@ class AcctCreditsAccountMasterController extends Controller
                                             ->setDescription("Master Data Pinjaman")
                                             ->setKeywords("Master Data Pinjaman")
                                             ->setCategory("Master Data Pinjaman");
-                                    
+
             $sheet = $spreadsheet->getActiveSheet(0);
             $spreadsheet->getActiveSheet()->setTitle("Master Data Pinjaman");
 
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
             $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
 			$spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(5);
+			$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(30);
 			$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(30);
 			$spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(20);
 			$spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(20);
@@ -130,37 +131,39 @@ class AcctCreditsAccountMasterController extends Controller
 			$spreadsheet->getActiveSheet()->getColumnDimension('T')->setWidth(20);
 			$spreadsheet->getActiveSheet()->getColumnDimension('U')->setWidth(20);
 			$spreadsheet->getActiveSheet()->getColumnDimension('V')->setWidth(20);
-            
-			$spreadsheet->getActiveSheet()->mergeCells("B1:V1");
+			$spreadsheet->getActiveSheet()->getColumnDimension('W')->setWidth(20);
+
+			$spreadsheet->getActiveSheet()->mergeCells("B1:W1");
 
 			$spreadsheet->getActiveSheet()->getStyle('B1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 			$spreadsheet->getActiveSheet()->getStyle('B1')->getFont()->setBold(true)->setSize(16);
-			$spreadsheet->getActiveSheet()->getStyle('B3:V3')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-			$spreadsheet->getActiveSheet()->getStyle('B3:V3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-			$spreadsheet->getActiveSheet()->getStyle('B3:V3')->getFont()->setBold(true);
+			$spreadsheet->getActiveSheet()->getStyle('B3:W3')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+			$spreadsheet->getActiveSheet()->getStyle('B3:W3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+			$spreadsheet->getActiveSheet()->getStyle('B3:W3')->getFont()->setBold(true);
 
 			$spreadsheet->getActiveSheet()->setCellValue('B1', "Master Data Pinjaman");
 			$spreadsheet->getActiveSheet()->setCellValue('B3', "No");
 			$spreadsheet->getActiveSheet()->setCellValue('C3', "No. Akad");
-			$spreadsheet->getActiveSheet()->setCellValue('D3', "No. Rekening");
-			$spreadsheet->getActiveSheet()->setCellValue('E3', "Nama");
-			$spreadsheet->getActiveSheet()->setCellValue('F3', "JNS Kel");
-			$spreadsheet->getActiveSheet()->setCellValue('G3', "Tanggal Lahir");
-			$spreadsheet->getActiveSheet()->setCellValue('H3', "Alamat");
-			$spreadsheet->getActiveSheet()->setCellValue('I3', "Pekerjaan");
-			$spreadsheet->getActiveSheet()->setCellValue('J3', "Perusahaan");
-			$spreadsheet->getActiveSheet()->setCellValue('K3', "No Identitas");
-			$spreadsheet->getActiveSheet()->setCellValue('L3', "Telp");
-			$spreadsheet->getActiveSheet()->setCellValue('M3', "Pinjaman");
-			$spreadsheet->getActiveSheet()->setCellValue('N3', "JK Waktu");
-			$spreadsheet->getActiveSheet()->setCellValue('O3', "TG Pinjam");
-			$spreadsheet->getActiveSheet()->setCellValue('P3', "TG JT Tempo");
-			$spreadsheet->getActiveSheet()->setCellValue('Q3', "JML Plafon");
-			$spreadsheet->getActiveSheet()->setCellValue('R3', "Pokok");
-			$spreadsheet->getActiveSheet()->setCellValue('S3', "Margin");
-			$spreadsheet->getActiveSheet()->setCellValue('T3', "ANG Pokok");
-			$spreadsheet->getActiveSheet()->setCellValue('U3', "ANG Margin");
-			$spreadsheet->getActiveSheet()->setCellValue('V3', "Saldo Pokok");
+			$spreadsheet->getActiveSheet()->setCellValue('D3', "AO");
+			$spreadsheet->getActiveSheet()->setCellValue('E3', "No. Rekening");
+			$spreadsheet->getActiveSheet()->setCellValue('F3', "Nama");
+			$spreadsheet->getActiveSheet()->setCellValue('G3', "JNS Kel");
+			$spreadsheet->getActiveSheet()->setCellValue('H3', "Tanggal Lahir");
+			$spreadsheet->getActiveSheet()->setCellValue('I3', "Alamat");
+			$spreadsheet->getActiveSheet()->setCellValue('J3', "Pekerjaan");
+			$spreadsheet->getActiveSheet()->setCellValue('K3', "Perusahaan");
+			$spreadsheet->getActiveSheet()->setCellValue('L3', "No Identitas");
+			$spreadsheet->getActiveSheet()->setCellValue('M3', "Telp");
+			$spreadsheet->getActiveSheet()->setCellValue('N3', "Pinjaman");
+			$spreadsheet->getActiveSheet()->setCellValue('O3', "JK Waktu");
+			$spreadsheet->getActiveSheet()->setCellValue('P3', "TG Pinjam");
+			$spreadsheet->getActiveSheet()->setCellValue('Q3', "TG JT Tempo");
+			$spreadsheet->getActiveSheet()->setCellValue('R3', "JML Plafon");
+			$spreadsheet->getActiveSheet()->setCellValue('S3', "Pokok");
+			$spreadsheet->getActiveSheet()->setCellValue('T3', "Margin");
+			$spreadsheet->getActiveSheet()->setCellValue('U3', "ANG Pokok");
+			$spreadsheet->getActiveSheet()->setCellValue('V3', "ANG Margin");
+			$spreadsheet->getActiveSheet()->setCellValue('W3', "Saldo Pokok");
 
 			$row    = 4;
 			$no     = 0;
@@ -172,12 +175,12 @@ class AcctCreditsAccountMasterController extends Controller
                 if(isset($savingsaccount['savings_account_no'])){
                     $savings_account_no = $savingsaccount['savings_account_no'];
                 }else{
-                    $savings_account_no = '';            
+                    $savings_account_no = '';
                 }
 
                 $no++;
 
-                $spreadsheet->getActiveSheet()->getStyle('B' . $row . ':V' . $row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $row . ':W' . $row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 $spreadsheet->getActiveSheet()->getStyle('B' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $spreadsheet->getActiveSheet()->getStyle('C' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 $spreadsheet->getActiveSheet()->getStyle('D' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
@@ -199,32 +202,34 @@ class AcctCreditsAccountMasterController extends Controller
                 $spreadsheet->getActiveSheet()->getStyle('T' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $spreadsheet->getActiveSheet()->getStyle('U' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $spreadsheet->getActiveSheet()->getStyle('V' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $spreadsheet->getActiveSheet()->getStyle('W' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
                 $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $no);
                 $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $val['credits_account_serial']);
-                $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $savings_account_no);
-                $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $val->member->member_name);
-                $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $membergender[$val->member->member_gender]);
-                $spreadsheet->getActiveSheet()->setCellValue('G' . $row, date('d-m-Y', strtotime($val->member->member_date_of_birth)));
-                $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $val->member->member_address);
-                $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $memberjobtype[$val->member->working->member_working_type] ?? '');
-                $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $val->member->member_company_name);
-                $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $val->member->member_identity_no);
-                $spreadsheet->getActiveSheet()->setCellValue('L' . $row, $val->member->member_phone);
-                $spreadsheet->getActiveSheet()->setCellValue('M' . $row, $val->credit->credits_name);
-                $spreadsheet->getActiveSheet()->setCellValue('N' . $row, $val['credits_account_period']);
-                $spreadsheet->getActiveSheet()->setCellValue('O' . $row, date('d-m-Y', strtotime($val['credits_account_date'])));
-                $spreadsheet->getActiveSheet()->setCellValue('P' . $row, date('d-m-Y', strtotime($val['credits_account_due_date'])));
-                $spreadsheet->getActiveSheet()->setCellValue('Q' . $row, number_format($val['credits_account_amount'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $val->office->office_name);
+                $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $savings_account_no);
+                $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $val->member->member_name);
+                $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $membergender[$val->member->member_gender]);
+                $spreadsheet->getActiveSheet()->setCellValue('H' . $row, date('d-m-Y', strtotime($val->member->member_date_of_birth)));
+                $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $val->member->member_address);
+                $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $memberjobtype[$val->member->working->member_working_type] ?? '');
+                $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $val->member->member_company_name);
+                $spreadsheet->getActiveSheet()->setCellValue('L' . $row, $val->member->member_identity_no);
+                $spreadsheet->getActiveSheet()->setCellValue('M' . $row, $val->member->member_phone);
+                $spreadsheet->getActiveSheet()->setCellValue('N' . $row, $val->credit->credits_name);
+                $spreadsheet->getActiveSheet()->setCellValue('O' . $row, $val['credits_account_period']);
+                $spreadsheet->getActiveSheet()->setCellValue('P' . $row, date('d-m-Y', strtotime($val['credits_account_date'])));
+                $spreadsheet->getActiveSheet()->setCellValue('Q' . $row, date('d-m-Y', strtotime($val['credits_account_due_date'])));
                 $spreadsheet->getActiveSheet()->setCellValue('R' . $row, number_format($val['credits_account_amount'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('S' . $row, number_format($val['credits_account_interest'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('T' . $row, number_format($val['credits_account_principal_amount'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('U' . $row, number_format($val['credits_account_interest_amount'], 2));
-                $spreadsheet->getActiveSheet()->setCellValue('V' . $row, number_format($val['credits_account_last_balance'], 2));
-					
+                $spreadsheet->getActiveSheet()->setCellValue('S' . $row, number_format($val['credits_account_amount'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('T' . $row, number_format($val['credits_account_interest'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('U' . $row, number_format($val['credits_account_principal_amount'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('V' . $row, number_format($val['credits_account_interest_amount'], 2));
+                $spreadsheet->getActiveSheet()->setCellValue('W' . $row, number_format($val['credits_account_last_balance'], 2));
+
 				$row++;
 			}
-            
+
             ob_clean();
             $filename='Master Data Pinjaman-'.date('dmYhis').'.xls';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
