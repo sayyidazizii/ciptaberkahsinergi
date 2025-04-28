@@ -699,6 +699,8 @@ class ApiController extends Controller
             ->where('credits_account_id', $credits_account_id)
             ->get();
 
+            $finalinstallment = count($acctcreditspayment);
+
             $credits_payment_date   = date('Y-m-d');
             $date1                  = date_create($credits_payment_date);
             $date2                  = date_create($acctcreditsaccount['credits_account_payment_date']);
@@ -793,7 +795,7 @@ class ApiController extends Controller
 				'credits_interest_last_balance'				=> $creditaccount->credits_account_interest_last_balance + $request->angsuran_bunga,
 				'credits_payment_fine'						=> $request->credits_payment_fine_amount,
 				'credits_account_payment_date'				=> $credits_account_payment_date,
-				'credits_payment_to'						=> $angsuranke,
+				'credits_payment_to'						=> $finalinstallment + 1,
 				'credits_payment_day_of_delay'				=> $credits_payment_day_of_delay,
 				'branch_id'									=> auth()->user()->branch_id,
 				'created_id'								=> auth()->user()->user_id,
