@@ -116,7 +116,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
             $querydata1 = AcctCreditsPayment::selectRaw(
                 '1 As type,
                 credits_payment_id As id,
-                credits_payment_date As tanggal,
+                acct_credits_payment.created_at As tanggal,
                 office_name As operator,
                 member_name As anggota,
                 credits_account_serial As no_transaksi,
@@ -148,7 +148,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
             $querydata2 = AcctSavingsCashMutation::selectRaw(
                 '2 As type,
                 savings_cash_mutation_id As id,
-                savings_cash_mutation_date As tanggal,
+                acct_savings_cash_mutation.created_at As tanggal,
                 office_name As operator,
                 member_name As anggota,
                 savings_account_no As no_transaksi,
@@ -180,7 +180,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
             $querydata3 = AcctSavingsCashMutation::selectRaw(
                 '3 As type,
                 savings_cash_mutation_id As id,
-                savings_cash_mutation_date As tanggal,
+                acct_savings_cash_mutation.created_at As tanggal,
                 office_name As operator,
                 member_name As anggota,
                 savings_account_no As no_transaksi,
@@ -335,7 +335,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
         $querydata1 = AcctCreditsPayment::selectRaw(
             '1 As type,
             credits_payment_id As id,
-            credits_payment_date As tanggal,
+            acct_credits_payment.created_at As tanggal,
             office_name As operator,
             member_name As anggota,
             credits_account_serial As no_transaksi,
@@ -367,7 +367,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
         $querydata2 = AcctSavingsCashMutation::selectRaw(
             '2 As type,
             savings_cash_mutation_id As id,
-            savings_cash_mutation_date As tanggal,
+            acct_savings_cash_mutation.created_at As tanggal,
             office_name As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
@@ -399,7 +399,7 @@ class AcctNominativeSavingsReportPickupController extends Controller
         $querydata3 = AcctSavingsCashMutation::selectRaw(
             '3 As type,
             savings_cash_mutation_id As id,
-            savings_cash_mutation_date As tanggal,
+            acct_savings_cash_mutation.created_at As tanggal,
             office_name As operator,
             member_name As anggota,
             savings_account_no As no_transaksi,
@@ -497,8 +497,11 @@ class AcctNominativeSavingsReportPickupController extends Controller
             $row++;
         }
 
+        $office_data= CoreOffice::where('office_id','=',$sessiondata['office_id'])->first();
+        $branch_data= CoreBranch::where('branch_id','=',auth()->user()->branch_id)->first();
+
         ob_clean();
-            $filename='DAFTAR PICKUP - '.Carbon::now()->format('Y-m-d-Hisu').'.xls';
+            $filename='DAFTAR PICKUP - '.$office_data->office_name.' - '. $branch_data->branch_name .' - '.Carbon::now()->format('Y-m-d-Hisu').'.xls';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="'.$filename.'"');
             header('Cache-Control: max-age=0');
