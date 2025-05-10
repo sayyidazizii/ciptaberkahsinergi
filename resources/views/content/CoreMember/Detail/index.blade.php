@@ -228,7 +228,7 @@
                             <table class="table table-rounded border gy-4 gs-4 show-border">
                                 <thead>
                                     <tr align="center">
-                                        <th colspan="3"><b>Daftar Pinjaman</b></th>
+                                        <th colspan="4"><b>Daftar Pinjaman</b></th>
                                     </tr>
                                     <tr align="center">
                                         <th><b>No</b></th>
@@ -243,6 +243,7 @@
                                         <tr>
                                             <th style="text-align: center">{{ $no }}</th>
                                             <th>{{ $val['credits_account_serial'] }}</th>
+                                            <th>{{ $val->credit->credits_name }}</th>
                                             <th class="text-center">
                                                 <a type="button"
                                                     href="{{ route('credits-account.detail', $val->credits_account_id) }}"
