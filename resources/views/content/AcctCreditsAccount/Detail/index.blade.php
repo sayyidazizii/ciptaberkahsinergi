@@ -344,12 +344,6 @@
                                             <td colspan="9" style="text-align: center">Data Kosong</td>
                                         </tr>
                                     <?php } ?>
-                                    @endforeach
-                                    <?php }else{?>
-                                        <tr>
-                                            <td colspan="9" style="text-align: center">Data Kosong</td>
-                                        </tr>
-                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
