@@ -306,6 +306,12 @@
                                 </thead>
                                 <tbody>
                                     <?php
+                                    $total_opening_balance = 0;
+                                    $total_angsuran_pokok = 0;
+                                    $total_angsuran_bunga = 0;
+                                    $total_angsuran = 0;
+                                    $total_last_balance = 0;
+
                                     if(!empty($datapola)){
                                     ?>
                                     @foreach($datapola as $key => $val)
@@ -317,6 +323,27 @@
                                             <td>{{ number_format(abs($val['angsuran']),2) }}</td>
                                             <td>{{ number_format(abs($val['last_balance']),2) }}</td>
                                         </tr>
+                                        <?php
+                                        $total_opening_balance += abs($val['opening_balance']);
+                                        $total_angsuran_pokok += abs($val['angsuran_pokok']);
+                                        $total_angsuran_bunga += abs($val['angsuran_bunga']);
+                                        $total_angsuran += abs($val['angsuran']);
+                                        $total_last_balance += abs($val['last_balance']);
+                                        ?>
+                                    @endforeach
+                                    <tr>
+                                        <td class="text-center"><b>Total</b></td>
+                                        <td><b>{{ number_format($total_opening_balance,2) }}</b></td>
+                                        <td><b>{{ number_format($total_angsuran_pokok,2) }}</b></td>
+                                        <td><b>{{ number_format($total_angsuran_bunga,2) }}</b></td>
+                                        <td><b>{{ number_format($total_angsuran,2) }}</b></td>
+                                        <td><b>{{ number_format($total_last_balance,2) }}</b></td>
+                                    </tr>
+                                    <?php }else{?>
+                                        <tr>
+                                            <td colspan="9" style="text-align: center">Data Kosong</td>
+                                        </tr>
+                                    <?php } ?>
                                     @endforeach
                                     <?php }else{?>
                                         <tr>
