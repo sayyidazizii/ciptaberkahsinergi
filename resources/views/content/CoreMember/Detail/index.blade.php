@@ -1,8 +1,8 @@
 @section('scripts')
-<script>
-const form = document.getElementById('kt_member_detail_view_form');
+    <script>
+        const form = document.getElementById('kt_member_detail_view_form');
 
-</script>
+    </script>
 @endsection
 
 <x-base-layout>
@@ -24,55 +24,76 @@ const form = document.getElementById('kt_member_detail_view_form');
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('No Anggota') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_no" class="form-control form-control-lg form-control-solid" placeholder="No Anggota" value="{{ $coremember['member_no'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_no"
+                                    class="form-control form-control-lg form-control-solid" placeholder="No Anggota"
+                                    value="{{ $coremember['member_no'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Nama Anggota') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_name" class="form-control form-control-lg form-control-solid" placeholder="Nama Anggota" value="{{ $coremember['member_name'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Nama Anggota"
+                                    value="{{ $coremember['member_name'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Sifat Anggota') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_character" class="form-control form-control-lg form-control-solid" placeholder="Sifat Anggota" value="{{ $membercharacter[$coremember['member_character']] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_character"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Sifat Anggota"
+                                    value="{{ $membercharacter[$coremember['member_character']] }}" autocomplete="off"
+                                    readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Jenis Kelamin') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_gender" class="form-control form-control-lg form-control-solid" placeholder="Jenis Kelamin" value="{{ $membergender[$coremember['member_gender']] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_gender"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Jenis Kelamin"
+                                    value="{{ $membergender[$coremember['member_gender']] }}" autocomplete="off"
+                                    readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Provinsi') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="province_name" class="form-control form-control-lg form-control-solid" placeholder="Provinsi" value="{{ $coremember->province->province_name }}" autocomplete="off" readonly/>
+                                <input type="text" name="province_name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Provinsi"
+                                    value="{{ $coremember->province->province_name }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Kabupaten') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="city_name" class="form-control form-control-lg form-control-solid" placeholder="Kabupaten" value="{{ $coremember->city->city_name }}" autocomplete="off" readonly/>
+                                <input type="text" name="city_name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Kabupaten"
+                                    value="{{ $coremember->city->city_name }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Kecamatan') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="kecamatan_name" class="form-control form-control-lg form-control-solid" placeholder="Kecamatan" value="{{ $coremember->kecamatan->kecamatan_name }}" autocomplete="off" readonly/>
+                                <input type="text" name="kecamatan_name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Kecamatan"
+                                    value="{{ $coremember->kecamatan->kecamatan_name }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Kode Pos') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_postal_code" class="form-control form-control-lg form-control-solid" placeholder="Kode Pos" value="{{ $coremember['member_postal_code'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_postal_code"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Kode Pos"
+                                    value="{{ $coremember['member_postal_code'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Alamat') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <textarea id="member_address" name="member_address" class="form-control form-control form-control-solid" data-kt-autosize="true" placeholder="Alamat Sesuai KTP" readonly>{{ $coremember['member_address'] }}</textarea>
+                                <textarea id="member_address" name="member_address"
+                                    class="form-control form-control form-control-solid" data-kt-autosize="true"
+                                    placeholder="Alamat Sesuai KTP"
+                                    readonly>{{ $coremember['member_address'] }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -80,55 +101,79 @@ const form = document.getElementById('kt_member_detail_view_form');
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tempat Lahir') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_place_of_birth" class="form-control form-control-lg form-control-solid" placeholder="Tempat Lahir" value="{{ $coremember['member_place_of_birth'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_place_of_birth"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Tempat Lahir"
+                                    value="{{ $coremember['member_place_of_birth'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Tanggal Lahir') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_date_of_birth" class="form-control form-control-lg form-control-solid" placeholder="Tanggal Lahir" value="{{ date('d-m-Y', strtotime($coremember['member_date_of_birth'])) }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_date_of_birth"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Tanggal Lahir"
+                                    value="{{ date('d-m-Y', strtotime($coremember['member_date_of_birth'])) }}"
+                                    autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('No Telepon') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_phone" class="form-control form-control-lg form-control-solid" placeholder="No Telepon" value="{{ $coremember['member_phone'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_phone"
+                                    class="form-control form-control-lg form-control-solid" placeholder="No Telepon"
+                                    value="{{ $coremember['member_phone'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('No Identitas') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_identity_no" class="form-control form-control-lg form-control-solid" placeholder="No Identitas" value="{{ $coremember['member_identity_no'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_identity_no"
+                                    class="form-control form-control-lg form-control-solid" placeholder="No Identitas"
+                                    value="{{ $coremember['member_identity_no'] }}" autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Nama Ibu Kandung') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_mother" class="form-control form-control-lg form-control-solid" placeholder="Nama Ibu Kandung" value="{{ $coremember['member_mother'] }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_mother"
+                                    class="form-control form-control-lg form-control-solid"
+                                    placeholder="Nama Ibu Kandung" value="{{ $coremember['member_mother'] }}"
+                                    autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Saldo Simp Pokok') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_principal_savings_last_balance" class="form-control form-control-lg form-control-solid" placeholder="Saldo Simp Pokok" value="{{ number_format($coremember['member_principal_savings_last_balance'], 2) }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_principal_savings_last_balance"
+                                    class="form-control form-control-lg form-control-solid"
+                                    placeholder="Saldo Simp Pokok"
+                                    value="{{ number_format($coremember['member_principal_savings_last_balance'], 2) }}"
+                                    autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Saldo Simp Wajib') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_mandatory_savings_last_balance" class="form-control form-control-lg form-control-solid" placeholder="Saldo Simp Wajib" value="{{ number_format($coremember['member_mandatory_savings_last_balance'], 2) }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_mandatory_savings_last_balance"
+                                    class="form-control form-control-lg form-control-solid"
+                                    placeholder="Saldo Simp Wajib"
+                                    value="{{ number_format($coremember['member_mandatory_savings_last_balance'], 2) }}"
+                                    autocomplete="off" readonly />
                             </div>
                         </div>
                         <div class="row mb-6">
                             <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Saldo Simp Khusus') }}</label>
                             <div class="col-lg-8 fv-row">
-                                <input type="text" name="member_special_savings_last_balance" class="form-control form-control-lg form-control-solid" placeholder="Saldo Simp Khusus" value="{{ number_format($coremember['member_special_savings_last_balance'], 2) }}" autocomplete="off" readonly/>
+                                <input type="text" name="member_special_savings_last_balance"
+                                    class="form-control form-control-lg form-control-solid"
+                                    placeholder="Saldo Simp Khusus"
+                                    value="{{ number_format($coremember['member_special_savings_last_balance'], 2) }}"
+                                    autocomplete="off" readonly />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive"> 
-                    <div class="row mb-6"> 
+                <div class="table-responsive">
+                    <div class="row mb-6">
                         <div class="col-lg-4">
                             <table class="table table-rounded border gy-4 gs-4 show-border">
                                 <thead>
@@ -149,7 +194,7 @@ const form = document.getElementById('kt_member_detail_view_form');
                                             <th>{{ $val['savings_account_no'] }}</th>
                                             <th>{{ $val->savingdata->savings_name }}</th>
                                         </tr>
-                                    <?php $no++ ?>
+                                        <?php    $no++ ?>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -174,7 +219,7 @@ const form = document.getElementById('kt_member_detail_view_form');
                                             <th>{{ $val->deposito_account_no }}</th>
                                             <th>{{ $val->deposito->deposito_name }}</th>
                                         </tr>
-                                    <?php $no++ ?>
+                                        <?php    $no++ ?>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -183,12 +228,13 @@ const form = document.getElementById('kt_member_detail_view_form');
                             <table class="table table-rounded border gy-4 gs-4 show-border">
                                 <thead>
                                     <tr align="center">
-                                        <th colspan="3"><b>Daftar Pinjaman</b></th>
+                                        <th colspan="4"><b>Daftar Pinjaman</b></th>
                                     </tr>
                                     <tr align="center">
                                         <th><b>No</b></th>
                                         <th><b>No Akad Pinjaman</b></th>
                                         <th><b>Jenis Pinjaman</b></th>
+                                        <th><b>Aksi</b></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -198,8 +244,15 @@ const form = document.getElementById('kt_member_detail_view_form');
                                             <th style="text-align: center">{{ $no }}</th>
                                             <th>{{ $val['credits_account_serial'] }}</th>
                                             <th>{{ $val->credit->credits_name }}</th>
+                                            <th class="text-center">
+                                                <a type="button"
+                                                    href="{{ route('credits-account.detail', $val->credits_account_id) }}"
+                                                    class="btn btn-sm btn-secondary btn-active-light-primary m-1">
+                                                    Detail
+                                                </a>
+                                            </th>
                                         </tr>
-                                    <?php $no++ ?>
+                                        <?php    $no++ ?>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -210,4 +263,3 @@ const form = document.getElementById('kt_member_detail_view_form');
         </div>
     </div>
 </x-base-layout>
-
