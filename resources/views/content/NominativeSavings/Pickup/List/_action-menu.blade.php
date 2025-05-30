@@ -33,7 +33,7 @@
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="type" value="{{ $model->type }}">
             <input type="hidden" name="id" value="{{ $model->id }}">
-            <button type="submit" class="btn btn-sm btn-danger btn-active-light-danger mb-1">
+            <button type="submit" class="btn btn-sm btn-danger btn-active-light-danger mt-2">
                 Hapus
             </button>
         </form>
