@@ -987,6 +987,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/filter', [AcctNominativeSavingsPickupController::class, 'filter'])->name('filter');
         Route::post('/filter/reset', [AcctNominativeSavingsPickupController::class, 'filterReset'])->name('filter-reset');
         Route::get('/add/{type}/{id}', [AcctNominativeSavingsPickupController::class, 'add'])->name('add');
+        Route::delete('/delete', [AcctNominativeSavingsPickupController::class, 'destroy'])->name('delete');
         Route::post('/process-add', [AcctNominativeSavingsPickupController::class, 'processAdd'])->name('process-add');
         Route::post('/process-all', [AcctNominativeSavingsPickupController::class, 'processAll'])->name('process-all');
         Route::post('/print', [AcctNominativeSavingsPickupController::class, 'print'])->name('print');

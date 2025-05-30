@@ -2004,4 +2004,43 @@ class AcctNominativeSavingsPickupController extends Controller
 
 
     }
+
+    public function destroy(Request $request)
+    {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            if($request['type'] == 1){
+                $credistPayment = AcctCreditsPayment::where('credits_payment_id',$request->id)->first();
+                $credistPayment->data_state = 1;
+                $credistPayment->deleted_at = Carbon::now();
+                $credistPayment->save(); 
+
+                $creditsAccount = AcctCreditsAccount::where('credits_account_id',$credistPayment->credits_account_id)->first();
+                $creditsAccount->credits_account_last_balance = $creditsAccount->credits_account_last_balance + $credistPayment->credits_payment_principal;
+                $creditsAccount->credits_account_interest_last_balance = $creditsAccount->credits_account_interest_last_balance + $credistPayment->credits_payment_interest;
+                $creditsAccount->credits_account_payment_to = $creditsAccount->credits_account_payment_to - 1;
+                $creditsAccount->save();
+            }else{
+                // throw new \Exception('Invalid type for pickup');
+                return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Proses delete Pickup Gagal',
+                'alert' => 'danger']);
+            }
+        }catch (\Exception $e) {
+            // Jika ada kesalahan, rollback transaksi
+            DB::rollBack();
+            // Lakukan sesuatu dengan error, misalnya log error atau tampilkan pesan
+            throw $e;
+            // Log error ke log file
+            Log::error('Proses Pickup Gagal: ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Proses Pickup Gagal',
+                'alert' => 'danger']);
+        }
+        DB::commit();
+        return redirect()->route('nomv-sv-pickup.index')->with(['pesan' => 'Hapus Pickup Berhasil ','alert' => 'success']);
+    }
+
+
 }
