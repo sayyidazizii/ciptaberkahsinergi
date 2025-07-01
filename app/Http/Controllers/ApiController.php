@@ -346,6 +346,7 @@ class ApiController extends Controller
     //print History Withdraw
     public function PrintGetWithdraw(Request $request){
 
+        try{
         $fields = $request->validate([
             'user_id'                   => 'required',
             'savings_cash_mutation_id'  => 'required'
@@ -373,6 +374,12 @@ class ApiController extends Controller
             'company'               => $company
 
         ],201);
+        }catch(Exception $e){
+            report($e);
+            // Log the error or handle it as needed
+            Log::error('Error in PrintGetWithdraw: ' . $e->getMessage());
+            return response($e,500);
+        }
     }
 
     //save tarik tunai
