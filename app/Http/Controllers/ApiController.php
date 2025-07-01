@@ -288,7 +288,7 @@ class ApiController extends Controller
             'company'     => $company
 
         ],201);
-        Log::info('PrintGetDeposit called successfully', [
+        Log::debug('PrintGetDeposit called successfully', [
             'user_id' => $fields['user_id'],
             'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
             'timestamp' => now(),
@@ -299,7 +299,7 @@ class ApiController extends Controller
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
-            Log::error('Error in PrintGetDeposit: ' . $e->getMessage());
+            Log::debug('Error in PrintGetDeposit: ' . $e->getMessage());
             return response($e,500);
         }
 
@@ -391,7 +391,7 @@ class ApiController extends Controller
             'company'               => $company
 
         ],201);
-        Log::info('PrintGetWithdraw called successfully', [
+        Log::debug('PrintGetWithdraw called successfully', [
             'user_id' => $fields['user_id'],
             'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
             'timestamp' => now(),
@@ -402,7 +402,7 @@ class ApiController extends Controller
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
-            Log::error('Error in PrintGetWithdraw: ' . $e->getMessage());
+            Log::debug('Error in PrintGetWithdraw: ' . $e->getMessage());
             return response($e,500);
         }
     }
