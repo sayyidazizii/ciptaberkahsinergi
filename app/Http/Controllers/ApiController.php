@@ -374,6 +374,14 @@ class ApiController extends Controller
             'company'               => $company
 
         ],201);
+        Log::info('PrintGetWithdraw called successfully', [
+            'user_id' => $fields['user_id'],
+            'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
+            'timestamp' => now(),
+            'data' => $data,
+            'preferencecompany' => $preferencecompany,
+            'company' => $company
+        ]);
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
