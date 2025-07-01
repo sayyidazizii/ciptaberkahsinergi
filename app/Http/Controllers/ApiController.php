@@ -259,6 +259,8 @@ class ApiController extends Controller
     //print History Simp Biasa
     public function PrintGetDeposit(Request $request){
 
+        try{
+
         $fields = $request->validate([
             'user_id'           => 'required',
             'savings_cash_mutation_id' => 'required'
@@ -286,6 +288,21 @@ class ApiController extends Controller
             'company'     => $company
 
         ],201);
+        Log::info('PrintGetDeposit called successfully', [
+            'user_id' => $fields['user_id'],
+            'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
+            'timestamp' => now(),
+            'data' => $data,
+            'preferencecompany' => $preferencecompany,
+            'company' => $company
+        ]);
+        }catch(Exception $e){
+            report($e);
+            // Log the error or handle it as needed
+            Log::error('Error in PrintGetDeposit: ' . $e->getMessage());
+            return response($e,500);
+        }
+
     }
 
     //data mutasi setor simpanan tunai
