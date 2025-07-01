@@ -404,12 +404,6 @@ class ApiController extends Controller
         $company = PreferenceCompany::select('company_name')
         ->first();
 
-        return response([
-            'data'                  => $data,
-            'preferencecompany'     => $preferencecompany,
-            'company'               => $company
-
-        ],201);
         Log::debug('PrintGetWithdraw called successfully', [
             'user_id' => $fields['user_id'],
             'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
@@ -418,6 +412,12 @@ class ApiController extends Controller
             'preferencecompany' => $preferencecompany,
             'company' => $company
         ]);
+        return response([
+            'data'                  => $data,
+            'preferencecompany'     => $preferencecompany,
+            'company'               => $company
+
+        ],201);
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
