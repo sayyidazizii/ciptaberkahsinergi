@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 use App\Http\Middleware\RejectBlockedUser;
@@ -33,6 +34,14 @@ use App\Http\Controllers\PPOB\AppController as PreferenceController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+
+Route::get('/tes-log', function () {
+    Log::debug('Tes log manual berhasil dimuat');
+    Log::info('Log dicoba');
+    Log::error('Log error dicoba');
+    return 'Log dicoba';
 });
 
 // Sample API route
