@@ -299,7 +299,7 @@ class ApiController extends Controller
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
-            Log::debug('Error in PrintGetDeposit: ' . $e->getMessage());
+            Log::error('Error in PrintGetDeposit: ' . $e->getMessage());
             return response($e,500);
         }
 
@@ -402,7 +402,7 @@ class ApiController extends Controller
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
-            Log::debug('Error in PrintGetWithdraw: ' . $e->getMessage());
+            Log::error('Error in PrintGetWithdraw: ' . $e->getMessage());
             return response($e,500);
         }
     }
