@@ -29,6 +29,7 @@ use App\Models\AcctSavingsAccount;
 use Illuminate\Support\Facades\DB;
 use App\Models\AcctDepositoAccount;
 use App\Models\AcctDepositoAccrual;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\AcctProfitLossReport;
 use Illuminate\Support\Facades\Hash;
@@ -282,12 +283,6 @@ class ApiController extends Controller
         $company = PreferenceCompany::select('company_name')
         ->first();
 
-        return response([
-            'data'           => $data,
-            'preferencecompany'     => $preferencecompany,
-            'company'     => $company
-
-        ],201);
         Log::debug('PrintGetDeposit called successfully', [
             'user_id' => $fields['user_id'],
             'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
@@ -296,6 +291,30 @@ class ApiController extends Controller
             'preferencecompany' => $preferencecompany,
             'company' => $company
         ]);
+
+        // Log the successful retrieval of data
+        if (!$data) {
+            Log::warning('No data found for PrintGetDeposit', [
+                'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
+                'timestamp' => now()
+            ]);
+            return response()->json(['message' => 'Data not found'], 404);
+        }
+
+        //Log Info
+        Log::info('PrintGetDeposit data retrieved info', [
+            'savings_cash_mutation_id' => $fields['savings_cash_mutation_id'],
+            'timestamp' => now(),
+            'data' => $data
+        ]);
+
+        return response([
+            'data'           => $data,
+            'preferencecompany'     => $preferencecompany,
+            'company'     => $company
+
+        ],201);
+        
         }catch(Exception $e){
             report($e);
             // Log the error or handle it as needed
