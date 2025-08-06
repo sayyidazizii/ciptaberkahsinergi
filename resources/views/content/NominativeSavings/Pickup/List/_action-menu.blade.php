@@ -16,6 +16,7 @@
     if ($currentPayment) {
         // Cari pembayaran terakhir berdasarkan credits_account_id
         $lastPayment = \App\Models\AcctCreditsPayment::where('credits_account_id', $currentPayment->credits_account_id)
+                        ->where('data_state',0)
                         ->orderBy('created_at', 'desc')
                         ->first();
 
